@@ -1,5 +1,5 @@
 package:
-  name: "hlbroken"
+  name: "dnaapler"
   version: "0.0.1"
 
 build:
@@ -7,7 +7,7 @@ build:
   noarch: generic
 
 source:
-  git_url: https://github.com/gbouras13/hlbroken
+  git_url: https://github.com/gbouras13/dnaapler
 
 requirements:
  run:
@@ -17,10 +17,10 @@ requirements:
 
 
 about:
-  home: https://github.com/gbouras13/hlbroken
+  home: https://github.com/gbouras13/dnaapler
   license: MIT
   license_familY: MIT
-  summary: "Identification and Extraction of s aureus hlb gene disruptions"
+  summary: "Orients complete bacterial whole genome chromosome assemblies to begin with dnaa gene"
 
 extra:
   recipe-maintainers:
