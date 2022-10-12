@@ -1,0 +1,27 @@
+package:
+  name: "hlbroken"
+  version: "0.0.1"
+
+build:
+  number: 0
+  noarch: generic
+
+source:
+  git_url: https://github.com/gbouras13/hlbroken
+
+requirements:
+ run:
+  - blast
+  - biopython
+  - pandas
+
+
+about:
+  home: https://github.com/gbouras13/hlbroken
+  license: MIT
+  license_familY: MIT
+  summary: "Identification and Extraction of s aureus hlb gene disruptions"
+
+extra:
+  recipe-maintainers:
+    - gbouras13
