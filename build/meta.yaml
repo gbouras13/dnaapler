@@ -13,7 +13,9 @@ requirements:
  run:
   - blast
   - biopython
+  - python >=3
   - pandas
+
 
 
 about:

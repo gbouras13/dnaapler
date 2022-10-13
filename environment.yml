@@ -7,3 +7,4 @@ dependencies:
   - blast
   - biopython
   - python >=3
+  - pandas
