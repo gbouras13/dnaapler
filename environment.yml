@@ -1,4 +1,4 @@
-name: hlbroken_env
+name: dnaapler_env
 channels:
   - conda-forge
   - bioconda
@@ -6,3 +6,4 @@ channels:
 dependencies:
   - blast
   - biopython
+  - python >=3
