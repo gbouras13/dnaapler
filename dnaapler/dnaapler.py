@@ -1,13 +1,17 @@
-#!/usr/bin/env python3
-# import input_commands
-# import processes
-# import os
-# import logging
 import time
 from loguru import logger
-import time
 import shutil
 from Bio import SeqIO
+from pathlib import Path
+import os
+import click
+import sys
+
+from .external_tools import ExternalTool
+
+from .constants import (
+    DNAAPLER_DB
+)
 
 from .util import (
     dnaapler_base,
@@ -16,13 +20,22 @@ from .util import (
     print_citation,
 )
 
-import os
-import click
-import sys
+from .validation import (
+    instantiate_dirs,
+    validate_fasta
+)
+
+
+from .processing import (
+    process_blast_output_and_reorient
+)
+
+
+
 
 
 """
-code taken from tbpore https://github.com/mbhall88/tbpore
+some code taken/adapted from tbpore https://github.com/mbhall88/tbpore
 """
 
 log_fmt = (
@@ -30,11 +43,39 @@ log_fmt = (
     "<level>{message}</level>"
 )
 
+def begin_dnaapler(input, output, threads, gene):
+    """
+    begins dnaapler
+    returns start time
+    """
+    # get start time
+    start_time = time.time()
+    # initial logging stuff
+    log_file = os.path.join(output, f"dnaapler_{start_time}.log")
+    # adds log file
+    logger.add(log_file)
+    logger.info(f"You are using dnaapler version {get_version()}")
+    logger.info(f"Repository homepage is https://github.com/gbouras13/dnaapler")
+    logger.info(f"Written by George Bouras: george.bouras@adelaide.edu.au")
+    logger.info(f"Your input FASTA is {input}")
+    logger.info(f"Your output directory  is {output}")
+    logger.info(f"You have specified {threads} threads to use with blastx")
+    logger.info(f"You have specified {gene} gene to reoirent your sequence")
+    return start_time
 
+def end_dnaapler(start_time):
+    """
+    finishes dnaapler
+    """
 
-"""
-code adapted from Snaketool https://github.com/beardymcjohnface/Snaketool
-"""
+   # Determine elapsed time
+    elapsed_time = time.time() - start_time
+    elapsed_time = round(elapsed_time, 2)
+
+    # Show elapsed time for the process
+    logger.info("dnaapler has finished")
+    logger.info("Elapsed time: "+str(elapsed_time)+" seconds")
+
 
 def common_options(func):
     """Common command line args
@@ -55,7 +96,7 @@ def common_options(func):
             help="Output directory ",
         ),
         click.option(
-            '-t,',
+            '-t',
             "--threads", 
             help="Number of threads to use with BLAST.",
             default=1, 
@@ -89,7 +130,7 @@ def main_cli():
 
 
 """
-Main run command
+Chromosome command
 """
 
 @main_cli.command()
@@ -97,7 +138,7 @@ Main run command
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
-def run(
+def chromosome(
     ctx,
     input,
     output,
@@ -106,56 +147,126 @@ def run(
     force,
     **kwargs
 ):
-    """Run dnaapler"""
 
-    # get start time
-    start_time = time.time()
-    # initial logging stuff
-    logger.add(os.path.join(output, "dnaapler.log"), rotation="500 MB", level="DEBUG")
-    logger.info(f"You are using dnaapler version {get_version()}")
-    logger.info(f"Repository homepage is https://github.com/gbouras13/dnaapler")
-    logger.info(f"Written by George Bouras: george.bouras@adelaide.edu.au")
-    logger.info(f"Your input FASTA specified is {input}")
-    logger.info(f"Your output directory specified  is {output}")
-    logger.info(f"You have specified {threads} threads")
+    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force, ctx)
 
-	# Checks the output directory
-	# remove outdir on force
-    logger.info(f"Checking the out directory")
-    if force == True:
-        if os.path.isdir(output) == True:
-            shutil.rmtree(output)
-        else:
-            logger.info(f"\n--force was specified even though the output directory does not already exist. Continuing. \n")
-    else:
-        if os.path.isdir(output) == True:
-            logger.error(f"Output directory already exists and force was not specified. Please specify -f or --force to overwrite the output directory.")
-            ctx.exit(2) 
-	# instantiate outdir
-    if os.path.isdir(output) == False:
-        os.mkdir(output)
+    # defines gene
+    gene = "dnaA"
 
-###################################
-    # checks input FASTA
-###################################
-    logger.info(f"Checking the input FASTA")
-    # to get extension
-    with open(input, "r") as handle:
-        fasta = SeqIO.parse(handle, "fasta")
-        if any(fasta):
-            logger.info(f"{input} file checked")
-        else:
-            logger.error("Error: {input} file is not in the FASTA format. Please check your input file")
-            ctx.exit(2) 
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
 
-    ##### use external_tools.py from tbpore
+    # validates fasta 
+    validate_fasta(input, ctx)
+    ##### use external_tools.py 
+
+    # chromosome path
+    # blast
+    logdir = Path(f"{output}/logs")
+    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+    # dnaA da
+    db = os.path.join(DNAAPLER_DB, f"dnaA_db")
+    blast = ExternalTool(
+        tool="blastx",
+        input=f"-query {input}",
+        output=f"-out {blast_output}",
+        params=f"-db {db} -evalue  1e-10 -num_threads {threads} -outfmt \" 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq \"",
+        logdir=logdir,
+    )
+
+    # tools_to_run = (
+    #     blast,
+    #     blast
+    # )
+    #ExternalTool.run_tools(tools_to_run, ctx)
+    #  makeblastdb -in dnaA.fasta -dbtype prot -out dnaA_db
+    #  makeblastdb -in terL.fasta -dbtype prot -out terL_db
+    #  makeblastdb -in repA.fasta -dbtype prot -out repA_db
+
+    # think I onle need 
+    # phr
+    # pin 
+    # psq
+
+    ExternalTool.run_tool(blast, ctx)
+
+    # reorient the 
+    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+    process_blast_output_and_reorient(input, blast_output,output_processed_file,  ctx, gene)
+
+    # end dnaapler
+    end_dnaapler(start_time)
 
 
+"""
+Plasmid command
+"""
 
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+def plasmid(
+    ctx,
+    input,
+    output,
+    threads,
+    prefix,
+    force,
+    **kwargs
+):
 
+    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force, ctx)
 
+    # defines gene
+    gene = "repA"
 
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
 
+    # validates fasta 
+    validate_fasta(input, ctx)
+    ##### use external_tools.py 
+
+    # chromosome path
+    # blast
+    logdir = Path(f"{output}/logs")
+    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+    # dnaA da
+    db = os.path.join(DNAAPLER_DB, f"repA_db")
+    blast = ExternalTool(
+        tool="blastx",
+        input=f"-query {input}",
+        output=f"-out {blast_output}",
+        params=f"-db {db} -evalue  1e-10 -num_threads {threads} -outfmt \" 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq \"",
+        logdir=logdir,
+    )
+
+    # tools_to_run = (
+    #     blast,
+    #     blast
+    # )
+    #ExternalTool.run_tools(tools_to_run, ctx)
+    #  makeblastdb -in dnaA.fasta -dbtype prot -out dnaA_db
+    #  makeblastdb -in terL.fasta -dbtype prot -out terL_db
+    #  makeblastdb -in repA.fasta -dbtype prot -out repA_db
+
+    # think I onle need 
+    # phr
+    # pin 
+    # psq
+
+    ExternalTool.run_tool(blast, ctx)
+
+    # reorient the 
+    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+    process_blast_output_and_reorient(input, blast_output,output_processed_file,  ctx, gene)
+
+    # end dnaapler
+    end_dnaapler(start_time)
 
 
 

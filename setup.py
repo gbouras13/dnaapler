@@ -6,6 +6,7 @@ def get_version():
     with open(
         os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
+            "dnaapler",
             "VERSION",
         )
     ) as f:
@@ -54,7 +55,8 @@ setup(
         "pyyaml>=6.0",
         "Click>=8.1.3",
         "pandas>=1.4.2",
-        "loguru>=0.5.3"
+        "loguru>=0.5.3", 
+        "biopython==1.79"
     ],
     entry_points={
         "console_scripts": [

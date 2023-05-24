@@ -11,19 +11,34 @@ dnaapler --help
 ```
 
 
-dnaapler is a simple python program that takes a single complete whole genome chromosome as input, finds the dnaa gene using BLAST, checks that the start of the gene is found, and if so, then reorients the chromosome to begin with this dnaa on the forward strand. This will ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages.
+`dnaapler` is a simple python program that takes a single nucleotide sequence (in FASTA format) as input, finds the desired start gene using BLAST, checks that the start of the gene is found, and if so, then reorients the chromosome to begin with this genes on the forward strand. 
 
-dnaapler is intended to be used with good-quality completed genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki) or with Flye and Illumina polishing.
+It was designed to replicate the reorientation functionality of [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta), but for FASTA input, and primarily for long-read first assembled chromosomes. But I have extended it to work with plasmids and phages, and any input FASTA desired.
 
-dnaapler uses 650 dnaA proteins downloaded from Uniprot with the query "Chromosomal replication initiator protein DnaA" on 12-10-22 as its database. 
+
+
+For bacterial chromosome, `dnaapler chromosome` should ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages. It is intended to be used with good-quality completed bacterial genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki) or [Dragonflye](https://github.com/rpetit3/dragonflye).
+
+Databases
+=============
+
+`dnaapler chromosome` uses 733 proteins downloaded from Uniprot with the query "Chromosomal replication initiator protein DnaA" on 24 May 2023 as its database for dnaA. 
+
+`dnaapler plasmid` uses the repA database curated by Ryan Wick in [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta).
+
+`dnaapler phage` uses a terL database I curated using [PHROGs](https://phrogs.lmge.uca.fr). I downloaded all the AA sequences of the 55 phrogs annotated as 'large terminase subunit', combined them depduplicated them using [seqkit](https://github.com/shenwei356/seqkit).
+
+```
+seqkit rmdup -s -o terL.faa phrog_terL.faa
+```
 
 It is strict - it requires a strong BLAST match, and the first amino acid of the putative dnaA gene BLAST sequence to be identified as Methionine, Valine or Leucine, the 3 most used start codons in bacteria. 
 
-For the most commonly studied microbes (ESKAPE pathogens, etc), the database should suffice.
+For the most commonly studied microbes (ESKAPE pathogens, etc), the dnaA database should suffice.
 
-If you try dnaapler on a more novel or under-studied microbe, you may need to provide your own dnaA gene in amino acid blast format. I will add this functionality later if required.
+If you try dnaapler on a more novel or under-studied microbe with a dnaA gene that has little sequence similarity to the database, you may need to provide your own dnaA gene in amino acid blast format using `dnaapler custom`.
 
-Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their work in the space and general ideas.
+Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their work in the space and general ideas. Also to Michael Hall, whose repository [tbpore](https://github.com/mbhall88/tbpore) I took and adapted a lot of scaffolding code from, and [Rob Edwards](https://github.com/linsalrob), because everything always comes back to phages.
 
 Motivation
 ------------
