@@ -443,7 +443,7 @@ def mystery(
     force,
     **kwargs
 ):
-    """Reorients your sequence with a mystery gene"""
+    """Reorients your sequence with a random gene"""
 
     ### validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force, ctx)

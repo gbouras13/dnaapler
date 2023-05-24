@@ -8,3 +8,4 @@ dependencies:
   - biopython >=1.79
   - python >=3.6,<4.0
   - pandas >=1.4.2
+  - pyrodigal >=2.0.0

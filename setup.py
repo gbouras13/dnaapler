@@ -35,6 +35,8 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 
@@ -43,7 +45,7 @@ setup(
     packages=find_packages(),
     url="",
     python_requires=">=3.7",
-    description="Orients complete bacterial whole genome chromosome assemblies to begin with dnaA gene",
+    description="Re-orients  bacterial chromosome seqeunces to begin with dnaA gene",
     long_description=get_description(),
     long_description_content_type="text/markdown",
     version=get_version(),
@@ -57,7 +59,9 @@ setup(
         "pandas>=1.4.2",
         "loguru>=0.5.3", 
         "biopython==1.79",
-        "pyrodigal>=2.0.0"
+        "pyrodigal>=2.0.0",
+        "pytest>=6.2.5",
+        "pytest-cov>=3.0.0"
     ],
     entry_points={
         "console_scripts": [
