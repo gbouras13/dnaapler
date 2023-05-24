@@ -1,5 +1,5 @@
 
-[![Test](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yml/badge.svg)](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yml)
+[![Test](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yml/badge.svg)](https://github.com/gbouras13/dnaapler/actions/ci.yml)
 [![cov](https://gbouras13.github.io/dnaapler/badges/coverage.svg)](https://github.com/gbouras13/dnaapler/actions)
 
 
