@@ -6,6 +6,9 @@ import shutil
 from loguru import logger
 import click
 from pathlib import Path
+from Bio.SeqUtils import seq3
+import re
+
 
 def instantiate_dirs(output_dir: str, force: bool, ctx:click.Context):
 	"""	Checks the output directory
@@ -33,6 +36,9 @@ def instantiate_dirs(output_dir: str, force: bool, ctx:click.Context):
 
 
 def validate_fasta(input_fasta: str, ctx:click.Context ):
+	"""
+	Validates  FASTA input - that the input is a FASTA with 1 sequence
+	"""
 	logger.info(f"Checking that the input file {input_fasta} is in FASTA format and has only 1 entry.")
 	# to get extension
 	with open(input_fasta, "r") as handle:
@@ -52,5 +58,32 @@ def validate_fasta(input_fasta: str, ctx:click.Context ):
 			ctx.exit(2)
 
 
+def validate_custom_db_fasta(custom_fasta: str, ctx:click.Context ):
+	"""
+	Validates custom db FASTA input - ensures it is FASTA file with amino acids (.faa)
+	"""
+	logger.info(f"Checking that the custom database file {custom_fasta} is in FASTA format with amino acid sequences.")
+
+	
+	with open(custom_fasta, "r") as handle:
+		# checks if fasta
+		fasta = SeqIO.parse(handle, "fasta")
+		if any(fasta) == False:
+			logger.error(f"Error: {custom_fasta} file is not in the FASTA format. Please check your input file")
+			ctx.exit(2) 
+		# checks amino acids
+
+	# still beat chatgpt! https://stackoverflow.com/questions/21609380/how-to-i-check-if-a-sequence-is-a-protein-sequence-or-not
+	alphabets = {'dna': re.compile('^[acgtn]*$', re.I), 
+				'protein': re.compile('^[acdefghiklmnpqrstvwy]*$', re.I)}
+
+	with open(custom_fasta, "r") as handle:
+		for record in SeqIO.parse(handle, "fasta"):
+			if alphabets['protein'].search(str(record.seq)) is None:
+				logger.error(f"Error: {custom_fasta} file does not seem to have amino acid sequences. Please check your input file")
+				ctx.exit(2) 
+
+	
+	logger.info(f"{custom_fasta} file checked.")
 
 

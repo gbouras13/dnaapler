@@ -56,7 +56,8 @@ setup(
         "Click>=8.1.3",
         "pandas>=1.4.2",
         "loguru>=0.5.3", 
-        "biopython==1.79"
+        "biopython==1.79",
+        "pyrodigal>=2.0.0"
     ],
     entry_points={
         "console_scripts": [
