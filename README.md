@@ -5,14 +5,14 @@
 
 # dnaapler
 
+Refactoring in progress :)
+
 ```
 git clone "https://github.com/gbouras13/dnaapler"
 cd dnaapler
 
 pip install -e .
 dnaapler --help
-
-
 ```
 
 
@@ -77,26 +77,4 @@ or via my conda channel.
 
 ```
 conda install -c gbouras13 dnaapler
-```
-
-Usage
-----------
-
-```
-usage: dnaapler.py [-h] -c CHROMOSOME [-o OUTDIR] [-f] [-p PREFIX] [-t THREADS] [-V]
-
-dnaapler: Orients complete bacterial whole genome chromosome assemblies to begin with dnaa gene.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -c CHROMOSOME, --chromosome CHROMOSOME
-                        Bacterial chromosome assembly file in FASTA format.
-  -o OUTDIR, --outdir OUTDIR
-                        Directory to write the output to.
-  -f, --force           Overwrites the output directory.
-  -p PREFIX, --prefix PREFIX
-                        Prefix for output files. This is not required
-  -t THREADS, --threads THREADS
-                        Threads for BLAST. Defaults to 4.
-  -V, --version         show program's version number and exit
 ```
