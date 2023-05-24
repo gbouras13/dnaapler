@@ -39,6 +39,14 @@ jobs:
           pip install pytest pytest-cov
           pytest --cov=./ --cov-report xml --cov-report lcov --cov-append
           
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@master
+        with:
+          parallel: true
+          github-token: ${{ secrets.github_token }}
+          flag-name: run-${{ matrix.test_number }}
+          path-to-lcov: "coverage.lcov"
+      
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
 
