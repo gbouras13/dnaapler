@@ -1,5 +1,16 @@
 # dnaapler
 
+```
+git clone "https://github.com/gbouras13/dnaapler"
+cd dnaapler
+
+pip install -e .
+dnaapler --help
+
+
+```
+
+
 dnaapler is a simple python program that takes a single complete whole genome chromosome as input, finds the dnaa gene using BLAST, checks that the start of the gene is found, and if so, then reorients the chromosome to begin with this dnaa on the forward strand. This will ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages.
 
 dnaapler is intended to be used with good-quality completed genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki) or with Flye and Illumina polishing.

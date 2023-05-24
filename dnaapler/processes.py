@@ -4,16 +4,9 @@ import subprocess as sp
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 import pandas as pd
-import logging
+from loguru import logger
 
 
-def write_to_log(s, logger):
-           while True:
-                output = s.readline().decode()
-                if output:
-                    logger.log(logging.INFO, output)
-                else:
-                    break
 
 def blast(input, out_dir, prefix, bin_path, threads, logger):
     blast_db = os.path.join(bin_path, "..", 'db', "dnaA_db") 
