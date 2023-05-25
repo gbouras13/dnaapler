@@ -14,7 +14,7 @@ Installation
 
 dnaapler requires only BLAST as an external dependency.
 
-For now, please install form source
+For now, please install from source
 
 ```
 git clone "https://github.com/gbouras13/dnaapler"
@@ -99,6 +99,6 @@ I recommend that you undertake 2 rounds of polishing. The first prior to running
 Acknowledgements
 =============
 
-Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) I took and adapted a lot of scaffolding code from because he writes really nice code, [Rob Edwards](https://github.com/linsalrob), because everything always comes back to phages, and [Vijini Mallawaarachchi]https://github.com/Vini2] who taught me how to actually do something resembling legitimate software development.
+Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) I took and adapted a lot of scaffolding code from because he writes really nice code, [Rob Edwards](https://github.com/linsalrob), because everything always comes back to phages, and [Vijini Mallawaarachchi](https://github.com/Vini2) who taught me how to actually do something resembling legitimate software development.
 
 
