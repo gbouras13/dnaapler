@@ -1,0 +1,11 @@
+name: dnaapler_env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - blast >=2.9
+  - biopython >=1.79
+  - python >=3.6,<4.0
+  - pandas >=1.4.2
+  - pyrodigal >=2.0.0

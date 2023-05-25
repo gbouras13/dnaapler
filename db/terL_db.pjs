@@ -1,0 +1,22 @@
+{
+  "version": "1.2",
+  "dbname": "terL_db",
+  "dbtype": "Protein",
+  "db-version": 5,
+  "description": "terL.faa",
+  "number-of-letters": 3834316,
+  "number-of-sequences": 7506,
+  "last-updated": "2023-05-25T10:39:00",
+  "number-of-volumes": 1,
+  "bytes-total": 5045060,
+  "bytes-to-cache": 3901967,
+  "files": [
+    "terL_db.pdb",
+    "terL_db.phr",
+    "terL_db.pin",
+    "terL_db.pot",
+    "terL_db.psq",
+    "terL_db.ptf",
+    "terL_db.pto"
+  ]
+}

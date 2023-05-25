@@ -1,0 +1,65 @@
+name: CI
+
+on: [push,pull_request]
+
+jobs:
+  tests:
+    name: "Python ${{ matrix.python-version }}"
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    strategy:
+      matrix:
+        os: [macos-12, ubuntu-latest]
+        python-version: ["3.10"]
+
+    steps:
+      - uses: "actions/checkout@v3"
+        with:
+          fetch-depth: 0
+
+      # Setup env
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: dnaapler
+          environment-file: build/environment.yaml
+          python-version: ${{ matrix.python-version }}
+          auto-activate-base: false
+
+      - name: "Setup dnaapler on ${{ matrix.os }} for Python ${{ matrix.python-version }}"
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+      
+      - name: "Generate coverage report on ${{ matrix.os }} for Python ${{ matrix.python-version }}"
+        run: |
+          pip install pytest pytest-cov
+          pytest --cov=./ --cov-report xml --cov-report lcov --cov-append
+          
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@master
+        with:
+          parallel: true
+          github-token: ${{ secrets.github_token }}
+          flag-name: run-${{ matrix.test_number }}
+          path-to-lcov: "coverage.lcov"
+      
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+
+  finish:
+    needs: tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-12, ubuntu-latest]
+        python-version: ["3.10"]
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
