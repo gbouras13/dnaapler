@@ -54,7 +54,6 @@ Commands:
 Description
 ----------
 
-
 `dnaapler` is a simple python program that takes a single nucleotide input sequence (in FASTA format) as input, finds the desired start gene using blastx, checks that the start of a gene is found, and if so, then reorients the chromosome to begin with this genes on the forward strand. 
 
 It was designed to replicate the reorientation functionality of [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta) with dnaA, but for FASTA input, and primarily for long-read first assembled chromosomes. And I have extended it to work with plasmids and phages, or for any input FASTA desired.
@@ -70,13 +69,13 @@ Databases
 
 `dnaapler phage` uses a terL database I curated using [PHROGs](https://phrogs.lmge.uca.fr). I downloaded all the AA sequences of the 55 phrogs annotated as 'large terminase subunit', combined them depduplicated them using [seqkit](https://github.com/shenwei356/seqkit) `seqkit rmdup -s -o terL.faa phrog_terL.faa`.
 
-`dnaapler custom` uses a custom amino acid FASTA gene database that you specify using `-c`.
+`dnaapler custom` uses a custom amino acid FASTA format gene(s) that you specify using `-c`. 
 
 The matching is strict - it requires a strong BLAST match, and the first amino acid of a top BLAST hit gene to be identified as Methionine, Valine or Leucine, the 3 most used start codons in bacteria/phages. 
 
 For the most commonly studied microbes (ESKAPE pathogens, etc), the dnaA database should suffice.
 
-If you try dnaapler on a more novel or under-studied microbe with a dnaA gene that has little sequence similarity to the database, you may need to provide your own dnaA gene in amino acid blast format using `dnaapler custom`.
+If you try dnaapler on a more novel or under-studied microbe with a dnaA gene that has little sequence similarity to the database, you may need to provide your own dnaA gene(s) in amino acid FASTA format using `dnaapler custom`.
 
 After Erin Young's [issue](https://github.com/gbouras13/dnaapler/issues/1), I've also added:
 
