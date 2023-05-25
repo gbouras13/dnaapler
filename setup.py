@@ -1,7 +1,6 @@
 import os
 from setuptools import setup, find_packages
 
-
 def get_version():
     with open(
         os.path.join(
@@ -22,7 +21,6 @@ def get_description():
 def get_data_files():
     data_files = [(".", ["README.md"])]
     return data_files
-
 
 CLASSIFIERS = [
     "Environment :: Console",
