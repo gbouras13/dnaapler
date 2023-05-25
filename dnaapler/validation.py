@@ -75,7 +75,7 @@ def validate_custom_db_fasta(custom_fasta: str, ctx:click.Context ):
 
 	# still beat chatgpt! https://stackoverflow.com/questions/21609380/how-to-i-check-if-a-sequence-is-a-protein-sequence-or-not
 	alphabets = {'dna': re.compile('^[acgtn]*$', re.I), 
-				'protein': re.compile('^[acdefghiklmnpqrstvwy]*$', re.I)}
+				'protein': re.compile('^[defhiklmpqrsvwy]*$', re.I)} # get rid of the nucleotide bases - assume any AA gene has at least one
 
 	with open(custom_fasta, "r") as handle:
 		for record in SeqIO.parse(handle, "fasta"):

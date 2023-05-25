@@ -4,12 +4,8 @@ You shouldn't need to tweak these much if at all
 
 import sys
 import os
-import subprocess
-import yaml
 import click
-import collections.abc
-from shutil import copyfile
-from time import localtime, strftime
+from loguru import logger
 
 
 class OrderedCommands(click.Group):
@@ -29,13 +25,11 @@ def get_version():
     return version
 
 
-
-
-def echo_click(msg, log=None):
-    click.echo(msg, nl=False, err=True)
-    if log:
-        with open(log, "a") as l:
-            l.write(msg)
+# def echo_click(msg, log=None):
+#     click.echo(msg, nl=False, err=True)
+#     if log:
+#         with open(log, "a") as l:
+#             l.write(msg)
 
 def print_citation():
     with open(dnaapler_base("CITATION"), "r") as f:
@@ -43,24 +37,24 @@ def print_citation():
             echo_click(line)
 
 
-def msg(err_message, log=None):
-    tstamp = strftime("[%Y:%m:%d %H:%M:%S] ", localtime())
-    echo_click(tstamp + err_message + "\n", log=log)
+# def msg(err_message, log=None):
+#     tstamp = strftime("[%Y:%m:%d %H:%M:%S] ", localtime())
+#     echo_click(tstamp + err_message + "\n", log=log)
 
 
-def msg_box(splash, errmsg=None, log=None):
-    msg("-" * (len(splash) + 4), log=log)
-    msg(f"| {splash} |", log=log)
-    msg(("-" * (len(splash) + 4)), log=log)
-    if errmsg:
-        echo_click("\n" + errmsg + "\n", log=log)
+# def msg_box(splash, errmsg=None, log=None):
+#     msg("-" * (len(splash) + 4), log=log)
+#     msg(f"| {splash} |", log=log)
+#     msg(("-" * (len(splash) + 4)), log=log)
+#     if errmsg:
+#         echo_click("\n" + errmsg + "\n", log=log)
 
 
 """
 code taken from tbpore https://github.com/mbhall88/tbpore
 """
 
-from loguru import logger
+
 
 log_fmt = (
     "[<green>{time:YYYY-MM-DD HH:mm:ss}</green>] <level>{level: <8}</level> | "

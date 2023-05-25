@@ -8,6 +8,13 @@ from typing import List, Optional, Tuple
 import click
 from loguru import logger
 
+"""
+to make the BLAST dbs
+
+ makeblastdb -in dnaA.faa -dbtype prot -out dnaA_db
+ makeblastdb -in terL.faa -dbtype prot -out terL_db
+ makeblastdb -in repA.faa -dbtype prot -out repA_db
+"""
 
 class ExternalTool:
     def __init__(self, tool: str, input: str, output: str, params: str, logdir: Path):

@@ -9,14 +9,22 @@ import click
 
 
 def process_blast_output_and_reorient(input, blast_file, out_file, ctx: click.Context, gene: str):
+    
+    # defin colnames
     col_list = ["qseqid", "qlen", "sseqid", "slen", "length", "qstart", "qend", "sstart", "send", "pident", "nident", "gaps", "mismatch", "evalue", "bitscore", "qseq", "sseq"] 
-    blast_df = pd.read_csv(blast_file, delimiter= '\t', index_col=False , names=col_list) 
+    # read in the dataframe from BLAST
+    try:
+        blast_df = pd.read_csv(blast_file, delimiter= '\t', index_col=False , names=col_list) 
+    except:
+        logger.error(f"There was an issue with parsing the BLAST output file.")
+        ctx.exit(2)
+
 
     ###### top hit has a start of 1 ########
     # take the top hit - blast sorts by bitscore
     # if the start is 1 of the top hit
-    if blast_df['qstart'][0] == 1 == 1:
-        logger.error(f"Based on the BLAST output, your input is already oriented to begin with {gene}.")
+    if blast_df['qstart'][0]  == 1:
+        logger.error(f"Based on the BLAST output top hit, your input is already oriented to begin with {gene}.")
         ctx.exit(2)
 
     ###### top hit ########
@@ -57,7 +65,7 @@ def reorient_sequence(blast_df, input, out_file, gene, i):
         identity = round(ident/covered_len*100, 2)
 
         logger.info(f"{gene} gene identified. It starts at coordinate {dnaa_start_on_chromosome} on the {strand} strand in your input file.")
-        logger.info(f"The best hit in the database is {top_hit}, which has length of {top_hit_length} AAs.")
+        logger.info(f"The best hit with a valid start codon in the database is {top_hit}, which has length of {top_hit_length} AAs.")
         logger.info(f"{covered_len} AAs were covered by the best hit, with an overall coverage of {coverage}%.")
         logger.info(f"{ident} AAs were identical, with an overall identity of {identity}%.")
         logger.info(f"Re-orienting.")
@@ -100,6 +108,8 @@ def reorient_sequence_random(input, out_file,  start, strand):
     record = SeqIO.read(input, "fasta")
     # length of chromosome
     length = len(record.seq)
+
+
 
     # reorient to start at the terminase  
     # forward is 1 from pyrodigal

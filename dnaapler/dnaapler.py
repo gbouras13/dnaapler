@@ -185,14 +185,7 @@ def chromosome(
     #     blast
     # )
     #ExternalTool.run_tools(tools_to_run, ctx)
-    #  makeblastdb -in dnaA.fasta -dbtype prot -out dnaA_db
-    #  makeblastdb -in terL.fasta -dbtype prot -out terL_db
-    #  makeblastdb -in repA.fasta -dbtype prot -out repA_db
 
-    # think I onle need 
-    # phr
-    # pin 
-    # psq
 
     ExternalTool.run_tool(blast, ctx)
 
