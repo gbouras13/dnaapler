@@ -15,10 +15,10 @@ import pytest
 
 
 # import functions
-from dnaapler import validation
-from dnaapler import processing
-from dnaapler import external_tools
-from dnaapler import dnaapler
+from src import validation
+from src import processing
+from src import external_tools
+from src.util import (begin_dnaapler, end_dnaapler)
 
 # move to folder with mock files. First try Github structure, then try pulled repository structure
 
@@ -217,14 +217,14 @@ class TestBlastOutput(unittest.TestCase):
         gene = "terL"
         tmp = 1
         outdir = os.path.join(test_data, "bad_dir")
-        dnaapler.begin_dnaapler(input, outdir, threads, gene)
+        begin_dnaapler(input, outdir, threads, gene)
         assert tmp == 1
 
     def test_end_dnaapler(self):
         # Test scenario where the no BLAST hit begins with 1 (start of gene)
         time = 2324.0
         tmp = 1
-        dnaapler.end_dnaapler(time)
+        end_dnaapler(time)
         assert tmp == 1
 
 
@@ -233,8 +233,8 @@ import sys
 from pathlib import Path
 from unittest.mock import patch
 
-from dnaapler.constants import repo_root
-from dnaapler.external_tools import ExternalTool
+from src.constants import repo_root
+from src.external_tools import ExternalTool
 
 ### external tools
 

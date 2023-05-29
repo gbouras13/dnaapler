@@ -1,29 +1,28 @@
-import time
+
 from loguru import logger
 import shutil
 from Bio import SeqIO
 from pathlib import Path
 import os
 import click
-import sys
 import pyrodigal
 import random
 
-from .external_tools import ExternalTool
+from src.external_tools import ExternalTool
 
-from .constants import DNAAPLER_DB
+from src.constants import DNAAPLER_DB
 
-from .util import (
-    dnaapler_base,
+from src.util import (
+    begin_dnaapler,
+    end_dnaapler,
     get_version,
-    OrderedCommands,
     print_citation,
 )
 
-from .validation import instantiate_dirs, validate_fasta, validate_custom_db_fasta
+from src.validation import instantiate_dirs, validate_fasta, validate_custom_db_fasta
 
 
-from .processing import process_blast_output_and_reorient, reorient_sequence_random
+from src.processing import process_blast_output_and_reorient, reorient_sequence_random
 
 
 """
@@ -35,40 +34,6 @@ log_fmt = (
     "<level>{message}</level>"
 )
 
-
-def begin_dnaapler(input, output, threads, gene):
-    """
-    begins dnaapler
-    returns start time
-    """
-    # get start time
-    start_time = time.time()
-    # initial logging stuff
-    log_file = os.path.join(output, f"dnaapler_{start_time}.log")
-    # adds log file
-    logger.add(log_file)
-    logger.info(f"You are using dnaapler version {get_version()}")
-    logger.info(f"Repository homepage is https://github.com/gbouras13/dnaapler")
-    logger.info(f"Written by George Bouras: george.bouras@adelaide.edu.au")
-    logger.info(f"Your input FASTA is {input}")
-    logger.info(f"Your output directory  is {output}")
-    logger.info(f"You have specified {threads} threads to use with blastx")
-    logger.info(f"You have specified {gene} gene to reoirent your sequence")
-    return start_time
-
-
-def end_dnaapler(start_time):
-    """
-    finishes dnaapler
-    """
-
-    # Determine elapsed time
-    elapsed_time = time.time() - start_time
-    elapsed_time = round(elapsed_time, 2)
-
-    # Show elapsed time for the process
-    logger.info("dnaapler has finished")
-    logger.info("Elapsed time: " + str(elapsed_time) + " seconds")
 
 
 def common_options(func):
@@ -121,13 +86,12 @@ def common_options(func):
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 def main_cli():
-    logger.info(f"Starting dnaapler")
+    1+1
 
 
 """
 Chromosome command
 """
-
 
 @main_cli.command()
 @click.help_option("--help", "-h")
@@ -459,3 +423,10 @@ def citation(**kwargs):
 
 # main_cli.add_command(run)
 main_cli.add_command(citation)
+
+
+def main():
+    main_cli()
+
+if __name__ == "__main__":
+    main()

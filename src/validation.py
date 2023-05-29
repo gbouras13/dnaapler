@@ -93,8 +93,8 @@ def validate_custom_db_fasta(custom_fasta: str, ctx: click.Context):
 
 
 def is_protein_sequence(string):
-    protein_letters = 'acdefghiklmnpqrstvwy'
-    nucleotide_letters = 'acgnt'
+    protein_letters = "acdefghiklmnpqrstvwy"
+    nucleotide_letters = "acgnt"
 
     # Check if the string contains only nucleotide letters
     if all(letter.lower() in nucleotide_letters for letter in string):
@@ -102,4 +102,3 @@ def is_protein_sequence(string):
 
     # Check if the string contains any protein letters
     return any(letter.lower() in protein_letters for letter in string)
-
