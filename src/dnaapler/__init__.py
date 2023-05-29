@@ -47,7 +47,7 @@ def common_options(func):
         click.option(
             "-i",
             "--input",
-            help="Path to assembly chromosome/plasmid file in FASTA format",
+            help="Path to input file in FASTA format",
             type=click.Path(),
             required=True,
         ),
@@ -62,7 +62,7 @@ def common_options(func):
         click.option(
             "-t",
             "--threads",
-            help="Number of threads to use with BLAST.",
+            help="Number of threads to use with BLAST",
             default=1,
             show_default=True,
         ),
@@ -70,14 +70,14 @@ def common_options(func):
             "-p",
             "--prefix",
             default="dnaapler",
-            help="Prefix for output files. Not required.",
+            help="Prefix for output files",
             show_default=True,
         ),
         click.option(
             "-f",
             "--force",
             is_flag=True,
-            help="Force overwrites the output directory.",
+            help="Force overwrites the output directory",
         ),
     ]
     for option in reversed(options):
