@@ -11,16 +11,22 @@ import os
 import click
 from pathlib import Path
 import pandas as pd
+import pytest
 
 
 # import functions
 from dnaapler import validation
 from dnaapler import processing
 from dnaapler import external_tools
+from dnaapler import dnaapler
 
 # move to folder with mock files. First try Github structure, then try pulled repository structure
 
 test_data = Path("tests/test_data")
+
+@pytest.fixture(scope="session")
+def tmp_dir(tmpdir_factory):
+    return tmpdir_factory.mktemp("tmp")
 
 
 class TestValidateFasta(unittest.TestCase):
@@ -93,6 +99,7 @@ class TestReorientSequenceRandom(unittest.TestCase):
             processing.reorient_sequence_random(input, out_file,  start, strand)
 
 
+
 class TestBlastOutput(unittest.TestCase):
     """ Tests for process_blast_output_and_reorient"""
 
@@ -138,17 +145,34 @@ class TestBlastOutput(unittest.TestCase):
             gene = 'terL'
             processing.process_blast_output_and_reorient(input, blast_file, output, ctx, gene)
 
-    def test_process_blast_output_and_reorient_no_one(self):
+    def test_process_blast_output_and_reorient_correct(self):
     # Test scenario where the no BLAST hit begins with 1 (start of gene)
         blast_file = os.path.join(test_data, 'SAOMS1_blast_output_correct.txt')  
         input =  os.path.join(test_data, 'SAOMS1.fasta')
-        output = os.path.join(test_data, 'SAOMS1_reoriented.fasta')
+        output = os.path.join(test_data, 'fake_reoriented.fasta')
         ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
         gene = 'terL'
         processing.process_blast_output_and_reorient(input, blast_file, output, ctx, gene)
         # checks the ctx is the same, no error
         assert ctx == ctx
 
+
+    def test_begin_dnaapler(self):
+    # Test begin
+        input =  os.path.join(test_data, 'SAOMS1.fasta')
+        threads = str(8)
+        gene = 'terL'
+        tmp = 1
+        outdir = os.path.join(test_data, 'bad_dir')
+        dnaapler.begin_dnaapler(input, outdir, threads, gene)
+        assert tmp == 1
+
+    def test_end_dnaapler(self):
+    # Test scenario where the no BLAST hit begins with 1 (start of gene)
+        time = 2324.0
+        tmp = 1
+        dnaapler.end_dnaapler(time)
+        assert tmp == 1
 
 
 

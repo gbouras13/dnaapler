@@ -25,11 +25,11 @@ def get_version():
     return version
 
 
-# def echo_click(msg, log=None):
-#     click.echo(msg, nl=False, err=True)
-#     if log:
-#         with open(log, "a") as l:
-#             l.write(msg)
+def echo_click(msg, log=None):
+    click.echo(msg, nl=False, err=True)
+    if log:
+        with open(log, "a") as l:
+            l.write(msg)
 
 def print_citation():
     with open(dnaapler_base("CITATION"), "r") as f:
@@ -37,17 +37,6 @@ def print_citation():
             echo_click(line)
 
 
-# def msg(err_message, log=None):
-#     tstamp = strftime("[%Y:%m:%d %H:%M:%S] ", localtime())
-#     echo_click(tstamp + err_message + "\n", log=log)
-
-
-# def msg_box(splash, errmsg=None, log=None):
-#     msg("-" * (len(splash) + 4), log=log)
-#     msg(f"| {splash} |", log=log)
-#     msg(("-" * (len(splash) + 4)), log=log)
-#     if errmsg:
-#         echo_click("\n" + errmsg + "\n", log=log)
 
 
 """
