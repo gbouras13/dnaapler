@@ -28,6 +28,10 @@ jobs:
           environment-file: build/environment.yaml
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
+          miniforge-variant: Mambaforge
+          channels: conda-forge,bioconda,defaults
+          channel-priority: strict
+          auto-update-conda: true
       - name: Install project
         shell: bash -l {0}
         run: |
