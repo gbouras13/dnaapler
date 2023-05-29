@@ -16,6 +16,7 @@ to make the BLAST dbs
  makeblastdb -in repA.faa -dbtype prot -out repA_db
 """
 
+
 class ExternalTool:
     def __init__(self, tool: str, input: str, output: str, params: str, logdir: Path):
         self.command: List[str] = self._build_command(tool, input, output, params)
@@ -69,15 +70,13 @@ class ExternalTool:
                     ctx.exit(1)
                 else:
                     sys.exit(1)
-    
+
     """
-    Only one tool
+    Only one toolf
     """
 
     @staticmethod
-    def run_tool(
-        tool: "ExternalTool", ctx: Optional[click.Context] = None
-    ) -> None:
+    def run_tool(tool: "ExternalTool", ctx: Optional[click.Context] = None) -> None:
         try:
             tool.run()
         except subprocess.CalledProcessError as error:

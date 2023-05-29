@@ -1,0 +1,9 @@
+pyyaml >=6.0
+pytest-runner >= 5.0.0
+biopython >=1.76
+pytest >=6.2.5
+pandas >=1.4.1
+loguru >=0.5.3
+Click >=8.0.0
+pytest-cov >=3.0.0
+pyrodigal >=2.0.0
