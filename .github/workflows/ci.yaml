@@ -45,25 +45,4 @@ jobs:
         run: just test-ci
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
-      - name: Coveralls Parallel
-        uses: coverallsapp/github-action@master
-        with:
-          parallel: true
-          github-token: ${{ secrets.github_token }}
-          flag-name: run-${{ matrix.test_number }}
-          path-to-lcov: "coverage.lcov"
       
-
-  finish:
-    needs: tests
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-12, ubuntu-latest]
-        python-version: ["3.10"]
-    steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.github_token }}
-        parallel-finished: true
