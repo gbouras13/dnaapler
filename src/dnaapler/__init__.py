@@ -1,240 +1,433 @@
 #!/usr/bin/env python3
-
-"""graphbin: Refined binning of metagenomic contigs using assembly graphs."""
-
-import logging
+"""dnaapler"""
+from loguru import logger
+import shutil
+from Bio import SeqIO
+from pathlib import Path
 import os
-import sys
-
 import click
+import pyrodigal
+import random
 
-from graphbin.utils import (
-    graphbin_Canu,
-    graphbin_Flye,
-    graphbin_MEGAHIT,
-    graphbin_Miniasm,
-    graphbin_SGA,
-    graphbin_SPAdes,
+from utils.external_tools import ExternalTool
+
+from utils.constants import DNAAPLER_DB
+
+from utils.util import (
+    begin_dnaapler,
+    end_dnaapler,
+    get_version,
+    print_citation,
+)
+
+from utils.validation import instantiate_dirs, validate_fasta, validate_custom_db_fasta
+
+
+from utils.processing import process_blast_output_and_reorient, reorient_sequence_random
+
+
+"""
+some code taken/adapted from tbpore https://github.com/mbhall88/tbpore
+"""
+
+log_fmt = (
+    "[<green>{time:YYYY-MM-DD HH:mm:ss}</green>] <level>{level: <8}</level> | "
+    "<level>{message}</level>"
 )
 
 
-__author__ = "Vijini Mallawaarachchi"
-__copyright__ = "Copyright 2019-2022, GraphBin Project"
-__credits__ = ["Vijini Mallawaarachchi", "Anuradha Wickramarachchi", "Yu Lin"]
-__license__ = "BSD-3"
-__version__ = "1.7.0"
-__maintainer__ = "Vijini Mallawaarachchi"
-__email__ = "vijini.mallawaarachchi@anu.edu.au"
-__status__ = "Production"
+
+def common_options(func):
+    """Common command line args
+    Define common command line args here, and include them with the @common_options decorator below.
+    """
+    options = [
+        click.option(
+            "-i",
+            "--input",
+            help="Path to assembly chromosome/plasmid file in FASTA format",
+            type=click.Path(),
+            required=True,
+        ),
+        click.option(
+            "-o",
+            "--output",
+            default="output.dnaapler",
+            show_default=True,
+            type=click.Path(),
+            help="Output directory ",
+        ),
+        click.option(
+            "-t",
+            "--threads",
+            help="Number of threads to use with BLAST.",
+            default=1,
+            show_default=True,
+        ),
+        click.option(
+            "-p",
+            "--prefix",
+            default="dnaapler",
+            help="Prefix for output files. Not required.",
+            show_default=True,
+        ),
+        click.option(
+            "-f",
+            "--force",
+            is_flag=True,
+            help="Force overwrites the output directory.",
+        ),
+    ]
+    for option in reversed(options):
+        func = option(func)
+    return func
 
 
-class ArgsObj:
-    def __init__(
-        self,
-        assembler,
-        graph,
-        contigs,
-        paths,
-        binned,
-        output,
-        prefix,
-        max_iteration,
-        diff_threshold,
-        delimiter,
-    ):
-        self.assembler = assembler
-        self.graph = graph
-        self.contigs = contigs
-        self.paths = paths
-        self.binned = binned
-        self.output = output
-        self.prefix = prefix
-        self.max_iteration = max_iteration
-        self.diff_threshold = diff_threshold
-        self.delimiter = delimiter
+@click.group()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+def main_cli():
+    1+1
+
+
+"""
+Chromosome command
+"""
+
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+def chromosome(ctx, input, output, threads, prefix, force, **kwargs):
+    """Reorients your sequence to begin with the dnaA chromosomal replication initiation gene"""
+
+    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force, ctx)
+
+    # defines gene
+    gene = "dnaA"
+
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
+
+    # validates fasta
+    validate_fasta(input, ctx)
+    ##### use external_tools.py
+
+    # chromosome path
+    # blast
+    logdir = Path(f"{output}/logs")
+    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+    # dnaA da
+    db = os.path.join(DNAAPLER_DB, f"dnaA_db")
+    blast = ExternalTool(
+        tool="blastx",
+        input=f"-query {input}",
+        output=f"-out {blast_output}",
+        params=f'-db {db} -evalue  1e-10 -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        logdir=logdir,
+    )
+
+    # tools_to_run = (
+    #     blast,
+    #     blast
+    # )
+    # ExternalTool.run_tools(tools_to_run, ctx)
+
+    ExternalTool.run_tool(blast, ctx)
+
+    # reorient the
+    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+    process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, ctx, gene
+    )
+
+    # end dnaapler
+    end_dnaapler(start_time)
+
+
+"""
+Plasmid command
+"""
+
+
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+def plasmid(ctx, input, output, threads, prefix, force, **kwargs):
+    """Reorients your sequence to begin with the repA replication initiation gene"""
+
+    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force, ctx)
+
+    # defines gene
+    gene = "repA"
+
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
+
+    # validates fasta
+    validate_fasta(input, ctx)
+    ##### use external_tools.py
+
+    # chromosome path
+    # blast
+    logdir = Path(f"{output}/logs")
+    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+    # dnaA da
+    db = os.path.join(DNAAPLER_DB, f"repA_db")
+    blast = ExternalTool(
+        tool="blastx",
+        input=f"-query {input}",
+        output=f"-out {blast_output}",
+        params=f'-db {db} -evalue  1e-10 -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        logdir=logdir,
+    )
+
+    ExternalTool.run_tool(blast, ctx)
+
+    # reorient the
+    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+    process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, ctx, gene
+    )
+
+    # end dnaapler
+    end_dnaapler(start_time)
+
+
+"""
+Phage command
+"""
+
+
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+def phage(ctx, input, output, threads, prefix, force, **kwargs):
+    """Reorients your sequence to begin with the terL large terminase subunit"""
+
+    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force, ctx)
+
+    # defines gene
+    gene = "terL"
+
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
+
+    # validates fasta
+    validate_fasta(input, ctx)
+    ##### use external_tools.py
+
+    # chromosome path
+    # blast
+    logdir = Path(f"{output}/logs")
+    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+    # dnaA da
+    db = os.path.join(DNAAPLER_DB, f"terL_db")
+    blast = ExternalTool(
+        tool="blastx",
+        input=f"-query {input}",
+        output=f"-out {blast_output}",
+        params=f'-db {db} -evalue  1e-10 -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        logdir=logdir,
+    )
+
+    ExternalTool.run_tool(blast, ctx)
+
+    # reorient the
+    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+    process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, ctx, gene
+    )
+
+    # end dnaapler
+    end_dnaapler(start_time)
+
+
+"""
+custom command
+"""
+
+
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+@click.option(
+    "-c",
+    "--custom_db",
+    help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want.",
+    type=click.Path(),
+    required=True,
+)
+def custom(ctx, input, output, threads, prefix, force, custom_db, **kwargs):
+    """Reorients your sequence with a custom database"""
+
+    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force, ctx)
+
+    # defines gene
+    gene = "custom"
+
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
+
+    # validates fasta
+    validate_fasta(input, ctx)
+
+    # validates custom fasta input for database
+    validate_custom_db_fasta(custom_db, ctx)
+
+    ##### use external_tools.py
+
+    # make db
+
+    db_dir = os.path.join(output, f"custom_db")
+    Path(db_dir).mkdir(parents=True, exist_ok=True)
+    custom_db_fasta = os.path.join(db_dir, "custom_db.faa")
+    shutil.copy2(custom_db, custom_db_fasta)
+
+    logdir = Path(f"{output}/logs")
+    # cstom db
+    # make custom db
+    custom_database = os.path.join(db_dir, "custom_db")
+    makeblastdb = ExternalTool(
+        tool="makeblastdb",
+        input=f"-in {custom_db_fasta}",
+        output=f"-out {custom_database}",
+        params=f"-dbtype prot ",
+        logdir=logdir,
+    )
+
+    # chromosome path
+    # blast
+    logdir = Path(f"{output}/logs")
+    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+    # dnaA da
+    db = os.path.join(db_dir, f"custom_db")
+    blast = ExternalTool(
+        tool="blastx",
+        input=f"-query {input}",
+        output=f"-out {blast_output}",
+        params=f'-db {db} -evalue  1e-10 -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        logdir=logdir,
+    )
+
+    tools_to_run = (makeblastdb, blast)
+    ExternalTool.run_tools(tools_to_run, ctx)
+
+    # think I only need
+    # phr
+    # pin
+    # psq
+
+    # reorient the
+    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+    process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, ctx, gene
+    )
+
+    # end dnaapler
+    end_dnaapler(start_time)
+
+
+"""
+mystery command
+"""
+
+
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+@click.option(
+    "--seed_value",
+    help="Seed to ensure reproducibility.",
+    type=int,
+    default=13,
+    show_default=True,
+)
+def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
+    """Reorients your sequence with a random gene"""
+
+    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force, ctx)
+
+    # defines gene
+    gene = "mystery"
+
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
+
+    # validates fasta
+    validate_fasta(input, ctx)
+
+    logger.info(f"Searching for genes with pyrodigal")
+
+    # get number of records of input
+    orf_finder = pyrodigal.OrfFinder(meta=True)
+
+    # set seed
+    random.seed(int(seed_value))
+
+    # there will only be 1 record
+    for i, record in enumerate(SeqIO.parse(input, "fasta")):
+        genes = orf_finder.find_genes(str(record.seq))
+        # get number of genes
+        gene_count = len(genes)
+
+        # ensure has > 3 genes
+        if gene_count < 4:
+            logger.error(
+                f"{input} has less than 4 genes. You probably shouldn't be using dnaapler mystery!"
+            )
+            ctx.exit(2)
+
+        logger.info(f"Reorienting with a random gene (that is not the first or last).")
+
+        # ensure not first or last gene
+        reorient_gene_number = random.randint(2, gene_count - 1)
+
+        logger.info(f"Gene number {reorient_gene_number} was selected.")
+        start = genes[reorient_gene_number].begin
+        strand = genes[reorient_gene_number].strand
+
+        if strand == 1:
+            strand_eng = "forward"
+        else:
+            strand_eng = "negative"
+
+        logger.info(f"Your random gene has a start coordinate of {start}.")
+        logger.info(f"Your random gene is on the {strand_eng} strand.")
+
+        output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+        reorient_sequence_random(input, output_processed_file, start, strand)
+
+    # finish dnaapler
+    end_dnaapler(start_time)
 
 
 @click.command()
-@click.option(
-    "--assembler",
-    help="name of the assembler used (SPAdes, SGA or MEGAHIT). GraphBin supports Flye, Canu and Miniasm long-read assemblies as well.",
-    type=click.Choice(
-        ["spades", "sga", "megahit", "flye", "canu", "miniasm"], case_sensitive=False
-    ),
-    required=True,
-)
-@click.option(
-    "--graph",
-    help="path to the assembly graph file",
-    type=click.Path(exists=True),
-    required=True,
-)
-@click.option(
-    "--contigs",
-    help="path to the contigs file",
-    type=click.Path(exists=True),
-    required=True,
-)
-@click.option(
-    "--paths",
-    help="path to the contigs.paths (metaSPAdes) or assembly.info (metaFlye) file",
-    type=click.Path(exists=True),
-    required=False,
-)
-@click.option(
-    "--binned",
-    help="path to the .csv file with the initial binning output from an existing tool",
-    type=click.Path(exists=True),
-    required=True,
-)
-@click.option(
-    "--output",
-    help="path to the output folder",
-    type=click.Path(dir_okay=True, writable=True, readable=True),
-    required=True,
-)
-@click.option(
-    "--prefix",
-    help="prefix for the output file",
-    type=str,
-    required=False,
-)
-@click.option(
-    "--max_iteration",
-    help="maximum number of iterations for label propagation algorithm",
-    type=int,
-    default=100,
-    show_default=True,
-    required=False,
-)
-@click.option(
-    "--diff_threshold",
-    help="difference threshold for label propagation algorithm",
-    type=click.FloatRange(0, 1),
-    default=0.1,
-    show_default=True,
-    required=False,
-)
-@click.option(
-    "--delimiter",
-    help="delimiter for input/output results. Supports a comma (,), a semicolon (;), a tab ($'\\t'), a space (\" \") and a pipe (|)",
-    type=click.Choice([",", ";", "$'\\t'", '" "'], case_sensitive=False),
-    default=",",
-    show_default=True,
-    required=False,
-)
-@click.version_option(__version__, "-v", "--version", is_flag=True)
-def main(
-    assembler,
-    graph,
-    contigs,
-    paths,
-    binned,
-    output,
-    prefix,
-    max_iteration,
-    diff_threshold,
-    delimiter,
-):
-    """
-    GraphBin: Refined Binning of Metagenomic Contigs using Assembly Graphs
-    """
+def citation(**kwargs):
+    """Print the citation(s) for this tool"""
+    print_citation()
 
-    # Setup logger
-    # ---------------------------------------------------
 
-    logger = logging.getLogger("GraphBin %s" % __version__)
-    logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-    consoleHeader = logging.StreamHandler()
-    consoleHeader.setFormatter(formatter)
-    consoleHeader.setLevel(logging.INFO)
-    logger.addHandler(consoleHeader)
+# main_cli.add_command(run)
+main_cli.add_command(citation)
 
-    fileHandler = logging.FileHandler(f"{output}{prefix}graphbin.log")
-    fileHandler.setLevel(logging.DEBUG)
-    fileHandler.setFormatter(formatter)
-    logger.addHandler(fileHandler)
 
-    # Validate options
-    # ---------------------------------------------------
-
-    # Check if paths files is provided when the assembler type is SPAdes
-    if assembler.lower() == "spades" and paths is None:
-        logger.error("Please make sure to provide the path to the contigs.paths file.")
-        logger.info("Exiting GraphBin... Bye...!")
-        sys.exit(1)
-
-    # Check if paths files is provided when the assembler type is Flye
-    if assembler.lower() == "flye" and paths is None:
-        logger.error("Please make sure to provide the path to the contigs.paths file.")
-        logger.info("Exiting GraphBin... Bye...!")
-        sys.exit(1)
-
-    # Validate prefix
-    if prefix != None:
-        if not prefix.endswith("_"):
-            prefix = prefix + "_"
-    else:
-        prefix = ""
-
-    # Validate max_iteration
-    if max_iteration <= 0:
-        logger.error("Please enter a valid number for max_iteration")
-        logger.info("Exiting GraphBin... Bye...!")
-        sys.exit(1)
-
-    # Validate diff_threshold
-    if diff_threshold < 0:
-        logger.error("Please enter a valid number for diff_threshold")
-        logger.info("Exiting GraphBin... Bye...!")
-        sys.exit(1)
-
-    # # Remove previous files if they exist
-    # if os.path.exists(f"{output}{prefix}graphbin.log"):
-    #     os.remove(f"{output}{prefix}graphbin.log")
-    # if os.path.exists(f"{output}{prefix}graphbin_output.csv"):
-    #     os.remove(f"{output}{prefix}graphbin_output.csv")
-    # if os.path.exists(f"{output}{prefix}graphbin_unbinned.csv"):
-    #     os.remove(f"{output}{prefix}graphbin_unbinned.csv")
-
-    # Make args object
-    args = ArgsObj(
-        assembler,
-        graph,
-        contigs,
-        paths,
-        binned,
-        output,
-        prefix,
-        max_iteration,
-        diff_threshold,
-        delimiter,
-    )
-
-    # Run GraphBin
-    # ---------------------------------------------------
-    if assembler.lower() == "canu":
-        graphbin_Canu.main(args)
-    if assembler.lower() == "flye":
-        graphbin_Flye.main(args)
-    if assembler.lower() == "megahit":
-        graphbin_MEGAHIT.main(args)
-    if assembler.lower() == "miniasm":
-        graphbin_Miniasm.main(args)
-    if assembler.lower() == "sga":
-        graphbin_SGA.main(args)
-    if assembler.lower() == "spades":
-        graphbin_SPAdes.main(args)
-
-    # Exit program
-    # --------------
-
-    logger.info("Thank you for using GraphBin! Bye...!")
-
-    logger.removeHandler(fileHandler)
-    logger.removeHandler(consoleHeader)
-
+def main():
+    main_cli()
 
 if __name__ == "__main__":
     main()
