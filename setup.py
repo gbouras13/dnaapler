@@ -4,9 +4,15 @@ import os
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-from src.util import (
-    get_version,
-)
+def get_version():
+    with open(
+        os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "src",
+            "VERSION",
+        )
+    ) as f:
+        return f.readline().strip()
 
 packages = find_packages()
 # the directories where the code is
