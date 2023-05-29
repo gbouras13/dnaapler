@@ -14,7 +14,6 @@ check-fmt:
 
 # install latest version with poetry
 install:
-    poetry config experimental.new-installer false
     poetry install --no-interaction
 
 # run all tests
