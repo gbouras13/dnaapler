@@ -14,31 +14,30 @@ def get_version():
     ) as f:
         return f.readline().strip()
 
+
+
 packages = find_packages()
 # the directories where the code is
 # so knows it should be included
 package_data = {"src": ["src/*"]}
 
 # for pypi
-data_files = [(".", ["LICENCE", "README.md"])]
+data_files = [(".", ["LICENSE", "README.md"])]
 
 
 CLASSIFIERS = [
     "Environment :: Console",
     "Environment :: MacOS X",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT license",
+    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: POSIX :: Linux",
     "Operating System :: MacOS :: MacOS X",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
-
 
 
 setup(
@@ -51,12 +50,11 @@ setup(
     long_description_content_type="text/markdown",
     author_email="george.bouras@adelaide.edu.au",
     packages=find_packages(),
-    package_data=package_data,
     data_files=data_files,
     include_package_data=True,
     scripts=["dnaapler"],
     url="https://github.com/gbouras13/dnaapler",
-    python_requires=">=3.7",
+    python_requires=">=3.8,<3.11",
     classifiers=CLASSIFIERS,
     install_requires=[
         "pyyaml>=6.0",
@@ -68,6 +66,6 @@ setup(
         "Click>=8.0.0",
         "pytest-cov>=3.0.0",
         "pyrodigal>=2.0.0",
-    ],
+    ]
 )
 
