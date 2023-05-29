@@ -31,30 +31,19 @@ def echo_click(msg, log=None):
         with open(log, "a") as l:
             l.write(msg)
 
+
 def print_citation():
     with open(dnaapler_base("CITATION"), "r") as f:
         for line in f:
             echo_click(line)
 
-
-
-
 """
 code taken from tbpore https://github.com/mbhall88/tbpore
 """
-
-
 
 log_fmt = (
     "[<green>{time:YYYY-MM-DD HH:mm:ss}</green>] <level>{level: <8}</level> | "
     "<level>{message}</level>"
 )
 
-def setup_logging(verbose: bool, quiet: bool) -> None:
-    log_lvl = "INFO"
-    if verbose:
-        log_lvl = "DEBUG"
-    elif quiet:
-        log_lvl = "ERROR"
-    logger.remove()
-    logger.add(sys.stderr, level=log_lvl, format=log_fmt)
+

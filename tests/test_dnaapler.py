@@ -1,9 +1,9 @@
-'''
+"""
 Unit tests for dnaapler.
 
 Usage: pytest
 
-'''
+"""
 
 # import
 import unittest
@@ -24,161 +24,210 @@ from dnaapler import dnaapler
 
 test_data = Path("tests/test_data")
 
+
 @pytest.fixture(scope="session")
 def tmp_dir(tmpdir_factory):
     return tmpdir_factory.mktemp("tmp")
 
 
 class TestValidateFasta(unittest.TestCase):
-    """ Tests of Fasta validation functions"""
+    """Tests of Fasta validation functions"""
 
     def test_non_fasta_input(self):
         with self.assertRaises(click.exceptions.Exit):
-            non_fasta_file =  os.path.join(test_data, 'non_fasta.txt')
-            ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
+            non_fasta_file = os.path.join(test_data, "non_fasta.txt")
+            ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
             validation.validate_fasta(non_fasta_file, ctx)
 
     def test_real_fasta_input(self):
-        non_fasta_file =  os.path.join(test_data, 'nucl_test.fna')
-        ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
+        non_fasta_file = os.path.join(test_data, "nucl_test.fna")
+        ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
         validation.validate_fasta(non_fasta_file, ctx)
         # checks the ctx is the same, no error
         assert ctx == ctx
-        
+
     def test_non_fasta_custom_input(self):
         with self.assertRaises(click.exceptions.Exit):
-            nucleotide_fasta_file =  os.path.join(test_data, 'non_fasta.txt')
-            ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
+            nucleotide_fasta_file = os.path.join(test_data, "non_fasta.txt")
+            ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
             validation.validate_custom_db_fasta(nucleotide_fasta_file, ctx)
 
     def test_non_aa_custom_fasta_input(self):
         with self.assertRaises(click.exceptions.Exit):
-            nucleotide_fasta_file =  os.path.join(test_data, 'nucl_test.fna')
-            ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
+            nucleotide_fasta_file = os.path.join(test_data, "nucl_test.fna")
+            ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
             validation.validate_custom_db_fasta(nucleotide_fasta_file, ctx)
 
+
 class TestReorientSequence(unittest.TestCase):
-    """ Tests for reorient_sequence"""
+    """Tests for reorient_sequence"""
 
     def test_reorient_sequence_outside_range(self):
-    # Test scenario where the row is outside of range
+        # Test scenario where the row is outside of range
         with self.assertRaises(KeyError):
-            blast_file = os.path.join(test_data, 'SAOMS1_blast_output_correct.txt') 
-            col_list = ["qseqid", "qlen", "sseqid", "slen", "length", "qstart", "qend", "sstart", "send", "pident", "nident", "gaps", "mismatch", "evalue", "bitscore", "qseq", "sseq"] 
-            blast_df = pd.read_csv(blast_file, delimiter= '\t', index_col=False , names=col_list)
-            input =  os.path.join(test_data, 'SAOMS1.fasta')
-            out_file = os.path.join(test_data, 'fake_reoriented.fasta')
-            ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
-            gene = 'terL'
+            blast_file = os.path.join(test_data, "SAOMS1_blast_output_correct.txt")
+            col_list = [
+                "qseqid",
+                "qlen",
+                "sseqid",
+                "slen",
+                "length",
+                "qstart",
+                "qend",
+                "sstart",
+                "send",
+                "pident",
+                "nident",
+                "gaps",
+                "mismatch",
+                "evalue",
+                "bitscore",
+                "qseq",
+                "sseq",
+            ]
+            blast_df = pd.read_csv(
+                blast_file, delimiter="\t", index_col=False, names=col_list
+            )
+            input = os.path.join(test_data, "SAOMS1.fasta")
+            out_file = os.path.join(test_data, "fake_reoriented.fasta")
+            ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
+            gene = "terL"
             i = int(3)
             processing.reorient_sequence(blast_df, input, out_file, gene, i)
-    
+
     def test_reorient_sequence_correct(self):
         # test where it works as expected
-        blast_file = os.path.join(test_data, 'SAOMS1_blast_output_correct.txt') 
-        col_list = ["qseqid", "qlen", "sseqid", "slen", "length", "qstart", "qend", "sstart", "send", "pident", "nident", "gaps", "mismatch", "evalue", "bitscore", "qseq", "sseq"] 
-        blast_df = pd.read_csv(blast_file, delimiter= '\t', index_col=False , names=col_list)
-        input =  os.path.join(test_data, 'SAOMS1.fasta')
-        out_file = os.path.join(test_data, 'fake_reoriented.fasta')
-        ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
-        gene = 'terL'
+        blast_file = os.path.join(test_data, "SAOMS1_blast_output_correct.txt")
+        col_list = [
+            "qseqid",
+            "qlen",
+            "sseqid",
+            "slen",
+            "length",
+            "qstart",
+            "qend",
+            "sstart",
+            "send",
+            "pident",
+            "nident",
+            "gaps",
+            "mismatch",
+            "evalue",
+            "bitscore",
+            "qseq",
+            "sseq",
+        ]
+        blast_df = pd.read_csv(
+            blast_file, delimiter="\t", index_col=False, names=col_list
+        )
+        input = os.path.join(test_data, "SAOMS1.fasta")
+        out_file = os.path.join(test_data, "fake_reoriented.fasta")
+        ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
+        gene = "terL"
         i = int(1)
         processing.reorient_sequence(blast_df, input, out_file, gene, i)
         assert ctx == ctx
 
 
 class TestReorientSequenceRandom(unittest.TestCase):
-    """ Tests for reorient_sequence_random"""
+    """Tests for reorient_sequence_random"""
+
     def test_reorient_sequence_random_bad_strand(self):
-    # Test scenario where the strand is outside 1 or -1
+        # Test scenario where the strand is outside 1 or -1
         with self.assertRaises(UnboundLocalError):
-            input =  os.path.join(test_data, 'SAOMS1.fasta')
-            out_file = os.path.join(test_data, 'fake_reoriented.fasta')
+            input = os.path.join(test_data, "SAOMS1.fasta")
+            out_file = os.path.join(test_data, "fake_reoriented.fasta")
             start = 1000
             strand = 24
-            processing.reorient_sequence_random(input, out_file,  start, strand)
-
+            processing.reorient_sequence_random(input, out_file, start, strand)
 
 
 class TestBlastOutput(unittest.TestCase):
-    """ Tests for process_blast_output_and_reorient"""
+    """Tests for process_blast_output_and_reorient"""
 
     def test_process_blast_output_and_reorient_invalid_blast_file(self):
-    # Test scenario where the blast input is invalud
+        # Test scenario where the blast input is invalud
         with self.assertRaises(click.exceptions.Exit):
-            blast_file = pd.DataFrame({'qstart': [1]})
-            input =  os.path.join(test_data, 'SAOMS1.fasta')
-            output = os.path.join(test_data, 'fake_reoriented.fasta')
-            ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
-            gene = 'terL'
-            processing.process_blast_output_and_reorient(input, blast_file, output, ctx, gene)
-    
+            blast_file = pd.DataFrame({"qstart": [1]})
+            input = os.path.join(test_data, "SAOMS1.fasta")
+            output = os.path.join(test_data, "fake_reoriented.fasta")
+            ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
+            gene = "terL"
+            processing.process_blast_output_and_reorient(
+                input, blast_file, output, ctx, gene
+            )
 
     def test_process_blast_output_and_reorient_already_oriented(self):
-    # Test scenario where the blast output suggests the contig is already oriented correctly
+        # Test scenario where the blast output suggests the contig is already oriented correctly
         with self.assertRaises(click.exceptions.Exit):
-            blast_file = os.path.join(test_data, 'SAOMS1_blast_output_already_oriented.txt')  
-            input =  os.path.join(test_data, 'SAOMS1.fasta')
-            output = os.path.join(test_data, 'fake_reoriented.fasta')
-            ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
-            gene = 'terL'
-            processing.process_blast_output_and_reorient(input, blast_file, output, ctx, gene)
+            blast_file = os.path.join(
+                test_data, "SAOMS1_blast_output_already_oriented.txt"
+            )
+            input = os.path.join(test_data, "SAOMS1.fasta")
+            output = os.path.join(test_data, "fake_reoriented.fasta")
+            ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
+            gene = "terL"
+            processing.process_blast_output_and_reorient(
+                input, blast_file, output, ctx, gene
+            )
 
     def test_process_blast_output_and_reorient_wrong_start_codon(self):
-    # Test scenario where the best BLAST hit has no valid start codon
+        # Test scenario where the best BLAST hit has no valid start codon
         with self.assertRaises(click.exceptions.Exit):
-            blast_file = os.path.join(test_data, 'SAOMS1_blast_output_wrong_start_codon.txt')  
-            input =  os.path.join(test_data, 'SAOMS1.fasta')
-            output = os.path.join(test_data, 'fake_reoriented.fasta')
-            ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
-            gene = 'terL'
-            processing.process_blast_output_and_reorient(input, blast_file, output, ctx, gene)
+            blast_file = os.path.join(
+                test_data, "SAOMS1_blast_output_wrong_start_codon.txt"
+            )
+            input = os.path.join(test_data, "SAOMS1.fasta")
+            output = os.path.join(test_data, "fake_reoriented.fasta")
+            ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
+            gene = "terL"
+            processing.process_blast_output_and_reorient(
+                input, blast_file, output, ctx, gene
+            )
 
-    
     def test_process_blast_output_and_reorient_no_one(self):
-    # Test scenario where the no BLAST hit begins with 1 (start of gene)
+        # Test scenario where the no BLAST hit begins with 1 (start of gene)
         with self.assertRaises(click.exceptions.Exit):
-            blast_file = os.path.join(test_data, 'SAOMS1_blast_output_no_one.txt')  
-            input =  os.path.join(test_data, 'SAOMS1.fasta')
-            output = os.path.join(test_data, 'fake_reoriented.fasta')
-            ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
-            gene = 'terL'
-            processing.process_blast_output_and_reorient(input, blast_file, output, ctx, gene)
+            blast_file = os.path.join(test_data, "SAOMS1_blast_output_no_one.txt")
+            input = os.path.join(test_data, "SAOMS1.fasta")
+            output = os.path.join(test_data, "fake_reoriented.fasta")
+            ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
+            gene = "terL"
+            processing.process_blast_output_and_reorient(
+                input, blast_file, output, ctx, gene
+            )
 
     def test_process_blast_output_and_reorient_correct(self):
-    # Test scenario where the no BLAST hit begins with 1 (start of gene)
-        blast_file = os.path.join(test_data, 'SAOMS1_blast_output_correct.txt')  
-        input =  os.path.join(test_data, 'SAOMS1.fasta')
-        output = os.path.join(test_data, 'fake_reoriented.fasta')
-        ctx = click.Context(click.Command('cmd'), obj={'prop': 'A Context'})
-        gene = 'terL'
-        processing.process_blast_output_and_reorient(input, blast_file, output, ctx, gene)
+        # Test scenario where the no BLAST hit begins with 1 (start of gene)
+        blast_file = os.path.join(test_data, "SAOMS1_blast_output_correct.txt")
+        input = os.path.join(test_data, "SAOMS1.fasta")
+        output = os.path.join(test_data, "fake_reoriented.fasta")
+        ctx = click.Context(click.Command("cmd"), obj={"prop": "A Context"})
+        gene = "terL"
+        processing.process_blast_output_and_reorient(
+            input, blast_file, output, ctx, gene
+        )
         # checks the ctx is the same, no error
         assert ctx == ctx
 
-
     def test_begin_dnaapler(self):
-    # Test begin
-        input =  os.path.join(test_data, 'SAOMS1.fasta')
+        # Test begin
+        input = os.path.join(test_data, "SAOMS1.fasta")
         threads = str(8)
-        gene = 'terL'
+        gene = "terL"
         tmp = 1
-        outdir = os.path.join(test_data, 'bad_dir')
+        outdir = os.path.join(test_data, "bad_dir")
         dnaapler.begin_dnaapler(input, outdir, threads, gene)
         assert tmp == 1
 
     def test_end_dnaapler(self):
-    # Test scenario where the no BLAST hit begins with 1 (start of gene)
+        # Test scenario where the no BLAST hit begins with 1 (start of gene)
         time = 2324.0
         tmp = 1
         dnaapler.end_dnaapler(time)
         assert tmp == 1
 
 
-
-
-
-    
 import glob
 import sys
 from pathlib import Path
@@ -193,6 +242,7 @@ from dnaapler.external_tools import ExternalTool
 taken from tbpore
 """
 
+
 class TestExternalTools:
     @patch.object(
         ExternalTool,
@@ -200,11 +250,12 @@ class TestExternalTools:
         return_value=["mocked", "command", "arg"],
     )
     @patch.object(Path, Path.mkdir.__name__)
-
     def test___constructor(self, mkdir_mock, build_command_mock):
         logdir = Path("logs")
 
-        external_tool = external_tools.ExternalTool("tool", "input", "output", "params", logdir)
+        external_tool = external_tools.ExternalTool(
+            "tool", "input", "output", "params", logdir
+        )
 
         assert external_tool.command == ["mocked", "command", "arg"]
         assert external_tool.command_as_str == "mocked command arg"

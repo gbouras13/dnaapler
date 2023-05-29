@@ -1,11 +1,11 @@
 [![CI](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yaml/badge.svg)](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yaml)
-
 [![codecov](https://codecov.io/gh/gbouras13/dnaapler/branch/refactor/graph/badge.svg?token=4B1T2PGM9V)](https://codecov.io/gh/gbouras13/dnaapler)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 
 # dnaapler
 
-Refactoring is in progress :) - install from source only for now. Will put on pypi and conda soon.
+Install from source for now. Will put on pypi and conda soon.
 
 If you have any ideas or suggestions, please make an issue.
 
@@ -17,14 +17,19 @@ dnaapler requires only BLAST as an external dependency.
 For now, please install from source
 
 ```
-git clone "https://github.com/gbouras13/dnaapler"
-cd dnaapler
-
-pip install -e .
+pip install git+https://github.com/gbouras13/dnaapler
 dnaapler --help
 ```
 
-and make sure you have blast installed and available.
+or 
+
+```
+git clone "https://github.com/gbouras13/dnaapler"
+cd dnaapler
+pip install -e .
+```
+
+and make sure you have blast installed and available in the PATH e.g. with conda.
 
 ```
 conda install blast

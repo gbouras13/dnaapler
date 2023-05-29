@@ -1,6 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
+
 def get_version():
     with open(
         os.path.join(
@@ -10,7 +11,7 @@ def get_version():
         )
     ) as f:
         return f.readline().strip()
-    
+
 
 def get_description():
     with open("README.md", "r") as fh:
@@ -21,6 +22,7 @@ def get_description():
 def get_data_files():
     data_files = [(".", ["README.md"])]
     return data_files
+
 
 CLASSIFIERS = [
     "Environment :: Console",
@@ -55,16 +57,12 @@ setup(
         "pyyaml>=6.0",
         "Click>=8.1.3",
         "pandas>=1.4.2",
-        "loguru>=0.5.3", 
+        "loguru>=0.5.3",
         "biopython==1.79",
         "pyrodigal>=2.0.0",
         "pytest>=6.2.5",
-        "pytest-cov>=3.0.0"
+        "pytest-cov>=3.0.0",
     ],
-    entry_points={
-        "console_scripts": [
-            "dnaapler=dnaapler.__main__:main" 
-        ]
-    },
+    entry_points={"console_scripts": ["dnaapler=dnaapler.__main__:main"]},
     include_package_data=True,
 )
