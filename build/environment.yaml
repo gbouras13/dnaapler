@@ -8,3 +8,4 @@ dependencies:
   - just
   - poetry
   - python >=3.8,<4.0
+  - ripgrep
