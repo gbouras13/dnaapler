@@ -5,32 +5,32 @@ Usage: pytest
 
 """
 
+import glob
+import os
+import sys
+
 # import
 import unittest
-import os
-import click
 from pathlib import Path
+from unittest.mock import patch
+
+import click
 import pandas as pd
 import pytest
-import glob
-import sys
-from unittest.mock import patch
 from loguru import logger
+
+from src.dnaapler.utils.constants import repo_root
+from src.dnaapler.utils.external_tools import ExternalTool
+from src.dnaapler.utils.processing import (
+    process_blast_output_and_reorient,
+    reorient_sequence,
+    reorient_sequence_random,
+)
+from src.dnaapler.utils.util import begin_dnaapler, end_dnaapler
+from src.dnaapler.utils.validation import validate_custom_db_fasta, validate_fasta
 
 # import functions
 
-from src.dnaapler.utils.validation import (
-    validate_fasta,
-    validate_custom_db_fasta,
-)
-from src.dnaapler.utils.processing import (
-    reorient_sequence,
-    reorient_sequence_random,
-    process_blast_output_and_reorient,
-)
-from src.dnaapler.utils.external_tools import ExternalTool
-from src.dnaapler.utils.util import begin_dnaapler, end_dnaapler
-from src.dnaapler.utils.constants import repo_root
 
 
 # test data

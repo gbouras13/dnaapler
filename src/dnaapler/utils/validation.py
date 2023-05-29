@@ -1,8 +1,9 @@
-from Bio import SeqIO
 import shutil
-from loguru import logger
-from pathlib import Path
 import sys
+from pathlib import Path
+
+from Bio import SeqIO
+from loguru import logger
 
 
 def instantiate_dirs(output_dir: str, force: bool):

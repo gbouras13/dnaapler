@@ -7,14 +7,14 @@ Usage: pytest
 
 # import
 import os
-from pathlib import Path
-import pytest
 import shutil
-import unittest
 
 # import functions
 import subprocess
+import unittest
+from pathlib import Path
 
+import pytest
 
 test_data = Path("tests/test_data")
 overall_test_data = Path(f"{test_data}/overall_inputs")
@@ -28,7 +28,6 @@ def remove_directory(dir_path):
 @pytest.fixture(scope="session")
 def tmp_dir(tmpdir_factory):
     return tmpdir_factory.mktemp("tmp")
-
 
 
 def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
@@ -63,13 +62,11 @@ def test_chrom(tmp_dir):
     exec_command(cmd)
 
 
-
 def test_plas(tmp_dir):
     """test plas"""
     input_fasta: Path = f"{overall_test_data}/plasmid.fasta"
     cmd = f"dnaapler plasmid -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
-
 
 
 def test_mys(tmp_dir):
@@ -80,7 +77,6 @@ def test_mys(tmp_dir):
     exec_command(cmd)
 
 
-
 def test_custom(tmp_dir):
     """test custom"""
     input_fasta: Path = f"{overall_test_data}/chromosome.fasta"
@@ -89,8 +85,10 @@ def test_custom(tmp_dir):
     cmd = f"dnaapler custom -i {input_fasta} -o {tmp_dir} -c {custom} -t 1 -f"
     exec_command(cmd)
 
+
 class TestExits(unittest.TestCase):
     """Tests of End to End common failures"""
+
     def test_chrom_double(self):
         """test chrom double to test force is working"""
         with self.assertRaises(RuntimeError):
@@ -115,6 +113,7 @@ class TestExits(unittest.TestCase):
             outdir: Path = f"{overall_test_data}/chrom_out"
             cmd = f"dnaapler chromosome -i {input_fasta} -o {outdir} -t 1 -f"
             exec_command(cmd)
+
 
 remove_directory(f"{overall_test_data}/phage_out")
 remove_directory(f"{overall_test_data}/chrom_out")

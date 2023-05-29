@@ -2,12 +2,13 @@
 You shouldn't need to tweak these much if at all
 """
 
-import time
 import os
-import click
-from loguru import logger
 import subprocess as sp
 import sys
+import time
+
+import click
+from loguru import logger
 
 
 class OrderedCommands(click.Group):

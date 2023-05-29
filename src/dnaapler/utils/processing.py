@@ -1,11 +1,12 @@
 import os
-import sys
 import subprocess as sp
+import sys
+
+import click
+import pandas as pd
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
-import pandas as pd
 from loguru import logger
-import click
 
 
 def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):

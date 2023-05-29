@@ -1,39 +1,33 @@
 #!/usr/bin/env python3
 """dnaapler"""
 
-import pyrodigal
-from loguru import logger
-import shutil
-from Bio import SeqIO
-from pathlib import Path
 import os
-import click
 import random
+import shutil
+from pathlib import Path
 
-
-from dnaapler.utils.external_tools import ExternalTool
+import click
+import pyrodigal
+from Bio import SeqIO
+from loguru import logger
 
 from dnaapler.utils.constants import DNAAPLER_DB
-
+from dnaapler.utils.external_tools import ExternalTool
+from dnaapler.utils.processing import (
+    process_blast_output_and_reorient,
+    reorient_sequence_random,
+)
 from dnaapler.utils.util import (
     begin_dnaapler,
     end_dnaapler,
     get_version,
     print_citation,
 )
-
 from dnaapler.utils.validation import (
     instantiate_dirs,
-    validate_fasta,
     validate_custom_db_fasta,
+    validate_fasta,
 )
-
-
-from dnaapler.utils.processing import (
-    process_blast_output_and_reorient,
-    reorient_sequence_random,
-)
-
 
 """
 some code taken/adapted from tbpore https://github.com/mbhall88/tbpore
