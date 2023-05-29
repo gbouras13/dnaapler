@@ -5,3 +5,6 @@ channels:
   - defaults
 dependencies:
   - blast >=2.9
+  - just
+  - poetry
+  - python >=3.8,<4.0
