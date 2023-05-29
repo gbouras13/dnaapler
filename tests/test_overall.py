@@ -15,7 +15,6 @@ import shutil
 # import functions
 import subprocess
 
-# move to folder with mock files. First try Github structure, then try pulled repository structure
 
 test_data = Path("tests/test_data")
 overall_test_data = Path(f"{test_data}/overall_inputs")

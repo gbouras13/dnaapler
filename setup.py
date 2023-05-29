@@ -1,15 +1,19 @@
-import os
 from setuptools import setup, find_packages
+import os
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 from src.util import (
     get_version,
 )
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
+packages = find_packages()
+# the directories where the code is
+# so knows it should be included
 package_data = {"src": ["src/*"]}
 
+# for pypi
 data_files = [(".", ["LICENCE", "README.md"])]
 
 
@@ -50,12 +54,14 @@ setup(
     classifiers=CLASSIFIERS,
     install_requires=[
         "pyyaml>=6.0",
-        "Click>=8.1.3",
+        "pytest-runner >= 5.0.0",
+        "biopython >=1.76",
+        "pytest>=6.2.5",
         "pandas>=1.4.2",
         "loguru>=0.5.3",
-        "biopython==1.79",
-        "pyrodigal>=2.0.0",
-        "pytest>=6.2.5",
+        "Click>=8.0.0",
         "pytest-cov>=3.0.0",
+        "pyrodigal>=2.0.0",
     ],
 )
+
