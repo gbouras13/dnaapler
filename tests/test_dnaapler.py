@@ -32,7 +32,6 @@ from src.dnaapler.utils.validation import validate_custom_db_fasta, validate_fas
 # import functions
 
 
-
 # test data
 test_data = Path("tests/test_data")
 logger.add(lambda _: sys.exit(1), level="ERROR")
