@@ -50,7 +50,6 @@ def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
 def test_phage(tmp_dir):
     """test phage"""
     input_fasta: Path = f"{overall_test_data}/SAOMS1.fasta"
-    outdir: Path = f"{overall_test_data}/phage_out"
     cmd = f"dnaapler phage -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
@@ -72,7 +71,6 @@ def test_plas(tmp_dir):
 def test_mys(tmp_dir):
     """test mystery"""
     input_fasta: Path = f"{overall_test_data}/chromosome.fasta"
-    outdir: Path = f"{overall_test_data}/mystery_out"
     cmd = f"dnaapler mystery -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
@@ -80,7 +78,6 @@ def test_mys(tmp_dir):
 def test_custom(tmp_dir):
     """test custom"""
     input_fasta: Path = f"{overall_test_data}/chromosome.fasta"
-    outdir: Path = f"{overall_test_data}/mystery_out"
     custom: Path = f"{test_data}/fake_custom.faa"
     cmd = f"dnaapler custom -i {input_fasta} -o {tmp_dir} -c {custom} -t 1 -f"
     exec_command(cmd)

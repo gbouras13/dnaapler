@@ -1,11 +1,6 @@
 import os
-import subprocess as sp
-import sys
-
-import click
 import pandas as pd
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 from loguru import logger
 
 
@@ -35,15 +30,15 @@ def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
         blast_df = pd.read_csv(
             blast_file, delimiter="\t", index_col=False, names=col_list
         )
-    except:
-        logger.error(f"There was an issue with parsing the BLAST output file.")
+    except Exception:
+        logger.error("There was an issue with parsing the BLAST output file.")
 
     if isinstance(blast_df, pd.DataFrame) and blast_df.empty:
         logger.error(
-            f"There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also cause this error."
+            "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also cause this error."
         )
 
-    ###### top hit has a start of 1 ########
+    # top hit has a start of 1 ########
     # take the top hit - blast sorts by bitscore
     # if the start is 1 of the top hit
     if blast_df["qstart"][0] == 1:
@@ -51,10 +46,10 @@ def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
             f"Based on the BLAST output top hit, your input is already oriented to begin with {gene}."
         )
 
-    ###### top hit ########
+    # top hit
     # prokaryotes can use AUG M, GUG V or UUG L as start codons - for Pseudomonas aeruginosa PA01  dnaA actually starts with V
     # Therefore, I will require the start codon to be the 1st in the searched sequence match - unlikely to not be but nonetheless
-    ########### Sometimes, the top hit might not be the actual gene of interest (e.g. in phages if the terL is disrupted - like SAOMS1)
+    # Sometimes, the top hit might not be the actual gene of interest (e.g. in phages if the terL is disrupted - like SAOMS1)
     # so in these cases, go down the list and check there is a hit with a legitimate start codon
     # I anticipate this will be rare usually, the first will be it :)
     else:
@@ -70,11 +65,11 @@ def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
                         f"The top {gene} blastx hit was not chosen to reorient your genome, as it did not begin with a valid start codon."
                     )
                     logger.warning(
-                        f"A lower hit had a valid start codon which was used instead."
+                        "A lower hit had a valid start codon which was used instead."
                     )
                 gene_found = True
                 break
-        if gene_found == False:
+        if gene_found is False:
             logger.error(
                 f"{gene} start not identified. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also cause this error."
             )
@@ -104,7 +99,7 @@ def reorient_sequence(blast_df, input, out_file, gene, i):
         f"{covered_len} AAs were covered by the best hit, with an overall coverage of {coverage}%."
     )
     logger.info(f"{ident} AAs were identical, with an overall identity of {identity}%.")
-    logger.info(f"Re-orienting.")
+    logger.info("Re-orienting.")
 
     ####################
     # reorientation

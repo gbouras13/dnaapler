@@ -105,7 +105,7 @@ Chromosome command
 def chromosome(ctx, input, output, threads, prefix, force, **kwargs):
     """Reorients your sequence to begin with the dnaA chromosomal replication initiation gene"""
 
-    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
     # defines gene
@@ -116,14 +116,14 @@ def chromosome(ctx, input, output, threads, prefix, force, **kwargs):
 
     # validates fasta
     validate_fasta(input)
-    ##### use external_tools.py
+    # use external_tools.py
 
     # chromosome path
     # blast
     logdir = Path(f"{output}/logs")
     blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
     # dnaA da
-    db = os.path.join(DNAAPLER_DB, f"dnaA_db")
+    db = os.path.join(DNAAPLER_DB, "dnaA_db")
     blast = ExternalTool(
         tool="blastx",
         input=f"-query {input}",
@@ -155,7 +155,7 @@ Plasmid command
 def plasmid(ctx, input, output, threads, prefix, force, **kwargs):
     """Reorients your sequence to begin with the repA replication initiation gene"""
 
-    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
     # defines gene
@@ -166,14 +166,14 @@ def plasmid(ctx, input, output, threads, prefix, force, **kwargs):
 
     # validates fasta
     validate_fasta(input)
-    ##### use external_tools.py
+    # use external_tools.py
 
     # chromosome path
     # blast
     logdir = Path(f"{output}/logs")
     blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
     # dnaA database
-    db = os.path.join(DNAAPLER_DB, f"repA_db")
+    db = os.path.join(DNAAPLER_DB, "repA_db")
     blast = ExternalTool(
         tool="blastx",
         input=f"-query {input}",
@@ -205,7 +205,7 @@ Phage command
 def phage(ctx, input, output, threads, prefix, force, **kwargs):
     """Reorients your sequence to begin with the terL large terminase subunit"""
 
-    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
     # defines gene
@@ -216,14 +216,14 @@ def phage(ctx, input, output, threads, prefix, force, **kwargs):
 
     # validates fasta
     validate_fasta(input)
-    ##### use external_tools.py
+    # use external_tools.py
 
     # chromosome path
     # blast
     logdir = Path(f"{output}/logs")
     blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
     # dnaA da
-    db = os.path.join(DNAAPLER_DB, f"terL_db")
+    db = os.path.join(DNAAPLER_DB, "terL_db")
     blast = ExternalTool(
         tool="blastx",
         input=f"-query {input}",
@@ -262,7 +262,7 @@ custom command
 def custom(ctx, input, output, threads, prefix, force, custom_db, **kwargs):
     """Reorients your sequence with a custom database"""
 
-    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
     # defines gene
@@ -277,24 +277,21 @@ def custom(ctx, input, output, threads, prefix, force, custom_db, **kwargs):
     # validates custom fasta input for database
     validate_custom_db_fasta(Path(custom_db))
 
-    ##### use external_tools.py
-
     # make db
-
-    db_dir = os.path.join(output, f"custom_db")
+    db_dir = os.path.join(output, "custom_db")
     Path(db_dir).mkdir(parents=True, exist_ok=True)
     custom_db_fasta = os.path.join(db_dir, "custom_db.faa")
     shutil.copy2(custom_db, custom_db_fasta)
 
     logdir = Path(f"{output}/logs")
-    # cstom db
+    # custom db
     # make custom db
     custom_database = os.path.join(db_dir, "custom_db")
     makeblastdb = ExternalTool(
         tool="makeblastdb",
         input=f"-in {custom_db_fasta}",
         output=f"-out {custom_database}",
-        params=f"-dbtype prot ",
+        params="-dbtype prot ",
         logdir=logdir,
     )
 
@@ -303,7 +300,7 @@ def custom(ctx, input, output, threads, prefix, force, custom_db, **kwargs):
     logdir = Path(f"{output}/logs")
     blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
     # dnaA da
-    db = os.path.join(db_dir, f"custom_db")
+    db = os.path.join(db_dir, "custom_db")
     blast = ExternalTool(
         tool="blastx",
         input=f"-query {input}",
@@ -343,7 +340,7 @@ mystery command
 def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
     """Reorients your sequence with a random gene"""
 
-    ### validates the directory  (need to before I start dnaapler or else no log file is written)
+    # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
     # defines gene
@@ -355,7 +352,7 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
     # validates fasta
     validate_fasta(input)
 
-    logger.info(f"Searching for genes with pyrodigal")
+    logger.info("Searching for genes with pyrodigal")
 
     # get number of records of input
     orf_finder = pyrodigal.OrfFinder(meta=True)
@@ -376,7 +373,7 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
             )
             ctx.exit(2)
 
-        logger.info(f"Reorienting with a random gene (that is not the first or last).")
+        logger.info("Reorienting with a random gene (that is not the first or last).")
 
         # ensure not first or last gene
         reorient_gene_number = random.randint(2, gene_count - 1)

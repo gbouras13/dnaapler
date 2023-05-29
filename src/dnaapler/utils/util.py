@@ -31,8 +31,8 @@ def get_version():
 def echo_click(msg, log=None):
     click.echo(msg, nl=False, err=True)
     if log:
-        with open(log, "a") as l:
-            l.write(msg)
+        with open(log, "a") as lo:
+            lo.write(msg)
 
 
 def print_citation():
@@ -64,8 +64,8 @@ def begin_dnaapler(input, output, threads, gene):
     logger.add(log_file)
     logger.add(lambda _: sys.exit(1), level="ERROR")
     logger.info(f"You are using dnaapler version {get_version()}")
-    logger.info(f"Repository homepage is https://github.com/gbouras13/dnaapler")
-    logger.info(f"Written by George Bouras: george.bouras@adelaide.edu.au")
+    logger.info("Repository homepage is https://github.com/gbouras13/dnaapler")
+    logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
     logger.info(f"Your input FASTA is {input}")
     logger.info(f"Your output directory  is {output}")
     logger.info(f"You have specified {threads} threads to use with blastx")
@@ -83,7 +83,7 @@ def check_blast_version():
         blast_out = blast_out.decode().strip()
         blast_out = blast_out.split("\n")[0]
         blast_version = blast_out.split(" ")[1]
-    except:
+    except Exception:
         logger.error("blastx not found. Please install blast")
 
     return blast_version

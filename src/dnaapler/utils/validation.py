@@ -18,21 +18,21 @@ def instantiate_dirs(output_dir: str, force: bool):
     # remove outdir on force
     logger.add(lambda _: sys.exit(1), level="ERROR")
     logger.info(f"Checking the output directory {output_dir}")
-    if force == True:
+    if force is True:
         if Path(output_dir).exists():
             shutil.rmtree(output_dir)
         else:
             logger.info(
-                f"\n--force was specified even though the output directory does not already exist. Continuing. \n"
+                "--force was specified even though the output directory does not already exist. Continuing."
             )
     else:
         if Path(output_dir).exists():
             logger.error(
-                f"Output directory already exists and force was not specified. Please specify -f or --force to overwrite the output directory."
+                "Output directory already exists and force was not specified. Please specify -f or --force to overwrite the output directory."
             )
 
     # instantiate outdir
-    if Path(output_dir).exists() == False:
+    if Path(output_dir).exists() is False:
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 
@@ -74,7 +74,7 @@ def validate_custom_db_fasta(custom_fasta: Path):
     with open(custom_fasta, "r") as handle:
         # checks if fasta
         fasta = SeqIO.parse(handle, "fasta")
-        if any(fasta) == False:
+        if any(fasta) is False:
             logger.error(
                 f"Error: {custom_fasta} file is not in the FASTA format. Please check your input file"
             )

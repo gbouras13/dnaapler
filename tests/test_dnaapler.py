@@ -13,8 +13,6 @@ import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-
-import click
 import pandas as pd
 import pytest
 from loguru import logger
@@ -211,7 +209,7 @@ class TestBlastOutput(unittest.TestCase):
         end_dnaapler(time)
 
 
-### external tools
+# external tools
 
 """
 taken from tbpore
