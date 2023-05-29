@@ -1,0 +1,2 @@
+/Users/a1667917/Library/Caches/pypoetry/virtualenvs/dnaapler-10ehDxnk-py3.10/bin/python: can't open file '/Users/a1667917/Documents/dnaapler/src/dnaapler/tests/helpers/run_test.py': [Errno 2] No such file or directory
+Command line: /Users/a1667917/Library/Caches/pypoetry/virtualenvs/dnaapler-10ehDxnk-py3.10/bin/python /Users/a1667917/Documents/dnaapler/src/dnaapler/tests/helpers/run_test.py output input

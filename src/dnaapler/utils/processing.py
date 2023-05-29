@@ -8,9 +8,7 @@ from loguru import logger
 import click
 
 
-def process_blast_output_and_reorient(
-    input, blast_file, out_file, ctx: click.Context, gene: str
-):
+def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
     # defin colnames
     col_list = [
         "qseqid",
@@ -38,7 +36,11 @@ def process_blast_output_and_reorient(
         )
     except:
         logger.error(f"There was an issue with parsing the BLAST output file.")
-        ctx.exit(2)
+
+    if isinstance(blast_df, pd.DataFrame) and blast_df.empty:
+        logger.error(
+            f"There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also cause this error."
+        )
 
     ###### top hit has a start of 1 ########
     # take the top hit - blast sorts by bitscore
@@ -47,7 +49,6 @@ def process_blast_output_and_reorient(
         logger.error(
             f"Based on the BLAST output top hit, your input is already oriented to begin with {gene}."
         )
-        ctx.exit(2)
 
     ###### top hit ########
     # prokaryotes can use AUG M, GUG V or UUG L as start codons - for Pseudomonas aeruginosa PA01  dnaA actually starts with V
@@ -73,10 +74,9 @@ def process_blast_output_and_reorient(
                 gene_found = True
                 break
         if gene_found == False:
-            logger.info(
-                f"{gene} start not identified. Please check your input file or try dnaapler custom. If you have assembled an unusual species, this may also cause this error."
+            logger.error(
+                f"{gene} start not identified. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also cause this error."
             )
-            ctx.exit(2)
 
 
 def reorient_sequence(blast_df, input, out_file, gene, i):

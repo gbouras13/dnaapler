@@ -28,17 +28,19 @@ jobs:
           environment-file: build/environment.yaml
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
-
-      - name: "Setup dnaapler on ${{ matrix.os }} for Python ${{ matrix.python-version }}"
+      - name: Install project
+        shell: bash -l {0}
         run: |
-          python -m pip install --upgrade pip
-          pip install -e .
-      
-      - name: "Generate coverage report on ${{ matrix.os }} for Python ${{ matrix.python-version }}"
-        run: |
-          pip install pytest pytest-cov
-          pytest --cov=./ --cov-report xml --cov-report lcov --cov-append
-          
+          mamba install python=${{ matrix.python-version }}
+          just install
+      - name: Check formatting
+        shell: bash -l {0}
+        run: just check-fmt
+      - name: Test and generate coverage report with pytest
+        shell: bash -l {0}
+        run: just test-ci
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
         with:
@@ -47,8 +49,6 @@ jobs:
           flag-name: run-${{ matrix.test_number }}
           path-to-lcov: "coverage.lcov"
       
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
 
   finish:
     needs: tests

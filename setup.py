@@ -4,6 +4,7 @@ import os
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+
 def get_version():
     with open(
         os.path.join(
@@ -13,7 +14,6 @@ def get_version():
         )
     ) as f:
         return f.readline().strip()
-
 
 
 packages = find_packages()
@@ -66,6 +66,5 @@ setup(
         "Click>=8.0.0",
         "pytest-cov>=3.0.0",
         "pyrodigal>=2.0.0",
-    ]
+    ],
 )
-

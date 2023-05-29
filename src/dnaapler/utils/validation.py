@@ -1,12 +1,11 @@
 from Bio import SeqIO
 import shutil
 from loguru import logger
-import click
 from pathlib import Path
-import re
+import sys
 
 
-def instantiate_dirs(output_dir: str, force: bool, ctx: click.Context):
+def instantiate_dirs(output_dir: str, force: bool):
     """Checks the output directory
     :param out_dir: output directory path
     :param force: force flag
@@ -16,6 +15,7 @@ def instantiate_dirs(output_dir: str, force: bool, ctx: click.Context):
 
     # Checks the output directory
     # remove outdir on force
+    logger.add(lambda _: sys.exit(1), level="ERROR")
     logger.info(f"Checking the output directory {output_dir}")
     if force == True:
         if Path(output_dir).exists():
@@ -29,13 +29,13 @@ def instantiate_dirs(output_dir: str, force: bool, ctx: click.Context):
             logger.error(
                 f"Output directory already exists and force was not specified. Please specify -f or --force to overwrite the output directory."
             )
-            ctx.exit(2)
+
     # instantiate outdir
     if Path(output_dir).exists() == False:
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 
-def validate_fasta(input_fasta: str, ctx: click.Context):
+def validate_fasta(input_fasta: Path):
     """
     Validates  FASTA input - that the input is a FASTA with 1 sequence
     """
@@ -51,7 +51,6 @@ def validate_fasta(input_fasta: str, ctx: click.Context):
             logger.error(
                 f"Error: {input_fasta} file is not in the FASTA format. Please check your input file"
             )
-            ctx.exit(2)
 
     with open(input_fasta, "r") as handle:
         # Check the number of records
@@ -61,10 +60,9 @@ def validate_fasta(input_fasta: str, ctx: click.Context):
             logger.error(
                 f"{input_fasta} has more than one entry. Please check your input FASTA file!"
             )
-            ctx.exit(2)
 
 
-def validate_custom_db_fasta(custom_fasta: str, ctx: click.Context):
+def validate_custom_db_fasta(custom_fasta: Path):
     """
     Validates custom db FASTA input - ensures it is FASTA file with amino acids (.faa)
     """
@@ -79,7 +77,7 @@ def validate_custom_db_fasta(custom_fasta: str, ctx: click.Context):
             logger.error(
                 f"Error: {custom_fasta} file is not in the FASTA format. Please check your input file"
             )
-            ctx.exit(2)
+
         # checks amino acids
     with open(custom_fasta, "r") as handle:
         for record in SeqIO.parse(handle, "fasta"):
@@ -87,7 +85,6 @@ def validate_custom_db_fasta(custom_fasta: str, ctx: click.Context):
                 logger.error(
                     f"Error: {custom_fasta} file does not seem to have amino acid sequences. Please check your input file"
                 )
-                ctx.exit(2)
 
     logger.info(f"{custom_fasta} file checked.")
 

@@ -1,87 +1,43 @@
-[build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
-
-[project]
+[tool.poetry]
 name = "dnaapler"
-authors = [
-    { name = "George Bouras", email = "george.bouras@adelaide.edu.au"}
-]
+version = "0.0.12" # change VERSION too
 description = "Reorients assembled microbial sequences"
-keywords = ["microbial", "bioinformatics"]
+authors = ["George Bouras <george.bouras@adelaide.edu.au>"]
+license = "MIT"
 readme = "README.md"
-license = { file = "LICENSE" }
-requires-python = ">=3.7,<3.11"
-dependencies = ["biopython >=1.76", "pyrodigal>=2.0.0", "pandas>=1.4.1", "Click>=8.0.0", "loguru>=0.5.3"]
-classifiers = [
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: BSD License",
-        "Topic :: Scientific/Engineering :: Bio-Informatics",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-    ]
-dynamic = ["version"]
+homepage = "https://github.com/gbouras13/dnaapler"
+repository = "https://github.com/gbouras13/dnaapler"
+keywords = ["microbial", "bioinformatics"]
+include = [
+    "HISTORY.md"
+]
 
-[project.urls]
-Documentation = "https://github.com/gbouras13/dnaapler/README.md"
-"Bug Tracker" = "https://github.com/gbouras13/dnaapler/issues"
-"Source Code" = "https://github.com/gbouras13/dnaapler/"
-
-[project.scripts]
+[tool.poetry.scripts]
 dnaapler = 'dnaapler:main'
 
-[project.optional-dependencies]
-test = [
-    "nox",
-    "pytest",
-    "pytest-cov",
-    "pytest-xdist",
-]
-dev = [
-    "black",
-    "click",
-    "docformatter",
-    "flit",
-    "nox",
-    "isort",
-    "pytest",
-    "pytest-cov",
-    "pytest-xdist",
-]
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+click = ">=8.0.0"
+loguru = ">=0.5.3"
+pyyaml = ">=6.0"
+pandas = ">=1.4.2"
+biopython = ">=1.76"
+pyrodigal = ">=2.0.0"
 
-[tool.flit.sdist]
-include = ["requirements.txt", "dnaapler", "src/*", "pyproject.toml"]
 
-[tool.pytest.ini_options]
-addopts = ["--strict-config", "-ra"]
-testpaths = "tests"
+[tool.poetry.dev-dependencies]
+black = ">=22.3.0"
+pytest = "^6.2.5"
+pytest-cov = "^3.0.0"
 
-[tool.black]
-line-length = 88
-target-version = ['py37', 'py38', 'py39', 'py310']
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | build
-  | dist
-  | tests/test_data
-)/
-'''
+[[tool.poetry.source]]
+name = "pypi-test"
+url = "https://test.pypi.org/simple/"
+priority = "primary"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
-atomic=true
-force_grid_wrap=0
-include_trailing_comma=true
-lines_after_imports=2
-lines_between_types=1
-multi_line_output=3
-use_parentheses=true
+profile = "black"
