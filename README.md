@@ -10,8 +10,22 @@
 
 # dnaapler
 
-Description
-----------
+## Quick Start
+
+```
+# creates conda environment with dnaapler
+conda create -n dnaapler_env dnaapler
+
+# activates conda environment
+conda activate dnaapler_env
+
+# runs dnaapler chromosome
+dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name -t 8
+```
+
+
+## Description
+
 
 `dnaapler` is a simple python program that takes a single nucleotide input sequence (in FASTA format), finds the desired start gene using `blastx` against an amino acid sequence database, checks that the start codon of this gene is found, and if so, then reorients the chromosome to begin with this gene on the forward strand. 
 
@@ -42,8 +56,7 @@ You will need to install BLAST separately.
 e.g.
 `conda install -c bioconda blast`
 
-Usage
-----------
+## Usage
 
 ```
 Usage: dnaapler [OPTIONS] COMMAND [ARGS]...
@@ -79,8 +92,13 @@ Options:
 
 The reoriented output FASTA will be `{prefix}_reoriented.fasta` in the specified output directory.
 
-Databases
-=============
+## Example Usage
+
+```
+dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name -t 8
+```
+
+## Databases
 
 `dnaapler chromosome` uses 733 proteins downloaded from Swissprot with the query "Chromosomal replication initiator protein DnaA" on 24 May 2023 as its database for dnaA.
 
@@ -99,8 +117,7 @@ If you try dnaapler on a more novel or under-studied microbe with a dnaA gene th
 After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler mystery` was added. It predicts all ORFs in the input using [pyrodigal](https://github.com/althonos/pyrodigal), then picks a random gene to re-orient your sequence with
 
 
-Motivation
-------------
+## Motivation
 
 1. I couldn't get [Circlator](https://sanger-pathogens.github.io/circlator/) to work and it is no longer supported.
 2. [berokka](https://github.com/tseemann/berokka) doesn't orient chromosomes to begin with dnaa.
@@ -108,8 +125,7 @@ Motivation
 4. While researching MGEs in _S. aureus_ whole genome sequences, I repeatedly found instances where MGEs were interrupted by the chromosome breakpoint. So I thought I'd add a tool to automate it in my pipeline. 
 5. It's probably good to have all your sequences start at the same location for synteny analyses.
 
-Acknowledgements
-=============
+## Acknowledgements
 
 Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) I took and adapted a lot of scaffolding code from because he writes really nice code, [Rob Edwards](https://github.com/linsalrob), because everything always comes back to phages, and especially [Vijini Mallawaarachchi](https://github.com/Vini2) who taught me how to actually do something resembling legitimate software development.
 
