@@ -35,17 +35,21 @@ For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome br
 
 ## Installation
 
-dnaapler requires only BLAST as an external dependency. 
+`dnaapler` requires only BLAST as an external dependency. 
 
 Installation from conda is recommended as this will install BLAST automatically.
 
 ### Conda
+
+`dnaapler` is available on bioconda.
 
 ```
 conda install -c bioconda dnaapler
 ```
 
 ### Pip
+
+You can also install `dnaapler` with pip.
 
 ```
 pip install dnaapler
@@ -112,7 +116,7 @@ The matching is strict - it requires a strong BLAST match (e-value 1E-10), and t
 
 For the most commonly studied microbes (ESKAPE pathogens, etc), the dnaA database should suffice.
 
-If you try dnaapler on a more novel or under-studied microbe with a dnaA gene that has little sequence similarity to the database, you may need to provide your own dnaA gene(s) in amino acid FASTA format using `dnaapler custom`.
+If you try `dnaapler` on a more novel or under-studied microbe with a dnaA gene that has little sequence similarity to the database, you may need to provide your own dnaA gene(s) in amino acid FASTA format using `dnaapler custom`.
 
 After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler mystery` was added. It predicts all ORFs in the input using [pyrodigal](https://github.com/althonos/pyrodigal), then picks a random gene to re-orient your sequence with
 
