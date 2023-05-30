@@ -2,31 +2,54 @@
 [![codecov](https://codecov.io/gh/gbouras13/dnaapler/branch/refactor/graph/badge.svg?token=4B1T2PGM9V)](https://codecov.io/gh/gbouras13/dnaapler)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
+[![Anaconda-Server Badge](https://anaconda.org/bioconda/dnaapler/badges/version.svg)](https://anaconda.org/bioconda/dnaapler)
+[![Bioconda Downloads](https://img.shields.io/conda/dn/bioconda/dnaapler)](https://img.shields.io/conda/dn/bioconda/dnaapler)
+[![PyPI version](https://badge.fury.io/py/dnaapler.svg)](https://badge.fury.io/py/dnaapler)
+[![Downloads](https://static.pepy.tech/badge/dnaapler)](https://pepy.tech/project/dnaapler)
+
 
 # dnaapler
 
-Description
-----------
+## Quick Start
 
-`dnaapler` is a simple python program that takes a single nucleotide input sequence (in FASTA format), finds the desired start gene using `blastx` against an amino acid database, checks that the start of a gene is found, and if so, then reorients the chromosome to begin with this genes on the forward strand. 
+```
+# creates conda environment with dnaapler
+conda create -n dnaapler_env dnaapler
 
-It was designed to replicate the reorientation functionality of [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta) with dnaA, but for FASTA input and for long-read first assembled chromosomes. I have extended it to work with plasmids and phages, or for any input FASTA desired with `plassembler custom` or `plassembler mystery`.
+# activates conda environment
+conda activate dnaapler_env
+
+# runs dnaapler chromosome
+dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name -t 8
+```
+
+
+## Description
+
+
+`dnaapler` is a simple python program that takes a single nucleotide input sequence (in FASTA format), finds the desired start gene using `blastx` against an amino acid sequence database, checks that the start codon of this gene is found, and if so, then reorients the chromosome to begin with this gene on the forward strand. 
+
+It was originally designed to replicate the reorientation functionality of [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta) with dnaA, but for for long-read first assembled chromosomes. I have extended it to work with plasmids (`plassembler plasmid`) and phages (`plassembler phage`), or for any input FASTA desired with `plassembler custom` or `plassembler mystery`.
 
 For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages. It is intended to be used with good-quality completed bacterial genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki), [Dragonflye](https://github.com/rpetit3/dragonflye) or my own pipleine [hybracter](https://github.com/gbouras13/hybracter).
 
 ## Installation
 
-dnaapler requires only BLAST as an external dependency. 
+`dnaapler` requires only BLAST as an external dependency. 
 
-Installation from conda is recommended as this will install BLAST automatically when it becomes available.
+Installation from conda is recommended as this will install BLAST automatically.
 
 ### Conda
+
+`dnaapler` is available on bioconda.
 
 ```
 conda install -c bioconda dnaapler
 ```
 
 ### Pip
+
+You can also install `dnaapler` with pip.
 
 ```
 pip install dnaapler
@@ -37,10 +60,7 @@ You will need to install BLAST separately.
 e.g.
 `conda install -c bioconda blast`
 
-
-
-Usage
-----------
+## Usage
 
 ```
 Usage: dnaapler [OPTIONS] COMMAND [ARGS]...
@@ -74,10 +94,15 @@ Options:
   -f, --force            Force overwrites the output directory
   ```
 
+The reoriented output FASTA will be `{prefix}_reoriented.fasta` in the specified output directory.
 
+## Example Usage
 
-Databases
-=============
+```
+dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name -t 8
+```
+
+## Databases
 
 `dnaapler chromosome` uses 733 proteins downloaded from Swissprot with the query "Chromosomal replication initiator protein DnaA" on 24 May 2023 as its database for dnaA.
 
@@ -91,27 +116,20 @@ The matching is strict - it requires a strong BLAST match (e-value 1E-10), and t
 
 For the most commonly studied microbes (ESKAPE pathogens, etc), the dnaA database should suffice.
 
-If you try dnaapler on a more novel or under-studied microbe with a dnaA gene that has little sequence similarity to the database, you may need to provide your own dnaA gene(s) in amino acid FASTA format using `dnaapler custom`.
+If you try `dnaapler` on a more novel or under-studied microbe with a dnaA gene that has little sequence similarity to the database, you may need to provide your own dnaA gene(s) in amino acid FASTA format using `dnaapler custom`.
 
-After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler mystery` was added. It predicted all ORFs in the input, then picks a random sequence to re-orient your sequence with.s
+After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler mystery` was added. It predicts all ORFs in the input using [pyrodigal](https://github.com/althonos/pyrodigal), then picks a random gene to re-orient your sequence with
 
 
-Motivation
-------------
+## Motivation
 
 1. I couldn't get [Circlator](https://sanger-pathogens.github.io/circlator/) to work and it is no longer supported.
 2. [berokka](https://github.com/tseemann/berokka) doesn't orient chromosomes to begin with dnaa.
-3. After reading Ryan Wick's masterful bacterial genome assembly [tutorial](https://github.com/rrwick/Perfect-bacterial-genome-tutorial/wiki), I realised that it is probably optimal to run 2 polishing steps, once before then once after rotating the chromosome, to ensure the breakpoint is polished. Further, for some "complete" assemblies that didn't circularise properly, I figured that as long as you have a complete assembly (even if not "circular" as marked as in Flye), polishing after a re-orientation would be likely to circularise the chromosome. A bit like Ryan's [rotate_circular_gfa.py](https://github.com/rrwick/Perfect-bacterial-genome-tutorial/blob/main/scripts/rotate_circular_gfa.py) script, without the requirement of strict circularity.
+3. After reading Ryan Wick's masterful bacterial genome assembly [tutorial](https://github.com/rrwick/Perfect-bacterial-genome-tutorial/wiki), I realised that it is probably optimal to run 2 polishing steps, once before then once after rotating the chromosome, to ensure the breakpoint is polished. Further, for some "complete" long read bacterial assemblies that didn't circularise properly, I figured that as long as you have a complete assembly (even if not "circular" as marked as in Flye), polishing after a re-orientation would be likely to circularise the chromosome. A bit like Ryan's [rotate_circular_gfa.py](https://github.com/rrwick/Perfect-bacterial-genome-tutorial/blob/main/scripts/rotate_circular_gfa.py) script, without the requirement of strict circularity.
 4. While researching MGEs in _S. aureus_ whole genome sequences, I repeatedly found instances where MGEs were interrupted by the chromosome breakpoint. So I thought I'd add a tool to automate it in my pipeline. 
 5. It's probably good to have all your sequences start at the same location for synteny analyses.
 
-Polishing Afterwards
------------
-
-I recommend that you undertake 2 rounds of polishing. The first prior to running dnaapler, and then again after. I'd highly recommend a conservative polisher like [Polypolish](https://github.com/rrwick/Polypolish) if you have short reads, otherwise 2 rounds of medaka.
-
-Acknowledgements
-=============
+## Acknowledgements
 
 Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) I took and adapted a lot of scaffolding code from because he writes really nice code, [Rob Edwards](https://github.com/linsalrob), because everything always comes back to phages, and especially [Vijini Mallawaarachchi](https://github.com/Vini2) who taught me how to actually do something resembling legitimate software development.
 
