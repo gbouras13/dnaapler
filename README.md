@@ -5,7 +5,7 @@
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/dnaapler/badges/version.svg)](https://anaconda.org/bioconda/dnaapler)
 [![Bioconda Downloads](https://img.shields.io/conda/dn/bioconda/dnaapler)](https://img.shields.io/conda/dn/bioconda/dnaapler)
 [![PyPI version](https://badge.fury.io/py/dnaapler.svg)](https://badge.fury.io/py/dnaapler)
-[![PyPI Downloads](https://static.pepy.tech/badge/dnaapler)](https://pepy.tech/project/dnaapler)
+[![Downloads](https://static.pepy.tech/badge/dnaapler)](https://pepy.tech/project/dnaapler)
 
 
 # dnaapler
