@@ -75,11 +75,10 @@ def common_options(func):
             show_default=True,
         ),
         click.option(
-            "-e",
-            "--evalue",
-            default="1e-10",
-            help="e value for blastx",
-            show_default=True,
+            "-f",
+            "--force",
+            is_flag=True,
+            help="Force overwrites the output directory",
         ),
     ]
     for option in reversed(options):
@@ -105,10 +104,11 @@ Chromosome command
 @click.pass_context
 @common_options
 @click.option(
-    "-f",
-    "--force",
-    is_flag=True,
-    help="Force overwrites the output directory",
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
 )
 def chromosome(ctx, input, output, threads, prefix, evalue, force, **kwargs):
     """Reorients your sequence to begin with the dnaA chromosomal replication initiation gene"""
@@ -165,10 +165,11 @@ Plasmid command
 @click.pass_context
 @common_options
 @click.option(
-    "-f",
-    "--force",
-    is_flag=True,
-    help="Force overwrites the output directory",
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
 )
 def plasmid(ctx, input, output, threads, prefix, evalue, force, **kwargs):
     """Reorients your sequence to begin with the repA replication initiation gene"""
@@ -225,10 +226,11 @@ Phage command
 @click.pass_context
 @common_options
 @click.option(
-    "-f",
-    "--force",
-    is_flag=True,
-    help="Force overwrites the output directory",
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
 )
 def phage(ctx, input, output, threads, prefix, evalue, force, **kwargs):
     """Reorients your sequence to begin with the terL large terminase subunit"""
@@ -285,10 +287,11 @@ custom command
 @click.pass_context
 @common_options
 @click.option(
-    "-f",
-    "--force",
-    is_flag=True,
-    help="Force overwrites the output directory",
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
 )
 @click.option(
     "-c",

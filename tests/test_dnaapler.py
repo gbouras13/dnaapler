@@ -221,6 +221,15 @@ class TestEValue(unittest.TestCase):
             evalue = "sfsd"
             check_evalue(evalue)
 
+    def test_evalue_char_mix(self):
+        with self.assertRaises(SystemExit):
+            evalue = "1e-10t"
+            check_evalue(evalue)
+
+    def test_evalue_char_int(self):
+        evalue = "5"
+        check_evalue(evalue)
+
     def test_evalue_int(self):
         evalue = 5
         check_evalue(evalue)
