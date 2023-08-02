@@ -60,6 +60,11 @@ def test_chrom(tmp_dir):
     cmd = f"dnaapler chromosome -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
+def test_chrom_diff_eval(tmp_dir):
+    """test chrom with different e value"""
+    input_fasta: Path = f"{overall_test_data}/chromosome.fasta"
+    cmd = f"dnaapler chromosome -i {input_fasta} -o {tmp_dir} -t 1 -e 0.1 -f"
+    exec_command(cmd)
 
 def test_plas(tmp_dir):
     """test plas"""
