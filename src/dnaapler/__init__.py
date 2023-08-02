@@ -24,10 +24,10 @@ from dnaapler.utils.util import (
     print_citation,
 )
 from dnaapler.utils.validation import (
+    check_evalue,
     instantiate_dirs,
     validate_custom_db_fasta,
     validate_fasta,
-    check_evalue,
 )
 
 """

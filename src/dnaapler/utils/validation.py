@@ -1,7 +1,7 @@
+import re
 import shutil
 import sys
 from pathlib import Path
-import re
 
 from Bio import SeqIO
 from loguru import logger
