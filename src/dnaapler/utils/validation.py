@@ -130,9 +130,9 @@ def check_evalue(evalue):
     checks if the evalue is scientific notation or numeric
     """
 
+    logger.info(f"You have specified an evalue of {evalue}.")
+
     if is_numeric(evalue) is False and is_scientific_notation(evalue) is False:
         logger.error(
-            f"Error: {evalue} parameter is neither numeric not in scientific notation. Please check your evalue"
+            f"Error: evalue {evalue} is neither numeric nor in scientific notation. Please check your evalue."
         )
-
-    logger.info(f"{evalue} checked.")

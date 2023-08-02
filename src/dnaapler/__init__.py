@@ -81,12 +81,6 @@ def common_options(func):
             help="e value for blastx",
             show_default=True,
         ),
-        click.option(
-            "-f",
-            "--force",
-            is_flag=True,
-            help="Force overwrites the output directory",
-        ),
     ]
     for option in reversed(options):
         func = option(func)
@@ -110,6 +104,12 @@ Chromosome command
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
+@click.option(
+    "-f",
+    "--force",
+    is_flag=True,
+    help="Force overwrites the output directory",
+)
 def chromosome(ctx, input, output, threads, prefix, evalue, force, **kwargs):
     """Reorients your sequence to begin with the dnaA chromosomal replication initiation gene"""
 
@@ -164,6 +164,12 @@ Plasmid command
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
+@click.option(
+    "-f",
+    "--force",
+    is_flag=True,
+    help="Force overwrites the output directory",
+)
 def plasmid(ctx, input, output, threads, prefix, evalue, force, **kwargs):
     """Reorients your sequence to begin with the repA replication initiation gene"""
 
@@ -218,6 +224,12 @@ Phage command
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
+@click.option(
+    "-f",
+    "--force",
+    is_flag=True,
+    help="Force overwrites the output directory",
+)
 def phage(ctx, input, output, threads, prefix, evalue, force, **kwargs):
     """Reorients your sequence to begin with the terL large terminase subunit"""
 
@@ -272,6 +284,12 @@ custom command
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
+@click.option(
+    "-f",
+    "--force",
+    is_flag=True,
+    help="Force overwrites the output directory",
+)
 @click.option(
     "-c",
     "--custom_db",
