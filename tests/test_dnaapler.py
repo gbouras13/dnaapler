@@ -340,3 +340,25 @@ class TestExternalTools:
                 "err\n",
                 f"Command line: {sys.executable} {python_script} output input\n",
             ]
+
+
+class TestFailExternal(unittest.TestCase):
+    """Fail Extenral Tool Test"""
+
+    def test___run_exit(self):
+        with self.assertRaises(FileNotFoundError):
+            logsdir = repo_root.parent.parent / "tests/helpers/logs"
+            logsdir.mkdir(parents=True, exist_ok=True)
+            for file in logsdir.iterdir():
+                file.unlink()
+
+            python_script = str(repo_root.parent.parent / "tests/helpers/run_test.py")
+            external_tool = ExternalTool(
+                "break_here",
+                "input",
+                "output",
+                python_script,
+                logsdir,
+            )
+
+            external_tool.run()
