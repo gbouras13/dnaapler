@@ -1,0 +1,22 @@
+{
+  "version": "1.2",
+  "dbname": "dnaA.faa",
+  "dbtype": "Protein",
+  "db-version": 5,
+  "description": "dnaA.faa",
+  "number-of-letters": 273810,
+  "number-of-sequences": 584,
+  "last-updated": "2023-08-02T14:49:00",
+  "number-of-volumes": 1,
+  "bytes-total": 451328,
+  "bytes-to-cache": 279155,
+  "files": [
+    "dnaA.faa.pdb",
+    "dnaA.faa.phr",
+    "dnaA.faa.pin",
+    "dnaA.faa.pot",
+    "dnaA.faa.psq",
+    "dnaA.faa.ptf",
+    "dnaA.faa.pto"
+  ]
+}
