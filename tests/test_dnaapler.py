@@ -26,7 +26,11 @@ from src.dnaapler.utils.processing import (
     reorient_sequence_random,
 )
 from src.dnaapler.utils.util import begin_dnaapler, end_dnaapler
-from src.dnaapler.utils.validation import validate_custom_db_fasta, validate_fasta
+from src.dnaapler.utils.validation import ( 
+    validate_custom_db_fasta, 
+    validate_fasta, 
+    check_evalue
+)
 
 # import functions
 
@@ -205,9 +209,26 @@ class TestBlastOutput(unittest.TestCase):
         begin_dnaapler(input, outdir, threads, gene)
 
     def test_end_dnaapler(self):
-        # Test scenario where the no BLAST hit begins with 1 (start of gene)
         time = 2324.0
         end_dnaapler(time)
+
+class TestEValue(unittest.TestCase):
+    """Tests of Evalue"""
+
+    def test_evalue_char(self):
+        with self.assertRaises(SystemExit):
+            evalue = "sfsd"
+            check_evalue(evalue)
+
+    def test_evalue_int(self):
+        evalue = 5
+        check_evalue(evalue)
+
+    def test_evalue_sci(self):
+        evalue = "1e-10"
+        check_evalue(evalue)
+
+
 
 
 # external tools
