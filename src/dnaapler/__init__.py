@@ -27,7 +27,7 @@ from dnaapler.utils.validation import (
     instantiate_dirs,
     validate_custom_db_fasta,
     validate_fasta,
-    check_evalue
+    check_evalue,
 )
 
 """
@@ -127,7 +127,7 @@ def chromosome(ctx, input, output, threads, prefix, evalue, force, **kwargs):
 
     # validate e value
     check_evalue(evalue)
-    
+
     # use external_tools.py
 
     # chromosome path

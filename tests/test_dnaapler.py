@@ -26,10 +26,10 @@ from src.dnaapler.utils.processing import (
     reorient_sequence_random,
 )
 from src.dnaapler.utils.util import begin_dnaapler, end_dnaapler
-from src.dnaapler.utils.validation import ( 
-    validate_custom_db_fasta, 
-    validate_fasta, 
-    check_evalue
+from src.dnaapler.utils.validation import (
+    validate_custom_db_fasta,
+    validate_fasta,
+    check_evalue,
 )
 
 # import functions
@@ -212,6 +212,7 @@ class TestBlastOutput(unittest.TestCase):
         time = 2324.0
         end_dnaapler(time)
 
+
 class TestEValue(unittest.TestCase):
     """Tests of Evalue"""
 
@@ -227,8 +228,6 @@ class TestEValue(unittest.TestCase):
     def test_evalue_sci(self):
         evalue = "1e-10"
         check_evalue(evalue)
-
-
 
 
 # external tools
