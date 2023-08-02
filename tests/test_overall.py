@@ -90,6 +90,12 @@ def test_custom(tmp_dir):
     exec_command(cmd)
 
 
+def test_citation():
+    """test citation"""
+    cmd = f"dnaapler citation"
+    exec_command(cmd)
+
+
 class TestExits(unittest.TestCase):
     """Tests of End to End common failures"""
 
