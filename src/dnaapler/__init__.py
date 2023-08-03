@@ -451,7 +451,7 @@ nearest command
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
-def nearest(ctx, input, output, threads, prefix,  force, **kwargs):
+def nearest(ctx, input, output, threads, prefix, force, **kwargs):
     """Reorients your sequence the begin with the first CDS as called by pyrodigal"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
