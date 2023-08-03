@@ -35,15 +35,15 @@ def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
         logger.error("There was an issue with parsing the BLAST output file.")
 
     if isinstance(blast_df, pd.DataFrame) and blast_df.empty:
-        logger.error(
+        logger.info(
             "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also cause this error."
         )
 
     # top hit has a start of 1 ########
     # take the top hit - blast sorts by bitscore
     # if the start is 1 of the top hit
-    if blast_df["qstart"][0] == 1:
-        logger.error(
+    elif blast_df["qstart"][0] == 1:
+        logger.info(
             f"Based on the BLAST output top hit, your input is already oriented to begin with {gene}."
         )
 
