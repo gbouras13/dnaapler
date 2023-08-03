@@ -82,6 +82,13 @@ def test_mys(tmp_dir):
     exec_command(cmd)
 
 
+def test_nearest(tmp_dir):
+    """test nearest"""
+    input_fasta: Path = f"{overall_test_data}/chromosome.fasta"
+    cmd = f"dnaapler nearest -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
 def test_custom(tmp_dir):
     """test custom"""
     input_fasta: Path = f"{overall_test_data}/chromosome.fasta"

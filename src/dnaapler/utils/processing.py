@@ -132,7 +132,7 @@ def reorient_sequence(blast_df, input, out_file, gene, i):
 
 def reorient_sequence_random(input, out_file, start, strand):
     """
-    for dnaapler random
+    for dnaapler mystery and nearest
     """
 
     ####################
