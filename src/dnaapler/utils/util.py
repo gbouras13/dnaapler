@@ -10,6 +10,8 @@ import time
 import click
 from loguru import logger
 
+from dnaapler.utils.cds_methods import run_mystery, run_nearest
+
 
 class OrderedCommands(click.Group):
     """This class will preserve the order of subcommands, which is useful when printing --help"""
@@ -101,3 +103,38 @@ def end_dnaapler(start_time):
     # Show elapsed time for the process
     logger.info("dnaapler has finished")
     logger.info("Elapsed time: " + str(elapsed_time) + " seconds")
+
+
+def run_autocomplete(
+    blast_success, autocomplete, ctx, input, seed_value, output, prefix
+):
+    """Processes
+    :param: blast_success: bool - whether a BLAST hit with a valid start codon was identified
+    :param: autocomplete: str - either "none" "mystery" or "nearest"
+    :return:
+    """
+
+    # if there was
+    if blast_success == False:
+        if autocomplete == "none":
+            logger.error(
+                "BLAST based reorientation failed.\n"
+                f"Because you chose the {autocomplete} autocomplete strategy as a backup strategy for reorientation,\n "
+                "Dnaapler will now exit.\n"
+                "Please check your input file,\n"
+                "or choose mystery or nearest as a value for the --autocomplete flag ."
+            )
+        elif autocomplete == "mystery":
+            logger.info(
+                "BLAST based reorientation failed.\n"
+                f"You chose the {autocomplete} autocomplete strategy as a backup strategy for reorientation.\n "
+                f"Running {autocomplete}."
+            )
+            run_mystery(ctx, input, seed_value, output, prefix)
+        elif autocomplete == "nearest":
+            logger.info(
+                "BLAST based reorientation failed.\n"
+                f"You chose the {autocomplete} autocomplete strategy as a backup strategy for reorientation.\n "
+                f"Running {autocomplete}."
+            )
+            run_nearest(ctx, input, output, prefix)

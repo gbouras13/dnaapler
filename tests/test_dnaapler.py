@@ -14,6 +14,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import click
 import pandas as pd
 import pytest
 from loguru import logger
@@ -28,6 +29,7 @@ from src.dnaapler.utils.processing import (
 from src.dnaapler.utils.util import begin_dnaapler, end_dnaapler
 from src.dnaapler.utils.validation import (
     check_evalue,
+    validate_choice_autocomplete,
     validate_custom_db_fasta,
     validate_fasta,
 )
@@ -163,34 +165,38 @@ class TestBlastOutput(unittest.TestCase):
 
     def test_process_blast_output_and_reorient_already_oriented(self):
         # Test scenario where the blast output suggests the contig is already oriented correctly
-        with self.assertRaises(SystemExit):
-            blast_file = os.path.join(
-                test_data, "SAOMS1_blast_output_already_oriented.txt"
-            )
-            input = os.path.join(test_data, "SAOMS1.fasta")
-            output = os.path.join(test_data, "fake_reoriented.fasta")
-            gene = "terL"
-            process_blast_output_and_reorient(input, blast_file, output, gene)
+        blast_file = os.path.join(test_data, "SAOMS1_blast_output_already_oriented.txt")
+        input = os.path.join(test_data, "SAOMS1.fasta")
+        output = os.path.join(test_data, "fake_reoriented.fasta")
+        gene = "terL"
+        blast_success = process_blast_output_and_reorient(
+            input, blast_file, output, gene
+        )
+        assert blast_success == True
 
     def test_process_blast_output_and_reorient_wrong_start_codon(self):
         # Test scenario where the best BLAST hit has no valid start codon
-        with self.assertRaises(SystemExit):
-            blast_file = os.path.join(
-                test_data, "SAOMS1_blast_output_wrong_start_codon.txt"
-            )
-            input = os.path.join(test_data, "SAOMS1.fasta")
-            output = os.path.join(test_data, "fake_reoriented.fasta")
-            gene = "terL"
-            process_blast_output_and_reorient(input, blast_file, output, gene)
+        blast_file = os.path.join(
+            test_data, "SAOMS1_blast_output_wrong_start_codon.txt"
+        )
+        input = os.path.join(test_data, "SAOMS1.fasta")
+        output = os.path.join(test_data, "fake_reoriented.fasta")
+        gene = "terL"
+        blast_success = process_blast_output_and_reorient(
+            input, blast_file, output, gene
+        )
+        assert blast_success == False
 
     def test_process_blast_output_and_reorient_no_one(self):
         # Test scenario where the no BLAST hit begins with 1 (start of gene)
-        with self.assertRaises(SystemExit):
-            blast_file = os.path.join(test_data, "SAOMS1_blast_output_no_one.txt")
-            input = os.path.join(test_data, "SAOMS1.fasta")
-            output = os.path.join(test_data, "fake_reoriented.fasta")
-            gene = "terL"
-            process_blast_output_and_reorient(input, blast_file, output, gene)
+        blast_file = os.path.join(test_data, "SAOMS1_blast_output_no_one.txt")
+        input = os.path.join(test_data, "SAOMS1.fasta")
+        output = os.path.join(test_data, "fake_reoriented.fasta")
+        gene = "terL"
+        blast_success = process_blast_output_and_reorient(
+            input, blast_file, output, gene
+        )
+        assert blast_success == False
 
     def test_process_blast_output_and_reorient_correct(self):
         # Test scenario where the no BLAST hit begins with 1 (start of gene)
@@ -198,7 +204,10 @@ class TestBlastOutput(unittest.TestCase):
         input = os.path.join(test_data, "SAOMS1.fasta")
         output = os.path.join(test_data, "fake_reoriented.fasta")
         gene = "terL"
-        process_blast_output_and_reorient(input, blast_file, output, gene)
+        blast_success = process_blast_output_and_reorient(
+            input, blast_file, output, gene
+        )
+        assert blast_success == True
 
     def test_begin_dnaapler(self):
         # Test begin
@@ -237,6 +246,36 @@ class TestEValue(unittest.TestCase):
     def test_evalue_sci(self):
         evalue = "1e-10"
         check_evalue(evalue)
+
+
+class TestChoiceAutocomplete(unittest.TestCase):
+    """Tests of Choice Autocomplete"""
+
+    def test_evalue_bad_char(self):
+        # fake values
+        ctx = "1"
+        param = "2"
+        value = "sfsd"
+        with self.assertRaises(click.BadParameter):
+            val = validate_choice_autocomplete(ctx, param, value)
+
+    def test_evalue_none(self):
+        value = "none"
+        ctx = "1"
+        param = "2"
+        val = validate_choice_autocomplete(ctx, param, value)
+
+    def test_evalue_mys(self):
+        value = "mystery"
+        ctx = "1"
+        param = "2"
+        val = validate_choice_autocomplete(ctx, param, value)
+
+    def test_evalue_nearest(self):
+        value = "nearest"
+        ctx = "1"
+        param = "2"
+        val = validate_choice_autocomplete(ctx, param, value)
 
 
 # external tools

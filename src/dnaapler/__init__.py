@@ -11,6 +11,7 @@ import pyrodigal
 from Bio import SeqIO
 from loguru import logger
 
+from dnaapler.utils.cds_methods import run_mystery, run_nearest
 from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
 from dnaapler.utils.processing import (
@@ -22,16 +23,18 @@ from dnaapler.utils.util import (
     end_dnaapler,
     get_version,
     print_citation,
+    run_autocomplete,
 )
 from dnaapler.utils.validation import (
     check_evalue,
     instantiate_dirs,
+    validate_choice_autocomplete,
     validate_custom_db_fasta,
     validate_fasta,
 )
 
 """
-some code taken/adapted from tbpore https://github.com/mbhall88/tbpore
+some code adapted from tbpore https://github.com/mbhall88/tbpore
 """
 
 log_fmt = (
@@ -110,8 +113,34 @@ Chromosome command
     help="e value for blastx",
     show_default=True,
 )
-def chromosome(ctx, input, output, threads, prefix, evalue, force, **kwargs):
-    """Reorients your sequence to begin with the dnaA chromosomal replication initiation gene"""
+@click.option(
+    "-a",
+    "--autocomplete",
+    type=click.STRING,
+    callback=validate_choice_autocomplete,
+    default="none",
+    help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nMust be one of: none, mystery or nearest [default: none]",
+)
+@click.option(
+    "--seed_value",
+    help="Random seed to ensure reproducibility.",
+    type=int,
+    default=13,
+    show_default=True,
+)
+def chromosome(
+    ctx,
+    input,
+    output,
+    threads,
+    prefix,
+    evalue,
+    force,
+    autocomplete,
+    seed_value,
+    **kwargs,
+):
+    """Reorients your genome to begin with the dnaA chromosomal replication initiation gene"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
@@ -121,6 +150,9 @@ def chromosome(ctx, input, output, threads, prefix, evalue, force, **kwargs):
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
+    logger.info(
+        f"You have chosen {autocomplete} to reoirent your sequence if the BLAST based method fails."
+    )
 
     # validates fasta
     validate_fasta(input)
@@ -146,9 +178,16 @@ def chromosome(ctx, input, output, threads, prefix, evalue, force, **kwargs):
 
     ExternalTool.run_tool(blast, ctx)
 
-    # reorient the
+    # reorient the genome based on the BLAST hit
     output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-    process_blast_output_and_reorient(input, blast_output, output_processed_file, gene)
+    blast_success = process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, gene
+    )
+
+    # run autocomplete if BLAST reorientation failed
+    run_autocomplete(
+        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+    )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -171,8 +210,34 @@ Plasmid command
     help="e value for blastx",
     show_default=True,
 )
-def plasmid(ctx, input, output, threads, prefix, evalue, force, **kwargs):
-    """Reorients your sequence to begin with the repA replication initiation gene"""
+@click.option(
+    "-a",
+    "--autocomplete",
+    type=click.STRING,
+    callback=validate_choice_autocomplete,
+    default="none",
+    help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nbe one of: none, mystery or nearest [default: none]",
+)
+@click.option(
+    "--seed_value",
+    help="Random seed to ensure reproducibility.",
+    type=int,
+    default=13,
+    show_default=True,
+)
+def plasmid(
+    ctx,
+    input,
+    output,
+    threads,
+    prefix,
+    evalue,
+    force,
+    autocomplete,
+    seed_value,
+    **kwargs,
+):
+    """Reorients your genome to begin with the repA replication initiation gene"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
@@ -182,6 +247,9 @@ def plasmid(ctx, input, output, threads, prefix, evalue, force, **kwargs):
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
+    logger.info(
+        f"You have chosen {autocomplete} to reoirent your sequence if the BLAST based method fails."
+    )
 
     # validates fasta
     validate_fasta(input)
@@ -207,9 +275,16 @@ def plasmid(ctx, input, output, threads, prefix, evalue, force, **kwargs):
 
     ExternalTool.run_tool(blast, ctx)
 
-    # reorient the
+    # reorient the genome based on the BLAST hit
     output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-    process_blast_output_and_reorient(input, blast_output, output_processed_file, gene)
+    blast_success = process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, gene
+    )
+
+    # run autocomplete if BLAST reorientation failed
+    run_autocomplete(
+        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+    )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -232,8 +307,34 @@ Phage command
     help="e value for blastx",
     show_default=True,
 )
-def phage(ctx, input, output, threads, prefix, evalue, force, **kwargs):
-    """Reorients your sequence to begin with the terL large terminase subunit"""
+@click.option(
+    "-a",
+    "--autocomplete",
+    type=click.STRING,
+    callback=validate_choice_autocomplete,
+    default="none",
+    help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nMust be one of: none, mystery or nearest [default: none]",
+)
+@click.option(
+    "--seed_value",
+    help="Random seed to ensure reproducibility.",
+    type=int,
+    default=13,
+    show_default=True,
+)
+def phage(
+    ctx,
+    input,
+    output,
+    threads,
+    prefix,
+    evalue,
+    force,
+    autocomplete,
+    seed_value,
+    **kwargs,
+):
+    """Reorients your genome to begin with the terL large terminase subunit"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
@@ -243,6 +344,9 @@ def phage(ctx, input, output, threads, prefix, evalue, force, **kwargs):
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
+    logger.info(
+        f"You have chosen {autocomplete} to reoirent your sequence if the BLAST based method fails."
+    )
 
     # validates fasta
     validate_fasta(input)
@@ -268,9 +372,16 @@ def phage(ctx, input, output, threads, prefix, evalue, force, **kwargs):
 
     ExternalTool.run_tool(blast, ctx)
 
-    # reorient the
+    # reorient the genome based on the BLAST hit
     output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-    process_blast_output_and_reorient(input, blast_output, output_processed_file, gene)
+    blast_success = process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, gene
+    )
+
+    # run autocomplete if BLAST reorientation failed
+    run_autocomplete(
+        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+    )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -300,8 +411,35 @@ custom command
     type=click.Path(),
     required=True,
 )
-def custom(ctx, input, output, threads, prefix, evalue, force, custom_db, **kwargs):
-    """Reorients your sequence with a custom database"""
+@click.option(
+    "-a",
+    "--autocomplete",
+    type=click.STRING,
+    callback=validate_choice_autocomplete,
+    default="none",
+    help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nMust be one of: none, mystery or nearest [default: none]",
+)
+@click.option(
+    "--seed_value",
+    help="Random seed to ensure reproducibility.",
+    type=int,
+    default=13,
+    show_default=True,
+)
+def custom(
+    ctx,
+    input,
+    output,
+    threads,
+    prefix,
+    evalue,
+    force,
+    custom_db,
+    autocomplete,
+    seed_value,
+    **kwargs,
+):
+    """Reorients your genome with a custom database"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
@@ -311,6 +449,9 @@ def custom(ctx, input, output, threads, prefix, evalue, force, custom_db, **kwar
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
+    logger.info(
+        f"You have chosen {autocomplete} to reoirent your sequence if the BLAST based method fails."
+    )
 
     # validates fasta
     validate_fasta(input)
@@ -356,9 +497,16 @@ def custom(ctx, input, output, threads, prefix, evalue, force, custom_db, **kwar
     tools_to_run = (makeblastdb, blast)
     ExternalTool.run_tools(tools_to_run, ctx)
 
-    # reorient the
+    # reorient the genome based on the BLAST hit
     output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-    process_blast_output_and_reorient(input, blast_output, output_processed_file, gene)
+    blast_success = process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, gene
+    )
+
+    # run autocomplete if BLAST reorientation failed
+    run_autocomplete(
+        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+    )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -376,13 +524,13 @@ mystery command
 @common_options
 @click.option(
     "--seed_value",
-    help="Seed to ensure reproducibility.",
+    help="Random seed to ensure reproducibility.",
     type=int,
     default=13,
     show_default=True,
 )
 def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
-    """Reorients your sequence with a random CDS"""
+    """Reorients your genome with a random CDS"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
@@ -396,46 +544,8 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
     # validates fasta
     validate_fasta(input)
 
-    logger.info("Searching for CDS with pyrodigal")
-
-    # get number of records of input
-    orf_finder = pyrodigal.OrfFinder(meta=True)
-
-    # set seed
-    random.seed(int(seed_value))
-
-    # there will only be 1 record
-    for i, record in enumerate(SeqIO.parse(input, "fasta")):
-        genes = orf_finder.find_genes(str(record.seq))
-        # get number of genes
-        gene_count = len(genes)
-
-        # ensure has > 3 genes
-        if gene_count < 4:
-            logger.error(
-                f"{input} has less than 4 CDS. You probably shouldn't be using dnaapler mystery!"
-            )
-            ctx.exit(2)
-
-        logger.info("Reorienting with a random CDS (that is not the first or last).")
-
-        # ensure not first or last gene
-        reorient_gene_number = random.randint(2, gene_count - 1)
-
-        logger.info(f"Gene number {reorient_gene_number} was selected.")
-        start = genes[reorient_gene_number].begin
-        strand = genes[reorient_gene_number].strand
-
-        if strand == 1:
-            strand_eng = "forward"
-        else:
-            strand_eng = "negative"
-
-        logger.info(f"Your random CDS has a start coordinate of {start}.")
-        logger.info(f"Your random CDS is on the {strand_eng} strand.")
-
-        output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-        reorient_sequence_random(input, output_processed_file, start, strand)
+    # run the mystery workflow
+    run_mystery(ctx, input, seed_value, output, prefix)
 
     # finish dnaapler
     end_dnaapler(start_time)
@@ -452,7 +562,7 @@ nearest command
 @click.pass_context
 @common_options
 def nearest(ctx, input, output, threads, prefix, force, **kwargs):
-    """Reorients your sequence the begin with the first CDS as called by pyrodigal"""
+    """Reorients your genome the begin with the first CDS as called by pyrodigal"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
@@ -466,41 +576,8 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
     # validates fasta
     validate_fasta(input)
 
-    logger.info("Searching for CDS with pyrodigal")
-
-    # get number of records of input
-    orf_finder = pyrodigal.OrfFinder(meta=True)
-
-    # there will only be 1 record
-    for i, record in enumerate(SeqIO.parse(input, "fasta")):
-        genes = orf_finder.find_genes(str(record.seq))
-        # get number of genes
-        gene_count = len(genes)
-
-        # ensure has > 1 genes
-        if gene_count < 2:
-            logger.error(
-                f"{input} has less than 2 CDS. You probably shouldn't be using dnaapler nearest!"
-            )
-            ctx.exit(2)
-
-        logger.info("Reorienting to begin with the first CDS.")
-
-        reorient_gene_number = 1
-
-        start = genes[reorient_gene_number].begin
-        strand = genes[reorient_gene_number].strand
-
-        if strand == 1:
-            strand_eng = "forward"
-        else:
-            strand_eng = "negative"
-
-        logger.info(f"Your first CDS has a start coordinate of {start}.")
-        logger.info(f"Your first CDS is on the {strand_eng} strand.")
-
-        output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-        reorient_sequence_random(input, output_processed_file, start, strand)
+    # run the nearest workflow
+    run_nearest(ctx, input, output, prefix)
 
     # finish dnaapler
     end_dnaapler(start_time)
