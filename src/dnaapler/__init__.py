@@ -441,6 +441,71 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
     end_dnaapler(start_time)
 
 
+"""
+nearest command
+"""
+
+
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+def nearest(ctx, input, output, threads, prefix,  force, **kwargs):
+    """Reorients your sequence the begin with the first CDS as called by pyrodigal"""
+
+    # validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force)
+
+    # defines gene
+    gene = "nearest"
+
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
+
+    # validates fasta
+    validate_fasta(input)
+
+    logger.info("Searching for genes with pyrodigal")
+
+    # get number of records of input
+    orf_finder = pyrodigal.OrfFinder(meta=True)
+
+    # there will only be 1 record
+    for i, record in enumerate(SeqIO.parse(input, "fasta")):
+        genes = orf_finder.find_genes(str(record.seq))
+        # get number of genes
+        gene_count = len(genes)
+
+        # ensure has > 1 genes
+        if gene_count < 2:
+            logger.error(
+                f"{input} has less than 2 genes. You probably shouldn't be using dnaapler mystery!"
+            )
+            ctx.exit(2)
+
+        logger.info("Reorienting to begin with the nearest gene.")
+
+        reorient_gene_number = 1
+
+        start = genes[reorient_gene_number].begin
+        strand = genes[reorient_gene_number].strand
+
+        if strand == 1:
+            strand_eng = "forward"
+        else:
+            strand_eng = "negative"
+
+        logger.info(f"Your nearest gene has a start coordinate of {start}.")
+        logger.info(f"Your nearest gene is on the {strand_eng} strand.")
+
+        output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+        reorient_sequence_random(input, output_processed_file, start, strand)
+
+    # finish dnaapler
+    end_dnaapler(start_time)
+
+
 @click.command()
 def citation(**kwargs):
     """Print the citation(s) for this tool"""
