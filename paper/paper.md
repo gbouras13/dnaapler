@@ -18,7 +18,7 @@ affiliations:
     index: 2
   - name: Flinders Accelerator for Microbiome Exploration, College of Science and Engineering, Flinders University, Bedford Park, Adelaide, South Australia 5042, Australia
     index: 3
-date: 03 August 2023  
+date: 04 August 2023  
 bibliography: paper.bib
 ---
 
@@ -28,20 +28,17 @@ Due to algorithms employed in assembling genomes from sequencing reads, microbes
 
 # Statement of need
 
-Circlator [@Hunt:2015] allows for the reorientation of circular microbial genomes. However, Circlator was designed for bacterial chromosomes and plasmids only, is no longer supported by its developers, has a number of external dependencies and requires corrected reads in FASTA or FASTQ format along with the FASTA genome assembly as input. Otherwise, genome reorientation is usually done manually or with custom scripts on a genome-by-genome and project-by-project basis, making integration into assembly workflows difficult. 
+Circlator [@Hunt:2015] is the most commonly used dedicated tool for reorienting bacterial genomes. However, Circlator was designed for bacterial chromosomes and plasmids only, is no longer supported by its developers, has a number of external dependencies and requires corrected reads in FASTA or FASTQ format along with the FASTA genome assembly as input. Otherwise, genome reorientation is usually done manually or with custom scripts on a genome-by-genome and project-by-project basis, making integration into assembly workflows difficult. 
 
-We propose Dnaapler, a simple command-line tool written in Python 3 that can easily be integrated into assembly workflows. Dnaapler takes only a single FASTA formatted genome file as input. It uses the Basic Local Alignment Search Tool (BLAST) [@altschul:1990; @mount:2007] or Pyrodigal [@Larralde:2022] [@Hyatt:2010] depending on the chosen subcommand. Specifically, Dnaapler 'chromosome', 'phage' and 'plasmid' subcommands use blastx (protein databases are searched using a translated nucleotide query) to search for the dnaA, terL or repA gene respectively in the input genomes, using built-in amino acid databases for each gene. Dnaapler will then check that the first amino acid of the identified start site begins with either Methionine, Valine or Leucine, the 3 most used gene start codons in bacteria and bacteriophages, and will then reorient the genome to begin with this gene forward stranded. If no satisfactory hit is found, Dnaapler will inform the user and exit without reorientation. If the 'custom' subcommand is selected, the same process will be conducted but with a user specified amino acid FASTA formatted input database. If the 'mystery' or 'nearest' subcommands are selected, Pyrodigal will be used to predict all coding sequences, and the genome will be reoriented to begin with either a random (mystery) or the first (nearest) CDS, respectively. Dnaapler returns an output directory containing a log file and a the genome reoriented as a FASTA formatted file.
+We propose Dnaapler, a simple command-line tool written in Python 3 that can easily be integrated into assembly workflows. Dnaapler takes only a single FASTA formatted genome file as input. It uses the Basic Local Alignment Search Tool (BLAST) [@altschul:1990; @mount:2007] or Pyrodigal [@Larralde:2022] [@Hyatt:2010] depending on the chosen subcommand for reorientation. Specifically, Dnaapler 'chromosome', 'phage' and 'plasmid' subcommands use blastx (protein databases are searched using a translated nucleotide query) to search for the dnaA, terL or repA gene respectively in the input genomes, using built-in amino acid databases for each gene. Dnaapler will then check that the first amino acid of the identified start site begins with either Methionine, Valine or Leucine, the 3 most used gene start codons in bacteria and bacteriophages, and will then reorient the genome to begin with this gene forward stranded. If the 'custom' subcommand is selected, the same process will be conducted but with a user specified amino acid FASTA formatted input database. If the 'mystery' or 'nearest' subcommands are selected, Pyrodigal will be used to predict all coding sequences, and the genome will be reoriented to begin with either a random (mystery) or the first (nearest) CDS, respectively. Dnaapler returns an output directory containing a log file and a the genome reoriented as a FASTA formatted file.
 
-Dnaapler has already been integrated into the StaPH-B (State Public Health Lab Bioinformatics) consortium [Docker image collection](https://github.com/StaPH-B/docker-builds).
-
-
+Dnaapler has already been integrated into the United States of America StaPH-B (State Public Health Lab Bioinformatics) consortium [Docker image collection](https://github.com/StaPH-B/docker-builds).
 
 # Availability
 
 Dnaapler is distributed on PyPI. A [Conda](https://conda.io/) package is
 also available in the Bioconda channel [@Bioconda:2018]. The source code is available on [GitHub](https://github.com/gbouras13/dnaapler),
 and features tests via a Continuous Integration workflow implemented with Github actions.
-
 
 # Acknowledgements
 We would like to thank Michael B. Hall for providing some code snippets particularly the external tool class from his great tool tbpore, Ryan Wick for curating a repA database from Unicycler and Sarah Vreugde for her supervision.
