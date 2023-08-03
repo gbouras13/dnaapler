@@ -36,7 +36,7 @@ def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
 
     if isinstance(blast_df, pd.DataFrame) and blast_df.empty:
         logger.info(
-            "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also cause this error."
+            "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
         )
 
     # top hit has a start of 1 ########
