@@ -3,17 +3,15 @@ import random
 import shutil
 from pathlib import Path
 
-import random
 import pyrodigal
 from Bio import SeqIO
 from loguru import logger
 
-from dnaapler.utils.processing import (
-    reorient_sequence_random,
-)
+from dnaapler.utils.processing import reorient_sequence_random
 
-def run_mystery(ctx, input, seed_value, output, prefix ):
-# get number of records of input
+
+def run_mystery(ctx, input, seed_value, output, prefix):
+    # get number of records of input
     orf_finder = pyrodigal.OrfFinder(meta=True)
 
     # set seed

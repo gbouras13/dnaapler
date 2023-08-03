@@ -13,6 +13,7 @@ from loguru import logger
 
 from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
+from dnaapler.utils.mystery import run_mystery
 from dnaapler.utils.processing import (
     process_blast_output_and_reorient,
     reorient_sequence_random,
@@ -28,10 +29,6 @@ from dnaapler.utils.validation import (
     instantiate_dirs,
     validate_custom_db_fasta,
     validate_fasta,
-)
-
-from dnaapler.utils.mystery import (
-    run_mystery
 )
 
 """
@@ -115,16 +112,10 @@ Chromosome command
     show_default=True,
 )
 @click.option(
-    "--mystery",
-    is_flag=True,
-    help="if no BLAST hit found, reorient with random CDS",
-    show_default=True,
-)
-@click.option(
-    "--nearest",
-    is_flag=True,
-    help="if no BLAST hit found, reorient with first CDS",
-    show_default=True,
+    "--autocomplete",
+    type=click.Choice(
+        ["mystery", "nearest", "none"], default="None", case_sensitive=False
+    ),
 )
 @click.option(
     "--seed_value",
@@ -133,7 +124,19 @@ Chromosome command
     default=13,
     show_default=True,
 )
-def chromosome(ctx, input, output, threads, prefix, evalue, force, mystery, nearest, seed_value **kwargs):
+def chromosome(
+    ctx,
+    input,
+    output,
+    threads,
+    prefix,
+    evalue,
+    force,
+    mystery,
+    nearest,
+    seed_value,
+    **kwargs,
+):
     """Reorients your sequence to begin with the dnaA chromosomal replication initiation gene"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
@@ -193,6 +196,12 @@ Plasmid command
     default="1e-10",
     help="e value for blastx",
     show_default=True,
+)
+@click.option(
+    "--autocomplete",
+    type=click.Choice(
+        ["mystery", "nearest", "none"], default="None", case_sensitive=False
+    ),
 )
 @click.option(
     "--seed_value",
@@ -261,6 +270,12 @@ Phage command
     default="1e-10",
     help="e value for blastx",
     show_default=True,
+)
+@click.option(
+    "--autocomplete",
+    type=click.Choice(
+        ["mystery", "nearest", "none"], default="None", case_sensitive=False
+    ),
 )
 @click.option(
     "--seed_value",
@@ -336,6 +351,12 @@ custom command
     help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want.",
     type=click.Path(),
     required=True,
+)
+@click.option(
+    "--autocomplete",
+    type=click.Choice(
+        ["mystery", "nearest", "none"], default="None", case_sensitive=False
+    ),
 )
 @click.option(
     "--seed_value",
@@ -444,7 +465,7 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
 
     # run the mystery workflow from mystery.py
     run_mystery(ctx, input, seed_value, output, prefix)
-    
+
     # finish dnaapler
     end_dnaapler(start_time)
 
