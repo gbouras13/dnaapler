@@ -31,7 +31,7 @@ from dnaapler.utils.validation import (
 )
 
 """
-some code taken/adapted from tbpore https://github.com/mbhall88/tbpore
+some code adapted from tbpore https://github.com/mbhall88/tbpore
 """
 
 log_fmt = (

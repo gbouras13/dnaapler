@@ -2,6 +2,13 @@
 History
 =======
 
+0.2.0 (2023-05-30)
+------------------
+
+* `plassembler nearest` subcommand added
+* dnaA database filtered to keep only bona-file dnaA genes (i.e. GN=dnaA)
+* Adds `-e` parameter to vary BLAST evalue if desired
+
 0.1.0 (2022-10-12)
 ------------------
 
