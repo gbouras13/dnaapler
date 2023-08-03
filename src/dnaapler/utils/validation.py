@@ -3,6 +3,7 @@ import shutil
 import sys
 from pathlib import Path
 
+import click
 from Bio import SeqIO
 from loguru import logger
 
@@ -136,3 +137,13 @@ def check_evalue(evalue):
         logger.error(
             f"Error: evalue {evalue} is neither numeric nor in scientific notation. Please check your evalue."
         )
+
+
+def validate_choice_autocomplete(ctx, param, value):
+    """
+    checks the click.Choice option for the autocomplete flag
+    """
+    choices = ["mystery", "nearest", "none"]
+    if value not in choices:
+        raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
+    return value

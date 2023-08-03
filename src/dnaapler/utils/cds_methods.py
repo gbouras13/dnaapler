@@ -1,7 +1,5 @@
 import os
 import random
-import shutil
-from pathlib import Path
 
 import pyrodigal
 from Bio import SeqIO
@@ -12,6 +10,7 @@ from dnaapler.utils.processing import reorient_sequence_random
 
 def run_mystery(ctx, input, seed_value, output, prefix):
     # get number of records of input
+    logger.info("Searching for CDS with pyrodigal")
     orf_finder = pyrodigal.OrfFinder(meta=True)
 
     # set seed
@@ -46,6 +45,43 @@ def run_mystery(ctx, input, seed_value, output, prefix):
 
         logger.info(f"Your random CDS has a start coordinate of {start}.")
         logger.info(f"Your random CDS is on the {strand_eng} strand.")
+
+        output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+        reorient_sequence_random(input, output_processed_file, start, strand)
+
+
+def run_nearest(ctx, input, output, prefix):
+    # get number of records of input
+    logger.info("Searching for CDS with pyrodigal")
+    orf_finder = pyrodigal.OrfFinder(meta=True)
+
+    # there will only be 1 record
+    for i, record in enumerate(SeqIO.parse(input, "fasta")):
+        genes = orf_finder.find_genes(str(record.seq))
+        # get number of genes
+        gene_count = len(genes)
+
+        # ensure has > 1 genes
+        if gene_count < 2:
+            logger.error(
+                f"{input} has less than 2 CDS. You probably shouldn't be using dnaapler nearest!"
+            )
+            ctx.exit(2)
+
+        logger.info("Reorienting to begin with the first CDS.")
+
+        reorient_gene_number = 1
+
+        start = genes[reorient_gene_number].begin
+        strand = genes[reorient_gene_number].strand
+
+        if strand == 1:
+            strand_eng = "forward"
+        else:
+            strand_eng = "negative"
+
+        logger.info(f"Your first CDS has a start coordinate of {start}.")
+        logger.info(f"Your first CDS is on the {strand_eng} strand.")
 
         output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
         reorient_sequence_random(input, output_processed_file, start, strand)

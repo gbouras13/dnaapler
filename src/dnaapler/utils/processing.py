@@ -6,7 +6,19 @@ from loguru import logger
 
 
 def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
-    # defin colnames
+    """Processes
+
+    :param input: input file
+    :param blast_file: blast output file
+    :param out_file: output file
+    :param gene: str - type of gene (dnaA etc)
+    :return: blast_success: bool - whether a BLAST hit with a valid start codon was identified
+    """
+
+    #  instantiate the returned bool
+    blast_success = True
+
+    # define colnames
     col_list = [
         "qseqid",
         "qlen",
@@ -38,17 +50,25 @@ def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
         logger.info(
             "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
         )
+        blast_success = False
 
     # top hit has a start of 1 ########
     # take the top hit - blast sorts by bitscore
     # if the start is 1 of the top hit
     elif blast_df["qstart"][0] == 1:
         logger.info(
-            f"Based on the BLAST output top hit, your input is already oriented to begin with {gene}."
+            f"Based on the BLAST output top hit, your input is already oriented to begin with {gene}.\n"
+            "The input file will be copied to the output so that your pipelines don't break :)"
         )
+        # writes to file
+        record = SeqIO.read(input, "fasta")
+        with open(out_file, "w") as out_fa:
+            SeqIO.write(record, out_fa, "fasta")
+
+        blast_success == True
 
     # top hit
-    # prokaryotes can use AUG M, GUG V or UUG L as start codons - for Pseudomonas aeruginosa PA01  dnaA actually starts with V
+    # prokaryotes can use AUG M, GUG V or UUG L as start codons - e.g. for Pseudomonas aeruginosa PA01  dnaA actually starts with V
     # Therefore, I will require the start codon to be the 1st in the searched sequence match - unlikely to not be but nonetheless
     # Sometimes, the top hit might not be the actual gene of interest (e.g. in phages if the terL is disrupted - like SAOMS1)
     # so in these cases, go down the list and check there is a hit with a legitimate start codon
@@ -71,9 +91,12 @@ def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
                 gene_found = True
                 break
         if gene_found is False:
-            logger.error(
+            logger.info(
                 f"{gene} start not identified. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also cause this error."
             )
+            blast_success = False
+
+    return blast_success
 
 
 def reorient_sequence(blast_df, input, out_file, gene, i):

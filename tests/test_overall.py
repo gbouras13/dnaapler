@@ -68,10 +68,52 @@ def test_chrom_diff_eval(tmp_dir):
     exec_command(cmd)
 
 
+def test_chrom_mystery_autocomplete(tmp_dir):
+    """test chrom - with phage (so no hit)"""
+    input_fasta: Path = f"{overall_test_data}/SAOMS1.fasta"
+    cmd = f"dnaapler chromosome -i {input_fasta} -o {tmp_dir} -t 1 -f -a mystery"
+    exec_command(cmd)
+
+
+def test_chrom_nearest_autocomplete(tmp_dir):
+    """test chrom - with phage (so no hit)"""
+    input_fasta: Path = f"{overall_test_data}/SAOMS1.fasta"
+    cmd = f"dnaapler chromosome -i {input_fasta} -o {tmp_dir} -t 1 -f -a nearest"
+    exec_command(cmd)
+
+
 def test_plas(tmp_dir):
     """test plas"""
     input_fasta: Path = f"{overall_test_data}/plasmid.fasta"
     cmd = f"dnaapler plasmid -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_plas_nearest_autocomplete(tmp_dir):
+    """test plas - with phage (so no hit)"""
+    input_fasta: Path = f"{overall_test_data}/SAOMS1.fasta"
+    cmd = f"dnaapler plasmid -i {input_fasta} -o {tmp_dir} -t 1 -f -a nearest"
+    exec_command(cmd)
+
+
+def test_plas_mystery_autocomplete(tmp_dir):
+    """test plas - with phage (so no hit)"""
+    input_fasta: Path = f"{overall_test_data}/SAOMS1.fasta"
+    cmd = f"dnaapler plasmid -i {input_fasta} -o {tmp_dir} -t 1 -f -a mystery"
+    exec_command(cmd)
+
+
+def test_phage_mystery(tmp_dir):
+    """test phage mystery - with plasmid (so no hit)"""
+    input_fasta: Path = f"{overall_test_data}/plasmid.fasta"
+    cmd = f"dnaapler phage -i {input_fasta} -o {tmp_dir} -t 1 -f -a mystery"
+    exec_command(cmd)
+
+
+def test_phage_nearest(tmp_dir):
+    """test phage nearest - with plasmid (so no hit)"""
+    input_fasta: Path = f"{overall_test_data}/plasmid.fasta"
+    cmd = f"dnaapler phage -i {input_fasta} -o {tmp_dir} -t 1 -f -a nearest"
     exec_command(cmd)
 
 
@@ -121,6 +163,16 @@ class TestExits(unittest.TestCase):
             input_fasta: Path = f"{overall_test_data}/SAOMS1.fasta"
             outdir: Path = f"{overall_test_data}/phage_out"
             cmd = f"dnaapler chromosome -i {input_fasta} -o {outdir} -t 1 -f"
+            exec_command(cmd)
+
+    def test_chrom_bad_autocomplete(self):
+        """test chrom with bad autcomplete"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{overall_test_data}/SAOMS1.fasta"
+            outdir: Path = f"{overall_test_data}/phage_out"
+            cmd = (
+                f"dnaapler chromosome -i {input_fasta} -o {outdir} -t 1 -f -a bad_auto"
+            )
             exec_command(cmd)
 
     def test_chrom_already_oriented(self):
