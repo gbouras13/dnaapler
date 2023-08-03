@@ -33,6 +33,15 @@ It was originally designed to replicate the reorientation functionality of [Unic
 
 For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages. It is intended to be used with good-quality completed bacterial genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki), [Dragonflye](https://github.com/rpetit3/dragonflye) or my own pipleine [hybracter](https://github.com/gbouras13/hybracter).
 
+## Commands
+
+* `dnaapler chromosome`: Reorients your sequence to begin with the dnaA chromosomal replication initiator gene
+* `dnaapler plasmid`: Reorients your sequence to begin with the repA plasmid replication initiation gene
+* `dnaapler phage`: Reorients your sequence to begin with the terL large terminase subunit gene
+* `dnaapler custom`: Reorients your sequence to begin with a custom amino acid FASTA format gene that you specify
+* `dnaapler mystery`: Reorients your sequence to begin with a random CDS
+* `dnaapler nearest`: Reorients your sequence to begin with the first CDS (nearest to the start). Designed for fixing sequences where a CDS spans the breakpoint.
+
 ## Installation
 
 `dnaapler` requires only BLAST as an external dependency. 
