@@ -24,6 +24,7 @@ from dnaapler.utils.util import (
     print_citation,
 )
 from dnaapler.utils.validation import (
+    check_evalue,
     instantiate_dirs,
     validate_custom_db_fasta,
     validate_fasta,
@@ -102,7 +103,14 @@ Chromosome command
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
-def chromosome(ctx, input, output, threads, prefix, force, **kwargs):
+@click.option(
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
+)
+def chromosome(ctx, input, output, threads, prefix, evalue, force, **kwargs):
     """Reorients your sequence to begin with the dnaA chromosomal replication initiation gene"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
@@ -116,6 +124,10 @@ def chromosome(ctx, input, output, threads, prefix, force, **kwargs):
 
     # validates fasta
     validate_fasta(input)
+
+    # validate e value
+    check_evalue(evalue)
+
     # use external_tools.py
 
     # chromosome path
@@ -128,7 +140,7 @@ def chromosome(ctx, input, output, threads, prefix, force, **kwargs):
         tool="blastx",
         input=f"-query {input}",
         output=f"-out {blast_output}",
-        params=f'-db {db} -evalue  1e-10 -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
         logdir=logdir,
     )
 
@@ -152,7 +164,14 @@ Plasmid command
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
-def plasmid(ctx, input, output, threads, prefix, force, **kwargs):
+@click.option(
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
+)
+def plasmid(ctx, input, output, threads, prefix, evalue, force, **kwargs):
     """Reorients your sequence to begin with the repA replication initiation gene"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
@@ -166,6 +185,10 @@ def plasmid(ctx, input, output, threads, prefix, force, **kwargs):
 
     # validates fasta
     validate_fasta(input)
+
+    # validate e value
+    check_evalue(evalue)
+
     # use external_tools.py
 
     # chromosome path
@@ -178,7 +201,7 @@ def plasmid(ctx, input, output, threads, prefix, force, **kwargs):
         tool="blastx",
         input=f"-query {input}",
         output=f"-out {blast_output}",
-        params=f'-db {db} -evalue  1e-10 -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
         logdir=logdir,
     )
 
@@ -202,7 +225,14 @@ Phage command
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
-def phage(ctx, input, output, threads, prefix, force, **kwargs):
+@click.option(
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
+)
+def phage(ctx, input, output, threads, prefix, evalue, force, **kwargs):
     """Reorients your sequence to begin with the terL large terminase subunit"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
@@ -216,6 +246,10 @@ def phage(ctx, input, output, threads, prefix, force, **kwargs):
 
     # validates fasta
     validate_fasta(input)
+
+    # validate e value
+    check_evalue(evalue)
+
     # use external_tools.py
 
     # chromosome path
@@ -228,7 +262,7 @@ def phage(ctx, input, output, threads, prefix, force, **kwargs):
         tool="blastx",
         input=f"-query {input}",
         output=f"-out {blast_output}",
-        params=f'-db {db} -evalue  1e-10 -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
         logdir=logdir,
     )
 
@@ -253,13 +287,20 @@ custom command
 @click.pass_context
 @common_options
 @click.option(
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
+)
+@click.option(
     "-c",
     "--custom_db",
     help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want.",
     type=click.Path(),
     required=True,
 )
-def custom(ctx, input, output, threads, prefix, force, custom_db, **kwargs):
+def custom(ctx, input, output, threads, prefix, evalue, force, custom_db, **kwargs):
     """Reorients your sequence with a custom database"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
@@ -273,6 +314,9 @@ def custom(ctx, input, output, threads, prefix, force, custom_db, **kwargs):
 
     # validates fasta
     validate_fasta(input)
+
+    # validate e value
+    check_evalue(evalue)
 
     # validates custom fasta input for database
     validate_custom_db_fasta(Path(custom_db))
@@ -305,7 +349,7 @@ def custom(ctx, input, output, threads, prefix, force, custom_db, **kwargs):
         tool="blastx",
         input=f"-query {input}",
         output=f"-out {blast_output}",
-        params=f'-db {db} -evalue  1e-10 -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
         logdir=logdir,
     )
 

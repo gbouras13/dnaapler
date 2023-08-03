@@ -110,16 +110,15 @@ dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name 
 
 `dnaapler phage` uses a terL database curated using [PHROGs](https://phrogs.lmge.uca.fr). I downloaded all the AA sequences of the 55 phrogs annotated as 'large terminase subunit', combined them depduplicated them using [seqkit](https://github.com/shenwei356/seqkit) `seqkit rmdup -s -o terL.faa phrog_terL.faa`.
 
-`dnaapler custom` uses a custom amino acid FASTA format gene(s) that you specify using `-c`. 
+`dnaapler custom` uses a custom amino acid FASTA format file that you specify using `-c`. 
 
-The matching is strict - it requires a strong BLAST match (e-value 1E-10), and the first amino acid of a BLAST hit gene to be identified as Methionine, Valine or Leucine, the 3 most used start codons in bacteria/phages. 
+The matching is strict - it requires a strong BLAST match (default e-value 1E-10), and the first amino acid of a BLAST hit gene to be identified as Methionine, Valine or Leucine, the 3 most used start codons in bacteria/phages. 
 
 For the most commonly studied microbes (ESKAPE pathogens, etc), the dnaA database should suffice.
 
 If you try `dnaapler` on a more novel or under-studied microbe with a dnaA gene that has little sequence similarity to the database, you may need to provide your own dnaA gene(s) in amino acid FASTA format using `dnaapler custom`.
 
 After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler mystery` was added. It predicts all ORFs in the input using [pyrodigal](https://github.com/althonos/pyrodigal), then picks a random gene to re-orient your sequence with
-
 
 ## Motivation
 

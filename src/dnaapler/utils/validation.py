@@ -1,3 +1,4 @@
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -100,3 +101,38 @@ def is_protein_sequence(string):
 
     # Check if the string contains any protein letters
     return any(letter.lower() in protein_letters for letter in string)
+
+
+def is_scientific_notation(evalue):
+    """
+    checks if evalue is scientific notation
+    """
+    # Define the regular expression pattern for scientific notation
+    scientific_pattern = r"^[+\-]?(\d+(\.\d*)?|\.\d+)([eE][+\-]?\d+)?$"
+
+    # Check if the number matches the scientific notation pattern
+    return bool(re.match(scientific_pattern, evalue))
+
+
+def is_numeric(evalue):
+    """
+    checks if evalue is numeric
+    """
+    try:
+        float(evalue)  # Attempt to convert the value to a float
+        return True
+    except ValueError:
+        return False
+
+
+def check_evalue(evalue):
+    """
+    checks if the evalue is scientific notation or numeric
+    """
+
+    logger.info(f"You have specified an evalue of {evalue}.")
+
+    if is_numeric(evalue) is False and is_scientific_notation(evalue) is False:
+        logger.error(
+            f"Error: evalue {evalue} is neither numeric nor in scientific notation. Please check your evalue."
+        )

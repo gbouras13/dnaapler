@@ -26,7 +26,11 @@ from src.dnaapler.utils.processing import (
     reorient_sequence_random,
 )
 from src.dnaapler.utils.util import begin_dnaapler, end_dnaapler
-from src.dnaapler.utils.validation import validate_custom_db_fasta, validate_fasta
+from src.dnaapler.utils.validation import (
+    check_evalue,
+    validate_custom_db_fasta,
+    validate_fasta,
+)
 
 # import functions
 
@@ -205,9 +209,34 @@ class TestBlastOutput(unittest.TestCase):
         begin_dnaapler(input, outdir, threads, gene)
 
     def test_end_dnaapler(self):
-        # Test scenario where the no BLAST hit begins with 1 (start of gene)
         time = 2324.0
         end_dnaapler(time)
+
+
+class TestEValue(unittest.TestCase):
+    """Tests of Evalue"""
+
+    def test_evalue_char(self):
+        with self.assertRaises(SystemExit):
+            evalue = "sfsd"
+            check_evalue(evalue)
+
+    def test_evalue_char_mix(self):
+        with self.assertRaises(SystemExit):
+            evalue = "1e-10t"
+            check_evalue(evalue)
+
+    def test_evalue_char_int(self):
+        evalue = "5"
+        check_evalue(evalue)
+
+    def test_evalue_int(self):
+        evalue = 5
+        check_evalue(evalue)
+
+    def test_evalue_sci(self):
+        evalue = "1e-10"
+        check_evalue(evalue)
 
 
 # external tools
@@ -311,3 +340,25 @@ class TestExternalTools:
                 "err\n",
                 f"Command line: {sys.executable} {python_script} output input\n",
             ]
+
+
+class TestFailExternal(unittest.TestCase):
+    """Fail Extenral Tool Test"""
+
+    def test___run_exit(self):
+        with self.assertRaises(FileNotFoundError):
+            logsdir = repo_root.parent.parent / "tests/helpers/logs"
+            logsdir.mkdir(parents=True, exist_ok=True)
+            for file in logsdir.iterdir():
+                file.unlink()
+
+            python_script = str(repo_root.parent.parent / "tests/helpers/run_test.py")
+            external_tool = ExternalTool(
+                "break_here",
+                "input",
+                "output",
+                python_script,
+                logsdir,
+            )
+
+            external_tool.run()
