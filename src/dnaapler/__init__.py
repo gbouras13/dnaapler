@@ -382,7 +382,7 @@ mystery command
     show_default=True,
 )
 def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
-    """Reorients your sequence with a random gene"""
+    """Reorients your sequence with a random CDS"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
@@ -396,7 +396,7 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
     # validates fasta
     validate_fasta(input)
 
-    logger.info("Searching for genes with pyrodigal")
+    logger.info("Searching for CDS with pyrodigal")
 
     # get number of records of input
     orf_finder = pyrodigal.OrfFinder(meta=True)
@@ -413,11 +413,11 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
         # ensure has > 3 genes
         if gene_count < 4:
             logger.error(
-                f"{input} has less than 4 genes. You probably shouldn't be using dnaapler mystery!"
+                f"{input} has less than 4 CDS. You probably shouldn't be using dnaapler mystery!"
             )
             ctx.exit(2)
 
-        logger.info("Reorienting with a random gene (that is not the first or last).")
+        logger.info("Reorienting with a random CDS (that is not the first or last).")
 
         # ensure not first or last gene
         reorient_gene_number = random.randint(2, gene_count - 1)
@@ -431,8 +431,8 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
         else:
             strand_eng = "negative"
 
-        logger.info(f"Your random gene has a start coordinate of {start}.")
-        logger.info(f"Your random gene is on the {strand_eng} strand.")
+        logger.info(f"Your random CDS has a start coordinate of {start}.")
+        logger.info(f"Your random CDS is on the {strand_eng} strand.")
 
         output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
         reorient_sequence_random(input, output_processed_file, start, strand)
@@ -466,7 +466,7 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
     # validates fasta
     validate_fasta(input)
 
-    logger.info("Searching for genes with pyrodigal")
+    logger.info("Searching for CDS with pyrodigal")
 
     # get number of records of input
     orf_finder = pyrodigal.OrfFinder(meta=True)
@@ -480,11 +480,11 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
         # ensure has > 1 genes
         if gene_count < 2:
             logger.error(
-                f"{input} has less than 2 genes. You probably shouldn't be using dnaapler mystery!"
+                f"{input} has less than 2 CDS. You probably shouldn't be using dnaapler nearest!"
             )
             ctx.exit(2)
 
-        logger.info("Reorienting to begin with the nearest gene.")
+        logger.info("Reorienting to begin with the first CDS.")
 
         reorient_gene_number = 1
 
@@ -496,8 +496,8 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
         else:
             strand_eng = "negative"
 
-        logger.info(f"Your nearest gene has a start coordinate of {start}.")
-        logger.info(f"Your nearest gene is on the {strand_eng} strand.")
+        logger.info(f"Your first CDS has a start coordinate of {start}.")
+        logger.info(f"Your first CDS is on the {strand_eng} strand.")
 
         output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
         reorient_sequence_random(input, output_processed_file, start, strand)
