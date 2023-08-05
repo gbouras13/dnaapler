@@ -7,6 +7,8 @@ import click
 from Bio import SeqIO
 from loguru import logger
 
+import subprocess as sp
+
 
 def instantiate_dirs(output_dir: str, force: bool):
     """Checks the output directory
@@ -147,3 +149,5 @@ def validate_choice_autocomplete(ctx, param, value):
     if value not in choices:
         raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
     return value
+
+

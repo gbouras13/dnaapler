@@ -582,6 +582,90 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
     # finish dnaapler
     end_dnaapler(start_time)
 
+"""
+bulk
+"""
+
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+@click.option(
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
+)
+@click.option(
+    "-g",
+    "--gene",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
+)
+def bulk(
+    ctx,
+    input,
+    output,
+    threads,
+    prefix,
+    evalue,
+    gene,
+    force,
+    **kwargs,
+):
+    """Reorients your multiple genomes to begin with the same gene"""
+
+    # validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force)
+
+    # defines gene
+
+
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
+ 
+
+    # validates fasta
+    validate_fasta_bulk(input)
+
+    # validate e value
+    check_evalue(evalue)
+
+    # use external_tools.py
+
+    # chromosome path
+    # blast
+    logdir = Path(f"{output}/logs")
+    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+    # dnaA da
+    db = os.path.join(DNAAPLER_DB, "terL_db")
+    blast = ExternalTool(
+        tool="blastx",
+        input=f"-query {input}",
+        output=f"-out {blast_output}",
+        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        logdir=logdir,
+    )
+
+    ExternalTool.run_tool(blast, ctx)
+
+    # reorient the genome based on the BLAST hit
+    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+    blast_success = process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, gene
+    )
+
+    # run autocomplete if BLAST reorientation failed
+    run_autocomplete(
+        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+    )
+
+    # end dnaapler
+    end_dnaapler(start_time)
+
 
 @click.command()
 def citation(**kwargs):
