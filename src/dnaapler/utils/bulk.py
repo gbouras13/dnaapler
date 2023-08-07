@@ -156,7 +156,6 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
 
     # Read the FASTA file and extract the IDs
     for record in SeqIO.parse(input, "fasta"):
-
         contig = record.id
 
         contigs.append(contig)
@@ -284,4 +283,3 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
         sep="\t",
         index=False,
     )
-

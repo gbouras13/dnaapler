@@ -130,6 +130,7 @@ def test_nearest(tmp_dir):
     cmd = f"dnaapler nearest -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
+
 def test_custom(tmp_dir):
     """test custom"""
     input_fasta: Path = f"{overall_test_data}/chromosome.fasta"
@@ -137,26 +138,30 @@ def test_custom(tmp_dir):
     cmd = f"dnaapler custom -i {input_fasta} -o {tmp_dir} -c {custom} -t 1 -f"
     exec_command(cmd)
 
+
 def test_bulk_chromosome(tmp_dir):
-    """test bulk chromosome """
+    """test bulk chromosome"""
     input_fasta: Path = f"{overall_test_data}/bulk_chromosome.fasta"
     cmd = f"dnaapler bulk -m chromosome -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
+
 def test_bulk_phage(tmp_dir):
-    """test bulk phage """
+    """test bulk phage"""
     input_fasta: Path = f"{overall_test_data}/bulk_phage.fasta"
     cmd = f"dnaapler bulk -m phage -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
+
 def test_bulk_plasmid(tmp_dir):
-    """test bulk plasmid """
+    """test bulk plasmid"""
     input_fasta: Path = f"{overall_test_data}/bulk_plasmid.fasta"
     cmd = f"dnaapler bulk -m plasmid -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
+
 def test_bulk_custom(tmp_dir):
-    """test bulk custom """
+    """test bulk custom"""
     input_fasta: Path = f"{overall_test_data}/bulk_chromosome.fasta"
     custom: Path = f"{test_data}/fake_custom.faa"
     cmd = f"dnaapler bulk -m custom -i {input_fasta} -o {tmp_dir} -c {custom} -t 1 -f"
@@ -167,7 +172,6 @@ def test_citation():
     """test citation"""
     cmd = f"dnaapler citation"
     exec_command(cmd)
-    
 
 
 class TestExits(unittest.TestCase):
@@ -223,7 +227,6 @@ class TestExits(unittest.TestCase):
             outdir: Path = f"{overall_test_data}/chrom_out"
             cmd = f"dnaapler bulk -m custom -i {input_fasta} -o {outdir} -t 1 -f"
             exec_command(cmd)
-
 
 
 remove_directory(f"{overall_test_data}/phage_out")

@@ -173,7 +173,6 @@ def chromosome(
         blast_success, autocomplete, ctx, input, seed_value, output, prefix
     )
 
-
     # end dnaapler
     end_dnaapler(start_time)
 
@@ -544,7 +543,7 @@ bulk subcommand
     "-c",
     "--custom_db",
     help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want. Must be specified if -m custom is specified.",
-    type=click.Path()
+    type=click.Path(),
 )
 def bulk(
     ctx,
@@ -583,11 +582,13 @@ def bulk(
     # validate e value
     check_evalue(evalue)
 
-    # check custom db 
+    # check custom db
     if mode == "custom":
         if custom_db == None:
-            logger.error("You have specified dnaapler bulk -m custom without specifying a custom database using -c. Please try again using -c to input a custom database.")
-        else: # makes the database
+            logger.error(
+                "You have specified dnaapler bulk -m custom without specifying a custom database using -c. Please try again using -c to input a custom database."
+            )
+        else:  # makes the database
             # validates custom fasta input for database
             validate_custom_db_fasta(Path(custom_db))
 
@@ -613,8 +614,9 @@ def bulk(
             ExternalTool.run_tool(makeblastdb, ctx)
     else:
         if custom_db != None:
-            logger.info(f"You have specified a custom database using -c but you have specified -m {mode}  not -m custom. Ignoring the custom database and continuing.")
-
+            logger.info(
+                f"You have specified a custom database using -c but you have specified -m {mode}  not -m custom. Ignoring the custom database and continuing."
+            )
 
     # runs  BLAST
     run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db)
