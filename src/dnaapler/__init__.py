@@ -564,7 +564,7 @@ def bulk(
     instantiate_dirs(output, force)
 
     # defines gene
-
+    gene = "dnaA"
     if mode == "chromosome":
         gene = "dnaA"
     elif mode == "plasmid":

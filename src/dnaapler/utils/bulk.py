@@ -1,10 +1,8 @@
 import os
-import random
 import shutil
 from pathlib import Path
 
 import pandas as pd
-import pyrodigal
 from Bio import SeqIO
 from loguru import logger
 
@@ -153,7 +151,7 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
 
     reoriented_output_file = os.path.join(output, f"{prefix}_reoriented.fasta")
     fail_reoriented_output_file = os.path.join(
-        output, f"{prefix}_failed_to_reoriented.fasta"
+        output, f"{prefix}_failed_to_reorient.fasta"
     )
 
     # Read the FASTA file and extract the IDs
@@ -287,56 +285,3 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
         index=False,
     )
 
-
-def reorient_sequence(blast_df, input, out_file, gene, i):
-    # get the start
-    dnaa_start_on_chromosome = blast_df["qstart"][i]
-    strand = "forward"
-    if blast_df["qstart"][i] > blast_df["qend"][i]:
-        strand = "reverse"
-
-    top_hit = blast_df["sseqid"][i]
-    top_hit_length = blast_df["slen"][i]
-    covered_len = blast_df["length"][i]
-    coverage = round(covered_len / top_hit_length * 100, 2)
-    ident = blast_df["nident"][i]
-    identity = round(ident / covered_len * 100, 2)
-
-    logger.info(
-        f"{gene} gene identified. It starts at coordinate {dnaa_start_on_chromosome} on the {strand} strand in your input file."
-    )
-    logger.info(
-        f"The best hit with a valid start codon in the database is {top_hit}, which has length of {top_hit_length} AAs."
-    )
-    logger.info(
-        f"{covered_len} AAs were covered by the best hit, with an overall coverage of {coverage}%."
-    )
-    logger.info(f"{ident} AAs were identical, with an overall identity of {identity}%.")
-    logger.info("Re-orienting.")
-
-    ####################
-    # reorientation
-    ####################
-    record = SeqIO.read(input, "fasta")
-    # length of chromosome
-    length = len(record.seq)
-
-    # reorient to start at the terminase
-    if strand == "forward":
-        left = record.seq[(int(dnaa_start_on_chromosome) - 1) : length]
-        right = record.seq[0 : int(dnaa_start_on_chromosome) - 1]
-        total_seq = left + right
-
-    # revese compliment if the strand is negative
-    if strand == "reverse":
-        record.seq = record.seq.reverse_complement()
-        left = record.seq[(length - int(dnaa_start_on_chromosome)) : length]
-        right = record.seq[0 : (length - int(dnaa_start_on_chromosome))]
-        total_seq = left + right
-
-    # updates the sequence
-    record.seq = total_seq
-
-    # writes to file
-    with open(out_file, "w") as out_fa:
-        SeqIO.write(record, out_fa, "fasta")
