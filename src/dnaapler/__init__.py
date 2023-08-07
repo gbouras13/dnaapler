@@ -543,7 +543,7 @@ bulk subcommand
 @click.option(
     "-c",
     "--custom_db",
-    help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want.",
+    help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want. Must be specified if -m custom is specified.",
     type=click.Path()
 )
 def bulk(
@@ -564,7 +564,7 @@ def bulk(
     instantiate_dirs(output, force)
 
     # defines gene
-    gene = "dnaA"
+    gene = "dnaAg"
     if mode == "chromosome":
         gene = "dnaA"
     elif mode == "plasmid":
