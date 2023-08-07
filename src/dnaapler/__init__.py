@@ -154,7 +154,7 @@ def chromosome(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
     logger.info(
-        f"You have chosen {autocomplete} to reoirent your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reoirent your sequence if the BLAST based method fails."
     )
 
     # validates fasta
@@ -162,6 +162,17 @@ def chromosome(
 
     # validate e value
     check_evalue(evalue)
+
+    # run BLAST
+    blast_success = run_blast_based_method(
+        ctx, input, output, prefix, gene, evalue, threads
+    )
+
+    # run autocomplete if BLAST reorientation failed
+    run_autocomplete(
+        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+    )
+
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -222,7 +233,7 @@ def plasmid(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
     logger.info(
-        f"You have chosen {autocomplete} to reoirent your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reoirent your sequence if the BLAST based method fails."
     )
 
     # validates fasta
@@ -231,6 +242,7 @@ def plasmid(
     # validate e value
     check_evalue(evalue)
 
+    # run BLAST
     blast_success = run_blast_based_method(
         ctx, input, output, prefix, gene, evalue, threads
     )
@@ -299,7 +311,7 @@ def phage(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
     logger.info(
-        f"You have chosen {autocomplete} to reoirent your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reoirent your sequence if the BLAST based method fails."
     )
 
     # validates fasta
@@ -385,7 +397,7 @@ def custom(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
     logger.info(
-        f"You have chosen {autocomplete} to reoirent your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reoirent your sequence if the BLAST based method fails."
     )
 
     # validates fasta

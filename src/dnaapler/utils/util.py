@@ -144,10 +144,8 @@ def run_autocomplete(
         if autocomplete == "none":
             logger.error(
                 "BLAST based reorientation failed.\n"
-                f"Because you chose the {autocomplete} autocomplete strategy as a backup strategy for reorientation,\n"
-                "Dnaapler will now exit.\n"
-                "Please check your input file,\n"
-                "or choose mystery or nearest with the --autocomplete flag ."
+                f"Because you chose the {autocomplete} autocomplete strategy as a backup strategy for reorientation, Dnaapler will now exit.\n"
+                "Please check your input file, or choose mystery or nearest with the --autocomplete flag."
             )
         elif autocomplete == "mystery":
             logger.info(
