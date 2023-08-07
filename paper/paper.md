@@ -8,8 +8,17 @@ authors:
   - name: George Bouras
     orcid: 0000-0002-5885-4186
     affiliation: "1, 2"
-  - name: Michael Roach
+  - name: Michael J. Roach
     orcid: 0000-0003-1488-5148
+    affiliation: 3
+  - name: Vijini Mallawaarachchi
+    orcid: 0000-0002-2651-8719
+    affiliation: 3
+  - name: Susanna R. Grigson
+    orcid: 0000-0003-4738-3451
+    affiliation: 3
+  - name: Bhavya Papudeshi
+    orcid: 0000-0001-5359-3100
     affiliation: 3
 affiliations:
   - name: Adelaide Medical School, Faculty of Health and Medical Sciences, The University of Adelaide, Adelaide, South Australia 5005, Australia
@@ -18,7 +27,7 @@ affiliations:
     index: 2
   - name: Flinders Accelerator for Microbiome Exploration, College of Science and Engineering, Flinders University, Bedford Park, Adelaide, South Australia 5042, Australia
     index: 3
-date: 04 August 2023  
+date: 07 August 2023  
 bibliography: paper.bib
 ---
 

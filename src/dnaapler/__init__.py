@@ -11,7 +11,7 @@ import pyrodigal
 from Bio import SeqIO
 from loguru import logger
 
-from dnaapler.utils.cds_methods import run_mystery, run_nearest
+from dnaapler.utils.cds_methods import (run_mystery, run_nearest, run_blast_based_method)
 from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
 from dnaapler.utils.processing import (
@@ -31,6 +31,8 @@ from dnaapler.utils.validation import (
     validate_choice_autocomplete,
     validate_custom_db_fasta,
     validate_fasta,
+    validate_choice_mode,
+    validate_fasta_bulk
 )
 
 """
@@ -160,34 +162,6 @@ def chromosome(
     # validate e value
     check_evalue(evalue)
 
-    # use external_tools.py
-
-    # chromosome path
-    # blast
-    logdir = Path(f"{output}/logs")
-    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
-    # dnaA da
-    db = os.path.join(DNAAPLER_DB, "dnaA_db")
-    blast = ExternalTool(
-        tool="blastx",
-        input=f"-query {input}",
-        output=f"-out {blast_output}",
-        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
-        logdir=logdir,
-    )
-
-    ExternalTool.run_tool(blast, ctx)
-
-    # reorient the genome based on the BLAST hit
-    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-    blast_success = process_blast_output_and_reorient(
-        input, blast_output, output_processed_file, gene
-    )
-
-    # run autocomplete if BLAST reorientation failed
-    run_autocomplete(
-        blast_success, autocomplete, ctx, input, seed_value, output, prefix
-    )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -256,30 +230,8 @@ def plasmid(
 
     # validate e value
     check_evalue(evalue)
-
-    # use external_tools.py
-
-    # chromosome path
-    # blast
-    logdir = Path(f"{output}/logs")
-    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
-    # dnaA database
-    db = os.path.join(DNAAPLER_DB, "repA_db")
-    blast = ExternalTool(
-        tool="blastx",
-        input=f"-query {input}",
-        output=f"-out {blast_output}",
-        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
-        logdir=logdir,
-    )
-
-    ExternalTool.run_tool(blast, ctx)
-
-    # reorient the genome based on the BLAST hit
-    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-    blast_success = process_blast_output_and_reorient(
-        input, blast_output, output_processed_file, gene
-    )
+    
+    blast_success = run_blast_based_method(ctx, input, output, prefix, gene, evalue, threads)
 
     # run autocomplete if BLAST reorientation failed
     run_autocomplete(
@@ -354,29 +306,8 @@ def phage(
     # validate e value
     check_evalue(evalue)
 
-    # use external_tools.py
-
-    # chromosome path
-    # blast
-    logdir = Path(f"{output}/logs")
-    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
-    # dnaA da
-    db = os.path.join(DNAAPLER_DB, "terL_db")
-    blast = ExternalTool(
-        tool="blastx",
-        input=f"-query {input}",
-        output=f"-out {blast_output}",
-        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
-        logdir=logdir,
-    )
-
-    ExternalTool.run_tool(blast, ctx)
-
-    # reorient the genome based on the BLAST hit
-    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-    blast_success = process_blast_output_and_reorient(
-        input, blast_output, output_processed_file, gene
-    )
+    # runs and processes BLAST
+    blast_success = run_blast_based_method(ctx, input, output, prefix, gene, evalue, threads)
 
     # run autocomplete if BLAST reorientation failed
     run_autocomplete(
@@ -469,6 +400,7 @@ def custom(
     shutil.copy2(custom_db, custom_db_fasta)
 
     logdir = Path(f"{output}/logs")
+
     # custom db
     # make custom db
     custom_database = os.path.join(db_dir, "custom_db")
@@ -480,28 +412,10 @@ def custom(
         logdir=logdir,
     )
 
-    # chromosome path
-    # blast
-    logdir = Path(f"{output}/logs")
-    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
-    # dnaA da
-    db = os.path.join(db_dir, "custom_db")
-    blast = ExternalTool(
-        tool="blastx",
-        input=f"-query {input}",
-        output=f"-out {blast_output}",
-        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
-        logdir=logdir,
-    )
+    ExternalTool.run_tool(makeblastdb, ctx)
 
-    tools_to_run = (makeblastdb, blast)
-    ExternalTool.run_tools(tools_to_run, ctx)
-
-    # reorient the genome based on the BLAST hit
-    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-    blast_success = process_blast_output_and_reorient(
-        input, blast_output, output_processed_file, gene
-    )
+    # runs and processes BLAST
+    blast_success = run_blast_based_method(ctx, input, output, prefix, gene, evalue, threads)
 
     # run autocomplete if BLAST reorientation failed
     run_autocomplete(
@@ -583,7 +497,7 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
     end_dnaapler(start_time)
 
 """
-bulk
+bulk subcommand
 """
 
 @main_cli.command()
@@ -599,11 +513,12 @@ bulk
     show_default=True,
 )
 @click.option(
-    "-g",
-    "--gene",
-    default="1e-10",
-    help="e value for blastx",
-    show_default=True,
+    "-m",
+    "--mode",
+    type=click.STRING,
+    callback=validate_choice_mode,
+    default="none",
+    help="Choose an mode to reorient in bulk.\nMust be one of: chromosome, plasmid or phage [default: chromosome]",
 )
 def bulk(
     ctx,

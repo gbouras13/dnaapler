@@ -10,6 +10,8 @@ from loguru import logger
 import subprocess as sp
 
 
+
+
 def instantiate_dirs(output_dir: str, force: bool):
     """Checks the output directory
     :param out_dir: output directory path
@@ -65,6 +67,34 @@ def validate_fasta(input_fasta: Path):
             logger.error(
                 f"{input_fasta} has more than one entry. Please check your input FASTA file!"
             )
+
+
+def validate_fasta_bulk(input_fasta: Path):
+    """
+    Validates  FASTA input - that the input is a FASTA with > 1 sequence
+    """
+    logger.info(
+        f"Checking that the input file {input_fasta} is in FASTA format and has only 1 entry."
+    )
+    # to get extension
+    with open(input_fasta, "r") as handle:
+        fasta = SeqIO.parse(handle, "fasta")
+        if any(fasta):
+            logger.info(f"{input_fasta} file checked.")
+        else:
+            logger.error(
+                f"Error: {input_fasta} file is not in the FASTA format. Please check your input file"
+            )
+
+    with open(input_fasta, "r") as handle:
+        # Check the number of records
+        if len(list(SeqIO.parse(handle, "fasta"))) == 1:
+            logger.error(f"{input_fasta} has only one entry, but more than one was expected. Please check your input FASTA file!")
+        else:
+            logger.info(
+                f"{input_fasta} has more than one entry."
+            )
+
 
 
 def validate_custom_db_fasta(custom_fasta: Path):
@@ -146,6 +176,15 @@ def validate_choice_autocomplete(ctx, param, value):
     checks the click.Choice option for the autocomplete flag
     """
     choices = ["mystery", "nearest", "none"]
+    if value not in choices:
+        raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
+    return value
+
+def validate_choice_mode(ctx, param, value):
+    """
+    checks the click.Choice option for the mode flag in bulk subcommand
+    """
+    choices = ["chromosome", "phage", "plasmid"]
     if value not in choices:
         raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
     return value
