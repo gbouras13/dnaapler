@@ -279,7 +279,7 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
     # Convert the dictionary to a DataFrame and save output
     bulk_summary_df = pd.DataFrame(data)
     bulk_summary_df.to_csv(
-        os.path.join(output, prefix + "_dnaapler_bulk_reorientation_summary.tsv"),
+        os.path.join(output, prefix + "_bulk_reorientation_summary.tsv"),
         sep="\t",
         index=False,
     )
