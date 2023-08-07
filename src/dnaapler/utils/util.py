@@ -83,7 +83,7 @@ def check_blast_version():
     """
     # blast
     message = "Checking BLAST installation."
-    logger.error(message)
+    logger.info(message)
     try:
         process = sp.Popen(["blastx", "-version"], stdout=sp.PIPE, stderr=sp.STDOUT)
         blast_out, _ = process.communicate()
@@ -95,14 +95,14 @@ def check_blast_version():
         blast_minor_version = int(blast_version.split(".")[1])
         blast_minorest_version = int(blast_version.split(".")[2])
         message = (
-        "BLAST version found is v"
-        + str(blast_major_version)
-        + "."
-        + str(blast_minor_version)
-        + "."
-        + str(blast_minorest_version)
-        + "."
-    )
+            "BLAST version found is v"
+            + str(blast_major_version)
+            + "."
+            + str(blast_minor_version)
+            + "."
+            + str(blast_minorest_version)
+            + "."
+        )
         logger.info(message)
     except Exception:
         message = "BLAST not found. Please install BLAST, see instructions at https://github.com/gbouras13/dnaapler."

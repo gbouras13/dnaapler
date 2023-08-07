@@ -1,15 +1,12 @@
 import re
 import shutil
+import subprocess as sp
 import sys
 from pathlib import Path
 
 import click
 from Bio import SeqIO
 from loguru import logger
-
-import subprocess as sp
-
-
 
 
 def instantiate_dirs(output_dir: str, force: bool):
@@ -89,12 +86,11 @@ def validate_fasta_bulk(input_fasta: Path):
     with open(input_fasta, "r") as handle:
         # Check the number of records
         if len(list(SeqIO.parse(handle, "fasta"))) == 1:
-            logger.error(f"{input_fasta} has only one entry, but more than one was expected. Please check your input FASTA file!")
-        else:
-            logger.info(
-                f"{input_fasta} has more than one entry."
+            logger.error(
+                f"{input_fasta} has only one entry, but more than one was expected. Please check your input FASTA file!"
             )
-
+        else:
+            logger.info(f"{input_fasta} has more than one entry.")
 
 
 def validate_custom_db_fasta(custom_fasta: Path):
@@ -180,6 +176,7 @@ def validate_choice_autocomplete(ctx, param, value):
         raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
     return value
 
+
 def validate_choice_mode(ctx, param, value):
     """
     checks the click.Choice option for the mode flag in bulk subcommand
@@ -188,5 +185,3 @@ def validate_choice_mode(ctx, param, value):
     if value not in choices:
         raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
     return value
-
-
