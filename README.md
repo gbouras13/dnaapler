@@ -30,7 +30,9 @@ dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name 
 
 It was originally designed to replicate the reorientation functionality of [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta) with dnaA, but for for long-read first assembled chromosomes. I have extended it to work with plasmids (`dnaapler plasmid`) and phages (`dnaapler phage`), or for any input FASTA desired with `dnaapler custom`, `dnaapler mystery` or `dnaapler nearest`.
 
-For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages. It is intended to be used with good-quality completed bacterial genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki), [Dragonflye](https://github.com/rpetit3/dragonflye) or my own pipleine [hybracter](https://github.com/gbouras13/hybracter).
+For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages. It is intended to be used with good-quality completed bacterial genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki), [Dragonflye](https://github.com/rpetit3/dragonflye) or my own pipeline [hybracter](https://github.com/gbouras13/hybracter).
+
+Additionally, you can also reorient multiple bacterial chromosomes/plasmids/phages at once using the `dnaapler bulk` subcommand.
 
 ## Commands
 
@@ -40,6 +42,7 @@ For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome br
 * `dnaapler custom`: Reorients your sequence to begin with a custom amino acid FASTA format gene that you specify
 * `dnaapler mystery`: Reorients your sequence to begin with a random CDS
 * `dnaapler nearest`: Reorients your sequence to begin with the first CDS (nearest to the start). Designed for fixing sequences where a CDS spans the breakpoint.
+* `dnaapler bulk`: Reorients multiple contigs to begin with the desired start gene - either dnaA, terL, repA or a custom gene.
 
 ## Installation
 
@@ -78,30 +81,36 @@ Options:
   -V, --version  Show the version and exit.
 
 Commands:
-  chromosome  Reorients your sequence to begin with the dnaA chromosomal...
+  bulk        Reorients multiple genomes to begin with the same gene
+  chromosome  Reorients your genome to begin with the dnaA chromosomal...
   citation    Print the citation(s) for this tool
-  custom      Reorients your sequence with a custom database
-  mystery     Reorients your sequence with a random gene
-  nearest     Reorients your sequence the begin with the first CDS as..
-  phage       Reorients your sequence to begin with the terL large...
-  plasmid     Reorients your sequence to begin with the repA replication...
+  custom      Reorients your genome with a custom database
+  mystery     Reorients your genome with a random CDS
+  nearest     Reorients your genome the begin with the first CDS as...
+  phage       Reorients your genome to begin with the terL large...
+  plasmid     Reorients your genome to begin with the repA replication...
   ```
 
   ```
   Usage: dnaapler chromosome [OPTIONS]
 
-  Reorients your sequence to begin with the dnaA chromosomal replication
+  Reorients your genome to begin with the dnaA chromosomal replication
   initiation gene
 
 Options:
-  -h, --help             Show this message and exit.
-  -V, --version          Show the version and exit.
-  -i, --input PATH       Path to input file in FASTA format  [required]
-  -o, --output PATH      Output directory   [default: output.dnaapler]
-  -t, --threads INTEGER  Number of threads to use with BLAST.  [default: 1]
-  -p, --prefix TEXT      Prefix for output files.  [default :dnaapler]
-  -f, --force            Force overwrites the output directory
-  -e, --evalue TEXT      e value for blastx  [default: 1e-10]
+  -h, --help               Show this message and exit.
+  -V, --version            Show the version and exit.
+  -i, --input PATH         Path to input file in FASTA format  [required]
+  -o, --output PATH        Output directory   [default: output.dnaapler]
+  -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
+  -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
+  -f, --force              Force overwrites the output directory
+  -e, --evalue TEXT        e value for blastx  [default: 1e-10]
+  -a, --autocomplete TEXT  Choose an option to autocomplete reorientation if
+                           BLAST based approach fails. Must be one of: none,
+                           mystery or nearest [default: none]
+  --seed_value INTEGER     Random seed to ensure reproducibility.  [default:
+                           13]
   ```
 
 The reoriented output FASTA will be `{prefix}_reoriented.fasta` in the specified output directory.

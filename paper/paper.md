@@ -43,13 +43,13 @@ Circlator [@Hunt:2015] is the most commonly used dedicated tool for reorienting 
 
 | Subcommand | Database used                                                                 | Gene used to reorient                       |
 |------------|-------------------------------------------------------------------------------|---------------------------------------------|
-| chromosome | Custom proteins downloaded from Swissprot                                     | dnaA chromosomal replication initiator gene |
-| plasmid    | repA database curated in Unicycler                                            | repA plasmid replication initiation gene    |
-| phage      | Prokaryotic Virus Remote Homologous Groups database (PHROGs)                  | terL large terminase subunit gene           |
+| chromosome | Custom database downloaded from Swissprot                                     | dnaA chromosomal replication initiator gene |
+| plasmid    | repA database curated from Unicycler [@Wick:2017]                             | repA plasmid replication initiation gene    |
+| phage      | Prokaryotic Virus Remote Homologous Groups database (PHROGs) [@Terzian:2021]  | terL large terminase subunit gene           |
 | custom     | User specified                                                                | Custom gene                                 |
 | mystery    | Pyrodigal predicted coding sequences                                          | random CDS                                  |
 | nearest    | Pyrodigal predicted coding sequences                                          | first CDS (nearest to the start)            |
-| bulk       | either chromosome, plasmid, phage or custom. Requires multiple input contigs. | dnaA, repA, terL or a custom gene           |
+| bulk       | Either chromosome, plasmid, phage or custom. Requires multiple input contigs. | dnaA, repA, terL or a custom gene           |
 
 
 Specifically, Dnaapler 'chromosome', 'phage' and 'plasmid' subcommands use blastx (protein databases are searched using a translated nucleotide query) to search for the dnaA, terL or repA gene respectively in the input genomes, using built-in amino acid databases for each gene. Dnaapler will check that the first amino acid of the identified start site begins with Methionine, Valine, or Leucine (the 3 most used gene start codons in bacteria and bacteriophages) and will then reorient the genome to begin with this gene in the forward direction. If the 'custom' subcommand is selected, the same process will be conducted but with a user specified amino acid FASTA formatted input database. If the 'mystery' or 'nearest' subcommands are selected, Pyrodigal will be used to predict all coding sequences, and the genome will be reoriented to begin with either a random (mystery) or the first (nearest) CDS, respectively. Dnaapler returns an output directory containing a log file and the genome reoriented as a FASTA formatted file. Finally, the 'bulk' subcommand can be used to reorient multiple input contigs (in a mulitFASTA format file) either either the chromosome, plasmid, phage or custom reorientation strategies.

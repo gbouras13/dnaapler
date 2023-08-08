@@ -1,0 +1,21 @@
+site_name: dnaapler
+site_url: "https://github.com/gbouras13/dnaapler"
+site_author: George Bouras
+theme:
+    name: readthedocs
+    highlightjs: true
+    hljs_languages:
+        - yaml
+        - bash
+        - shell
+        - python
+nav:
+    - ABOUT:
+      - Overview: index.md
+      - Citation: citation.md
+    - RUNNING:
+      - Install: install.md
+      - Usage: run.md
+    - OUTPUT:
+      - Output: output.md
+
