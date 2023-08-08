@@ -42,7 +42,7 @@ dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name 
 ## Description
 
 <p align="center">
-  <img src="paper/Dnaapler_figure.png" alt="Dnaapler Figure" height=600>
+  <img src="paper/Dnaapler_figure.png" alt="Dnaapler Figure">
 </p>
 
 `dnaapler` is a simple python program that takes a single nucleotide input sequence (in FASTA format), finds the desired start gene using `blastx` against an amino acid sequence database, checks that the start codon of this gene is found, and if so, then reorients the chromosome to begin with this gene on the forward strand. 
