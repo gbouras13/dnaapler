@@ -1,7 +1,7 @@
 """
 Unit tests for dnaapler overall
 
-Usage: pytest
+Usage: pytest .
 
 """
 
@@ -139,6 +139,35 @@ def test_custom(tmp_dir):
     exec_command(cmd)
 
 
+def test_bulk_chromosome(tmp_dir):
+    """test bulk chromosome"""
+    input_fasta: Path = f"{overall_test_data}/bulk_chromosome.fasta"
+    cmd = f"dnaapler bulk -m chromosome -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_bulk_phage(tmp_dir):
+    """test bulk phage"""
+    input_fasta: Path = f"{overall_test_data}/bulk_phage.fasta"
+    cmd = f"dnaapler bulk -m phage -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_bulk_plasmid(tmp_dir):
+    """test bulk plasmid"""
+    input_fasta: Path = f"{overall_test_data}/bulk_plasmid.fasta"
+    cmd = f"dnaapler bulk -m plasmid -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_bulk_custom(tmp_dir):
+    """test bulk custom"""
+    input_fasta: Path = f"{overall_test_data}/bulk_chromosome.fasta"
+    custom: Path = f"{test_data}/fake_custom.faa"
+    cmd = f"dnaapler bulk -m custom -i {input_fasta} -o {tmp_dir} -c {custom} -t 1 -f"
+    exec_command(cmd)
+
+
 def test_citation():
     """test citation"""
     cmd = f"dnaapler citation"
@@ -183,6 +212,39 @@ class TestExits(unittest.TestCase):
             cmd = f"dnaapler chromosome -i {input_fasta} -o {outdir} -t 1 -f"
             exec_command(cmd)
 
+    def test_bulk_single_genome(self):
+        """test bulk with single genome"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{overall_test_data}/SAOMS1_reoriented.fasta"
+            outdir: Path = f"{overall_test_data}/chrom_out"
+            cmd = f"dnaapler bulk -m phage -i {input_fasta} -o {outdir} -t 1 -f"
+            exec_command(cmd)
+
+    def test_bulk_bad_mode(self):
+        """test bulk with incorrect -m value"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{overall_test_data}/SAOMS1_reoriented.fasta"
+            outdir: Path = f"{overall_test_data}/chrom_out"
+            cmd = f"dnaapler bulk -m bad -i {input_fasta} -o {outdir} -t 1 -f"
+            exec_command(cmd)
+
+    def test_bulk_custom_no_db(self):
+        """test bulk custom with no db"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{overall_test_data}/bulk_chromosome.fasta"
+            outdir: Path = f"{overall_test_data}/chrom_out"
+            cmd = f"dnaapler bulk -m custom -i {input_fasta} -o {outdir} -t 1 -f"
+            exec_command(cmd)
+
+    def test_bulk_phage_with_chrom(self):
+        """test bulk chromosome with phage genomes"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{overall_test_data}/bulk_phage.fasta"
+            outdir: Path = f"{overall_test_data}/chrom_out"
+            cmd = f"dnaapler bulk -m chromosome -i {input_fasta} -o {outdir} -t 1 -f"
+            exec_command(cmd)
+
 
 remove_directory(f"{overall_test_data}/phage_out")
 remove_directory(f"{overall_test_data}/chrom_out")
+remove_directory(f"{overall_test_data}/bulk_out")

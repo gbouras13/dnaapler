@@ -1,11 +1,17 @@
 import os
 import random
+from pathlib import Path
 
 import pyrodigal
 from Bio import SeqIO
 from loguru import logger
 
-from dnaapler.utils.processing import reorient_sequence_random
+from dnaapler.utils.constants import DNAAPLER_DB
+from dnaapler.utils.external_tools import ExternalTool
+from dnaapler.utils.processing import (
+    process_blast_output_and_reorient,
+    reorient_sequence_random,
+)
 
 
 def run_mystery(ctx, input, seed_value, output, prefix):
@@ -85,3 +91,89 @@ def run_nearest(ctx, input, output, prefix):
 
         output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
         reorient_sequence_random(input, output_processed_file, start, strand)
+
+
+def run_blast_based_method(ctx, input, output, prefix, gene, evalue, threads):
+    """
+    returns: bool -  blast_success, whether or not the BLAST based approach succeeded
+    """
+
+    # sets DB directory based of the gene name
+
+    # defines db name
+    db_name = "dnaA_db"
+    if gene == "dnaA":
+        db_name = "dnaA_db"
+    elif gene == "repA":
+        db_name = "repA_db"
+    elif gene == "terL":
+        db_name = "terL_db"
+
+    # chromosome path
+    # blast
+    logdir = Path(f"{output}/logs")
+    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+
+    db = os.path.join(DNAAPLER_DB, db_name)
+    if gene == "custom":
+        db = os.path.join(output, "custom_db", "custom_db")
+    blast = ExternalTool(
+        tool="blastx",
+        input=f"-query {input}",
+        output=f"-out {blast_output}",
+        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        logdir=logdir,
+    )
+
+    ExternalTool.run_tool(blast, ctx)
+
+    # reorient the genome based on the BLAST hit
+    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+    blast_success = process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, gene
+    )
+
+    return blast_success
+
+
+def run_blast_based_method_bulk(ctx, input, output, prefix, gene, evalue, threads):
+    """
+    returns: bool -  blast_success, whether or not the BLAST based approach succeeded
+    """
+
+    # sets DB directory based of the gene name
+
+    # defines db name
+    db_name = "dnaA_db"
+    if gene == "dnaA":
+        db_name = "dnaA_db"
+    elif gene == "repA":
+        db_name = "repA_db"
+    elif gene == "terL":
+        db_name = "terL_db"
+
+    # chromosome path
+    # blast
+    logdir = Path(f"{output}/logs")
+    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+
+    db = os.path.join(DNAAPLER_DB, db_name)
+    if gene == "custom":
+        db = os.path.join(output, "custom_db", "custom_db")
+    blast = ExternalTool(
+        tool="blastx",
+        input=f"-query {input}",
+        output=f"-out {blast_output}",
+        params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        logdir=logdir,
+    )
+
+    ExternalTool.run_tool(blast, ctx)
+
+    # reorient the genome based on the BLAST hit
+    output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+    blast_success = process_blast_output_and_reorient(
+        input, blast_output, output_processed_file, gene
+    )
+
+    return blast_success

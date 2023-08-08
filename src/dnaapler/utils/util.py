@@ -72,23 +72,48 @@ def begin_dnaapler(input, output, threads, gene):
     logger.info(f"Your output directory  is {output}")
     logger.info(f"You have specified {threads} threads to use with blastx")
     logger.info(f"You have specified {gene} gene to reoirent your sequence")
-    blast_version = check_blast_version()
-    logger.info(f"blastx version {blast_version} found")
+    # check BLAST version
+    check_blast_version()
     return start_time
 
 
 def check_blast_version():
+    """
+    checks the BLAST version
+    """
     # blast
+    message = "Checking BLAST installation."
+    logger.info(message)
     try:
         process = sp.Popen(["blastx", "-version"], stdout=sp.PIPE, stderr=sp.STDOUT)
         blast_out, _ = process.communicate()
         blast_out = blast_out.decode().strip()
         blast_out = blast_out.split("\n")[0]
         blast_version = blast_out.split(" ")[1]
+        blast_version = blast_version.strip("+")
+        blast_major_version = int(blast_version.split(".")[0])
+        blast_minor_version = int(blast_version.split(".")[1])
+        blast_minorest_version = int(blast_version.split(".")[2])
+        message = (
+            "BLAST version found is v"
+            + str(blast_major_version)
+            + "."
+            + str(blast_minor_version)
+            + "."
+            + str(blast_minorest_version)
+            + "."
+        )
+        logger.info(message)
     except Exception:
-        logger.error("blastx not found. Please install blast")
+        message = "BLAST not found. Please install BLAST, see instructions at https://github.com/gbouras13/dnaapler."
+        logger.error(message)
 
-    return blast_version
+    if blast_minor_version < 9 or blast_major_version < 2:
+        message = "BLAST is too old - please reinstall BLAST v2.9 or newer, see instructions at https://github.com/gbouras13/dnaapler."
+        logger.error(message)
+    else:
+        message = "BLAST version is ok."
+        logger.info(message)
 
 
 def end_dnaapler(start_time):
@@ -119,10 +144,8 @@ def run_autocomplete(
         if autocomplete == "none":
             logger.error(
                 "BLAST based reorientation failed.\n"
-                f"Because you chose the {autocomplete} autocomplete strategy as a backup strategy for reorientation,\n "
-                "Dnaapler will now exit.\n"
-                "Please check your input file,\n"
-                "or choose mystery or nearest as a value for the --autocomplete flag ."
+                f"Because you chose the {autocomplete} autocomplete strategy as a backup strategy for reorientation, Dnaapler will now exit.\n"
+                "Please check your input file, or choose mystery or nearest with the --autocomplete flag."
             )
         elif autocomplete == "mystery":
             logger.info(

@@ -187,6 +187,63 @@ def reorient_sequence_random(input, out_file, start, strand):
         SeqIO.write(record, out_fa, "fasta")
 
 
+def reorient_single_record_bulk(blast_df, out_file, record, i):
+    """
+    reorients a single record in dnaapler bulk
+    """
+
+    # get the start
+    dnaa_start_on_chromosome = blast_df["qstart"][i]
+    strand = "forward"
+    if blast_df["qstart"][i] > blast_df["qend"][i]:
+        strand = "reverse"
+
+    top_hit = blast_df["sseqid"][i]
+    top_hit_length = blast_df["slen"][i]
+    covered_len = blast_df["length"][i]
+    coverage = round(covered_len / top_hit_length * 100, 2)
+    ident = blast_df["nident"][i]
+    identity = round(ident / covered_len * 100, 2)
+
+    ####################
+    # reorientation
+    ####################
+
+    # length of chromosome
+    length = len(record.seq)
+
+    # reorient to start at the terminase
+    if strand == "forward":
+        left = record.seq[(int(dnaa_start_on_chromosome) - 1) : length]
+        right = record.seq[0 : int(dnaa_start_on_chromosome) - 1]
+        total_seq = left + right
+
+    # revese compliment if the strand is negative
+    if strand == "reverse":
+        record.seq = record.seq.reverse_complement()
+        left = record.seq[(length - int(dnaa_start_on_chromosome)) : length]
+        right = record.seq[0 : (length - int(dnaa_start_on_chromosome))]
+        total_seq = left + right
+
+    # updates the sequence
+    record.seq = total_seq
+
+    # writes to file
+    with open(out_file, "a") as out_fa:
+        SeqIO.write(record, out_fa, "fasta")
+
+    return (
+        dnaa_start_on_chromosome,
+        strand,
+        top_hit,
+        top_hit_length,
+        covered_len,
+        coverage,
+        ident,
+        identity,
+    )
+
+
 # function to touch create a file
 # https://stackoverflow.com/questions/12654772/create-empty-file-using-python
 def touch_file(path):
