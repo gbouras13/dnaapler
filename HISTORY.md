@@ -2,10 +2,11 @@
 History
 =======
 
-0.2.0 (2023-05-30)
+0.2.0 (2023-08-08)
 ------------------
 
 * `dnaapler nearest` subcommand added
+* `dnaapler bulk` subcommand added
 * dnaA database filtered to keep only bona-file dnaA genes (i.e. GN=dnaA)
 * Adds `-e` parameter to vary BLAST evalue if desired
 * Adds `-a` autocomplete parameter if user wants to reorient sequences with mystery or nearest methods in case the BLAST based method fails
