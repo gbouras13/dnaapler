@@ -37,8 +37,6 @@ def run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db)
         blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
 
         db = os.path.join(DNAAPLER_DB, db_name)
-        if gene == "custom":
-            db = os.path.join(output, "custom_db", "custom_db")
         blast = ExternalTool(
             tool="blastx",
             input=f"-query {input}",
@@ -51,7 +49,7 @@ def run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db)
 
     # if gene == custom
     # maikes db then runs blast
-    else:
+    elif gene == "custom":
         # validates custom fasta input for database
         validate_custom_db_fasta(Path(custom_db))
 
@@ -134,7 +132,7 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
         logger.error("There was an issue with parsing the BLAST output file.")
 
     if isinstance(blast_df, pd.DataFrame) and blast_df.empty:
-        logger.info(
+        logger.error(
             "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
         )
 

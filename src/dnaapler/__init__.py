@@ -2,23 +2,17 @@
 """dnaapler"""
 
 import os
-import random
 import shutil
 from pathlib import Path
 
 import click
-import pyrodigal
-from Bio import SeqIO
 from loguru import logger
 
 from dnaapler.utils.bulk import bulk_process_blast_output_and_reorient, run_bulk_blast
 from dnaapler.utils.cds_methods import run_blast_based_method, run_mystery, run_nearest
 from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
-from dnaapler.utils.processing import (
-    process_blast_output_and_reorient,
-    reorient_sequence_random,
-)
+
 from dnaapler.utils.util import (
     begin_dnaapler,
     end_dnaapler,
@@ -563,7 +557,7 @@ def bulk(
     instantiate_dirs(output, force)
 
     # defines gene
-    gene = "dnaAg"
+    gene = "dnaA"
     if mode == "chromosome":
         gene = "dnaA"
     elif mode == "plasmid":
