@@ -12,7 +12,6 @@ from dnaapler.utils.bulk import bulk_process_blast_output_and_reorient, run_bulk
 from dnaapler.utils.cds_methods import run_blast_based_method, run_mystery, run_nearest
 from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
-
 from dnaapler.utils.util import (
     begin_dnaapler,
     end_dnaapler,
