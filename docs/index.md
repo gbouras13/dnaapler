@@ -8,6 +8,4 @@ For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome br
 
 A clear schematic of what dnaapler is trying to achieve is presented below:
 
-<p align="center">
-  <img src="Dnaapler_figure.png" alt="Dnaapler Figure">
-</p>
+![Image](Dnaapler_figure.png)
