@@ -1,5 +1,7 @@
 # Output
 
+### files
+
 dnaapler creates a number of output files. For all subcommands that are not `dnaapler bulk`, inside the output directory you will find:
 
 * A `{prefix}_reoriented.fasta` containing the reoriented genome.

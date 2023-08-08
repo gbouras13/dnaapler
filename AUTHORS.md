@@ -1,4 +1,3 @@
-=======
 Credits
 =======
 
@@ -10,4 +9,7 @@ Development Lead
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Michael J. Roach
+* Vijini Mallawaarachchi
+* Susanna R. Grigson
+* Bhavya Papudeshi

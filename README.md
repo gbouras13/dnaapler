@@ -23,8 +23,27 @@ conda activate dnaapler_env
 dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name -t 8
 ```
 
+## Table of Contents
+- [dnaapler](#dnaapler)
+  - [Quick Start](#quick-start)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+  - [Documentation](#documentation)
+  - [Commands](#commands)
+  - [Installation](#installation)
+    - [Conda](#conda)
+    - [Pip](#pip)
+  - [Usage](#usage)
+  - [Example Usage](#example-usage)
+  - [Databases](#databases)
+  - [Motivation](#motivation)
+  - [Acknowledgements](#acknowledgements)
 
 ## Description
+
+<p align="center">
+  <img src="paper/Dnaapler_figure.png" alt="Dnaapler Figure" height=600>
+</p>
 
 `dnaapler` is a simple python program that takes a single nucleotide input sequence (in FASTA format), finds the desired start gene using `blastx` against an amino acid sequence database, checks that the start codon of this gene is found, and if so, then reorients the chromosome to begin with this gene on the forward strand. 
 
@@ -33,6 +52,10 @@ It was originally designed to replicate the reorientation functionality of [Unic
 For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages. It is intended to be used with good-quality completed bacterial genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki), [Dragonflye](https://github.com/rpetit3/dragonflye) or my own pipeline [hybracter](https://github.com/gbouras13/hybracter).
 
 Additionally, you can also reorient multiple bacterial chromosomes/plasmids/phages at once using the `dnaapler bulk` subcommand.
+
+## Documentation
+
+The full documentation for `dnaapler` can be found [here](https://dnaapler.readthedocs.io).
 
 ## Commands
 
@@ -46,7 +69,7 @@ Additionally, you can also reorient multiple bacterial chromosomes/plasmids/phag
 
 ## Installation
 
-`dnaapler` requires only BLAST as an external dependency. 
+`dnaapler` requires only BLAST v2.9 or higher as an external dependency. 
 
 Installation from conda is recommended as this will install BLAST automatically.
 
@@ -69,7 +92,10 @@ pip install dnaapler
 You will need to install BLAST separately.
 
 e.g.
-`conda install -c bioconda blast`
+
+```
+conda install -c bioconda blast>=2.9
+```
 
 ## Usage
 
@@ -141,6 +167,11 @@ dnaapler mystery -i input.fasta -o output_directory_path -p my_genome_name
 dnaapler nearest -i input.fasta -o output_directory_path -p my_genome_name
 ```
 
+```
+# to reorient multiple bacterial chromosomes
+dnaapler bulk -i input_file_with_multiple_chromosomes.fasta -m chromosome -o output_directory_path -p my_genome_name 
+```
+
 ## Databases
 
 `dnaapler chromosome` uses 584 proteins downloaded from Swissprot with the query "Chromosomal replication initiator protein DnaA" on 24 May 2023 as its database for dnaA. All hits from the query were also filtered to ensure "GN=dnaA" was included in the header of the FASTA entry.
@@ -169,6 +200,6 @@ After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler my
 
 ## Acknowledgements
 
-Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) I took and adapted a lot of scaffolding code from because he writes really nice code, [Rob Edwards](https://github.com/linsalrob), because everything always comes back to phages, and especially [Vijini Mallawaarachchi](https://github.com/Vini2) who taught me how to actually do something resembling legitimate software development.
+Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) I took and adapted a lot of scaffolding code from because he writes really nice code.
 
 
