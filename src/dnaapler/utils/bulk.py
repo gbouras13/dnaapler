@@ -190,7 +190,6 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
             # if the start is 1 of the top hit
             if filtered_df["qstart"][0] == 1:
                 # writes to file
-                record = SeqIO.read(input, "fasta")
                 with open(reoriented_output_file, "a") as out_fa:
                     SeqIO.write(record, out_fa, "fasta")
 
