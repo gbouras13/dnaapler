@@ -30,9 +30,7 @@ e.g.
 conda install -c bioconda blast>=2.9
 ```
 
-
-
-# Beginner Conda Installation
+### Beginner Conda Installation
 
 If you are new to using the command-line, please install conda using the following instructions.
 
@@ -41,7 +39,7 @@ If you are new to using the command-line, please install conda using the followi
 
 `curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
 
-For Mac (Intel, will also work with M1):
+* For Mac (Intel, will also work with M1):
 
 `curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh`
 
@@ -61,7 +59,7 @@ conda config --add channels conda-forge
 
 `conda install mamba`
 
- 6. Finally, I would recommend installing dnaapler into a fresh environment. For example to create an environment called dnaaplerENV with dnaapler installed:
+6. Finally, I would recommend installing dnaapler into a fresh environment. For example to create an environment called dnaaplerENV with dnaapler installed:
 
 ```
 mamba create -n dnaaplerENV dnaapler
