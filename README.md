@@ -89,12 +89,12 @@ You can also install `dnaapler` with pip.
 pip install dnaapler
 ```
 
-You will need to install BLAST separately.
+You will need to install BLAST v2.9 or higher separately.
 
 e.g.
 
 ```
-conda install -c bioconda blast>=2.9
+conda install -c bioconda blast>2.8
 ```
 
 ## Usage
