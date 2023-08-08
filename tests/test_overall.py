@@ -1,7 +1,7 @@
 """
 Unit tests for dnaapler overall
 
-Usage: pytest
+Usage: pytest .
 
 """
 
@@ -159,6 +159,7 @@ def test_bulk_plasmid(tmp_dir):
     cmd = f"dnaapler bulk -m plasmid -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
+
 def test_bulk_custom(tmp_dir):
     """test bulk custom"""
     input_fasta: Path = f"{overall_test_data}/bulk_chromosome.fasta"
@@ -218,7 +219,7 @@ class TestExits(unittest.TestCase):
             outdir: Path = f"{overall_test_data}/chrom_out"
             cmd = f"dnaapler bulk -m phage -i {input_fasta} -o {outdir} -t 1 -f"
             exec_command(cmd)
-    
+
     def test_bulk_bad_mode(self):
         """test bulk with incorrect -m value"""
         with self.assertRaises(RuntimeError):
@@ -242,7 +243,6 @@ class TestExits(unittest.TestCase):
             outdir: Path = f"{overall_test_data}/chrom_out"
             cmd = f"dnaapler bulk -m chromosome -i {input_fasta} -o {outdir} -t 1 -f"
             exec_command(cmd)
-
 
 
 remove_directory(f"{overall_test_data}/phage_out")
