@@ -10,6 +10,8 @@
 
 # dnaapler
 
+Dnaapler is a simple tool that reorients complete circular microbial genomes.
+
 ## Quick Start
 
 ```
@@ -47,7 +49,7 @@ dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name 
 
 `dnaapler` is a simple python program that takes a single nucleotide input sequence (in FASTA format), finds the desired start gene using `blastx` against an amino acid sequence database, checks that the start codon of this gene is found, and if so, then reorients the chromosome to begin with this gene on the forward strand. 
 
-It was originally designed to replicate the reorientation functionality of [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta) with dnaA, but for for long-read first assembled chromosomes. I have extended it to work with plasmids (`dnaapler plasmid`) and phages (`dnaapler phage`), or for any input FASTA desired with `dnaapler custom`, `dnaapler mystery` or `dnaapler nearest`.
+It was originally designed to replicate the reorientation functionality of [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta) with dnaA, but for for long-read first assembled chromosomes. We have extended it to work with plasmids (`dnaapler plasmid`) and phages (`dnaapler phage`), or for any input FASTA desired with `dnaapler custom`, `dnaapler mystery` or `dnaapler nearest`.
 
 For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages. It is intended to be used with good-quality completed bacterial genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki), [Dragonflye](https://github.com/rpetit3/dragonflye) or my own pipeline [hybracter](https://github.com/gbouras13/hybracter).
 
@@ -178,7 +180,7 @@ dnaapler bulk -i input_file_with_multiple_chromosomes.fasta -m chromosome -o out
 
 `dnaapler plasmid` uses the repA database curated by Ryan Wick in [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta).
 
-`dnaapler phage` uses a terL database curated using [PHROGs](https://phrogs.lmge.uca.fr). I downloaded all the AA sequences of the 55 phrogs annotated as 'large terminase subunit', combined them depduplicated them using [seqkit](https://github.com/shenwei356/seqkit) `seqkit rmdup -s -o terL.faa phrog_terL.faa`.
+`dnaapler phage` uses a terL database curated using [PHROGs](https://phrogs.lmge.uca.fr). All the AA sequences of the 55 phrogs annotated as 'large terminase subunit' were downloaded, combined and depduplicated using [seqkit](https://github.com/shenwei356/seqkit) `seqkit rmdup -s -o terL.faa phrog_terL.faa`.
 
 `dnaapler custom` uses a custom amino acid FASTA format file that you specify using `-c`. 
 
@@ -200,6 +202,6 @@ After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler my
 
 ## Acknowledgements
 
-Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) I took and adapted a lot of scaffolding code from because he writes really nice code.
+Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) we took and adapted a lot of scaffolding code from because he writes really nice code.
 
 
