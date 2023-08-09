@@ -8,7 +8,9 @@
 [![Downloads](https://static.pepy.tech/badge/dnaapler)](https://pepy.tech/project/dnaapler)
 
 
-# dnaapler
+# Dnaapler
+
+Dnaapler is a simple tool that reorients complete circular microbial genomes.
 
 ## Quick Start
 
@@ -23,39 +25,14 @@ conda activate dnaapler_env
 dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name -t 8
 ```
 
-## Table of Contents
-- [dnaapler](#dnaapler)
-  - [Quick Start](#quick-start)
-  - [Table of Contents](#table-of-contents)
-  - [Description](#description)
-  - [Documentation](#documentation)
-  - [Commands](#commands)
-  - [Installation](#installation)
-    - [Conda](#conda)
-    - [Pip](#pip)
-  - [Usage](#usage)
-  - [Example Usage](#example-usage)
-  - [Databases](#databases)
-  - [Motivation](#motivation)
-  - [Acknowledgements](#acknowledgements)
 
 ## Description
 
-<p align="center">
-  <img src="paper/Dnaapler_figure.png" alt="Dnaapler Figure">
-</p>
-
 `dnaapler` is a simple python program that takes a single nucleotide input sequence (in FASTA format), finds the desired start gene using `blastx` against an amino acid sequence database, checks that the start codon of this gene is found, and if so, then reorients the chromosome to begin with this gene on the forward strand. 
 
-It was originally designed to replicate the reorientation functionality of [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta) with dnaA, but for for long-read first assembled chromosomes. I have extended it to work with plasmids (`dnaapler plasmid`) and phages (`dnaapler phage`), or for any input FASTA desired with `dnaapler custom`, `dnaapler mystery` or `dnaapler nearest`.
+It was originally designed to replicate the reorientation functionality of [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta) with dnaA, but for for long-read first assembled chromosomes. We have extended it to work with plasmids (`dnaapler plasmid`) and phages (`dnaapler phage`), for any input FASTA desired with `dnaapler custom`, `dnaapler mystery` or `dnaapler nearest`, and for multiple input contigs with `dnaapler bulk`.
 
-For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages. It is intended to be used with good-quality completed bacterial genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki), [Dragonflye](https://github.com/rpetit3/dragonflye) or my own pipeline [hybracter](https://github.com/gbouras13/hybracter).
-
-Additionally, you can also reorient multiple bacterial chromosomes/plasmids/phages at once using the `dnaapler bulk` subcommand.
-
-## Documentation
-
-The full documentation for `dnaapler` can be found [here](https://dnaapler.readthedocs.io).
+For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome breakpoint never interrupts genes or mobile genetic elements like prophages. It is intended to be used with good-quality completed bacterial genomes, generated with methods such as [Trycycler](https://github.com/rrwick/Trycycler/wiki), [Dragonflye](https://github.com/rpetit3/dragonflye) or my own pipleine [hybracter](https://github.com/gbouras13/hybracter).
 
 ## Commands
 
@@ -65,11 +42,10 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 * `dnaapler custom`: Reorients your sequence to begin with a custom amino acid FASTA format gene that you specify
 * `dnaapler mystery`: Reorients your sequence to begin with a random CDS
 * `dnaapler nearest`: Reorients your sequence to begin with the first CDS (nearest to the start). Designed for fixing sequences where a CDS spans the breakpoint.
-* `dnaapler bulk`: Reorients multiple contigs to begin with the desired start gene - either dnaA, terL, repA or a custom gene.
 
 ## Installation
 
-`dnaapler` requires only BLAST v2.9 or higher as an external dependency. 
+`dnaapler` requires only BLAST as an external dependency. 
 
 Installation from conda is recommended as this will install BLAST automatically.
 
@@ -89,13 +65,10 @@ You can also install `dnaapler` with pip.
 pip install dnaapler
 ```
 
-You will need to install BLAST v2.9 or higher separately.
+You will need to install BLAST separately.
 
 e.g.
-
-```
-conda install -c bioconda blast>2.8
-```
+`conda install -c bioconda blast`
 
 ## Usage
 
@@ -107,36 +80,30 @@ Options:
   -V, --version  Show the version and exit.
 
 Commands:
-  bulk        Reorients multiple genomes to begin with the same gene
-  chromosome  Reorients your genome to begin with the dnaA chromosomal...
+  chromosome  Reorients your sequence to begin with the dnaA chromosomal...
   citation    Print the citation(s) for this tool
-  custom      Reorients your genome with a custom database
-  mystery     Reorients your genome with a random CDS
-  nearest     Reorients your genome the begin with the first CDS as...
-  phage       Reorients your genome to begin with the terL large...
-  plasmid     Reorients your genome to begin with the repA replication...
+  custom      Reorients your sequence with a custom database
+  mystery     Reorients your sequence with a random gene
+  nearest     Reorients your sequence the begin with the first CDS as..
+  phage       Reorients your sequence to begin with the terL large...
+  plasmid     Reorients your sequence to begin with the repA replication...
   ```
 
   ```
   Usage: dnaapler chromosome [OPTIONS]
 
-  Reorients your genome to begin with the dnaA chromosomal replication
+  Reorients your sequence to begin with the dnaA chromosomal replication
   initiation gene
 
 Options:
-  -h, --help               Show this message and exit.
-  -V, --version            Show the version and exit.
-  -i, --input PATH         Path to input file in FASTA format  [required]
-  -o, --output PATH        Output directory   [default: output.dnaapler]
-  -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
-  -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
-  -f, --force              Force overwrites the output directory
-  -e, --evalue TEXT        e value for blastx  [default: 1e-10]
-  -a, --autocomplete TEXT  Choose an option to autocomplete reorientation if
-                           BLAST based approach fails. Must be one of: none,
-                           mystery or nearest [default: none]
-  --seed_value INTEGER     Random seed to ensure reproducibility.  [default:
-                           13]
+  -h, --help             Show this message and exit.
+  -V, --version          Show the version and exit.
+  -i, --input PATH       Path to input file in FASTA format  [required]
+  -o, --output PATH      Output directory   [default: output.dnaapler]
+  -t, --threads INTEGER  Number of threads to use with BLAST.  [default: 1]
+  -p, --prefix TEXT      Prefix for output files.  [default :dnaapler]
+  -f, --force            Force overwrites the output directory
+  -e, --evalue TEXT      e value for blastx  [default: 1e-10]
   ```
 
 The reoriented output FASTA will be `{prefix}_reoriented.fasta` in the specified output directory.
@@ -167,18 +134,13 @@ dnaapler mystery -i input.fasta -o output_directory_path -p my_genome_name
 dnaapler nearest -i input.fasta -o output_directory_path -p my_genome_name
 ```
 
-```
-# to reorient multiple bacterial chromosomes
-dnaapler bulk -i input_file_with_multiple_chromosomes.fasta -m chromosome -o output_directory_path -p my_genome_name 
-```
-
 ## Databases
 
 `dnaapler chromosome` uses 584 proteins downloaded from Swissprot with the query "Chromosomal replication initiator protein DnaA" on 24 May 2023 as its database for dnaA. All hits from the query were also filtered to ensure "GN=dnaA" was included in the header of the FASTA entry.
 
 `dnaapler plasmid` uses the repA database curated by Ryan Wick in [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta).
 
-`dnaapler phage` uses a terL database curated using [PHROGs](https://phrogs.lmge.uca.fr). I downloaded all the AA sequences of the 55 phrogs annotated as 'large terminase subunit', combined them depduplicated them using [seqkit](https://github.com/shenwei356/seqkit) `seqkit rmdup -s -o terL.faa phrog_terL.faa`.
+`dnaapler phage` uses a terL database curated using [PHROGs](https://phrogs.lmge.uca.fr). All the AA sequences of the 55 phrogs annotated as 'large terminase subunit' were downloaded, combined and depduplicated using [seqkit](https://github.com/shenwei356/seqkit) `seqkit rmdup -s -o terL.faa phrog_terL.faa`.
 
 `dnaapler custom` uses a custom amino acid FASTA format file that you specify using `-c`. 
 
@@ -200,6 +162,6 @@ After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler my
 
 ## Acknowledgements
 
-Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) I took and adapted a lot of scaffolding code from because he writes really nice code.
+Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) We took and adapted a lot of scaffolding code from because he writes really nice code, [Rob Edwards](https://github.com/linsalrob), because everything always comes back to phages, and especially [Vijini Mallawaarachchi](https://github.com/Vini2) who taught me how to actually do something resembling legitimate software development.
 
 
