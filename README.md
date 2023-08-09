@@ -204,4 +204,3 @@ After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler my
 
 Thanks to Torsten Seemann, Ryan Wick and the Circlator team for their existing work in the space. Also to [Michael Hall](https://github.com/mbhall88), whose repository [tbpore](https://github.com/mbhall88/tbpore) we took and adapted a lot of scaffolding code from because he writes really nice code.
 
-
