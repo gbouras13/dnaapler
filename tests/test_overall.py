@@ -167,11 +167,13 @@ def test_bulk_custom(tmp_dir):
     cmd = f"dnaapler bulk -m custom -i {input_fasta} -o {tmp_dir} -c {custom} -t 1 -f"
     exec_command(cmd)
 
+
 def test_all(tmp_dir):
     """test all"""
     input_fasta: Path = f"{overall_test_data}/all_test.fasta"
     cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
+
 
 def test_all_ignore(tmp_dir):
     """test all"""
@@ -179,6 +181,7 @@ def test_all_ignore(tmp_dir):
     ignore_file: Path = f"{overall_test_data}/ignore.txt"
     cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f --ignore {ignore_file}"
     exec_command(cmd)
+
 
 def test_citation():
     """test citation"""

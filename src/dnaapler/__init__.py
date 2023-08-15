@@ -680,7 +680,7 @@ def all(
     if ignore == "":
         ignore_flag = False
     else:
-        ignore_flag = True 
+        ignore_flag = True
     # checks if the ignore file exists and contains text
     if ignore_flag == True:
         logger.info(f"You have specified contigs to ignore in {ignore}.")
@@ -702,7 +702,7 @@ def all(
             # gets all contigs in the ignore
             # will split by space so short_contig only (to match BLAST)
             with open(ignore) as f:
-                    ignore_dict = {x.rstrip().split()[0] for x in f}
+                ignore_dict = {x.rstrip().split()[0] for x in f}
             ignore_list = list(ignore_dict)
 
     all_process_blast_output_and_reorient(
