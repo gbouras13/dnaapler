@@ -156,8 +156,8 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
 
     # Read the FASTA file and extract the IDs
     for record in SeqIO.parse(input, "fasta"):
-        contig = record.id
-
+        contig = record.description
+ 
         contigs.append(contig)
 
         # Filter the DataFrame where 'qseqid' matches 'contig'

@@ -668,7 +668,7 @@ def all(
     # validate e value
     check_evalue(evalue)
 
-    # runs  bulk BLAST
+    # runs bulk BLAST
     run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db = None)
 
     # rerorients blast
