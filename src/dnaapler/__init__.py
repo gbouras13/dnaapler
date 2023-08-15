@@ -29,6 +29,8 @@ from dnaapler.utils.validation import (
     validate_fasta_bulk,
 )
 
+from dnaapler.utils.all import (all_process_blast_output_and_reorient)
+
 """
 some code adapted from tbpore https://github.com/mbhall88/tbpore
 """
@@ -628,7 +630,6 @@ def bulk(
 all subcommand
 """
 
-
 @main_cli.command()
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
@@ -673,7 +674,8 @@ def all(
 
     # rerorients blast
     blast_file = os.path.join(output, f"{prefix}_blast_output.txt")
-    bulk_process_blast_output_and_reorient(input, blast_file, output, prefix)
+
+    all_process_blast_output_and_reorient(input, blast_file, output, prefix)
 
     # end dnaapler
     end_dnaapler(start_time)

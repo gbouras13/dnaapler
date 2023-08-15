@@ -157,11 +157,13 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
     # Read the FASTA file and extract the IDs
     for record in SeqIO.parse(input, "fasta"):
         contig = record.description
+        # need this to match for BLAST
+        short_contig = record.id
  
         contigs.append(contig)
 
         # Filter the DataFrame where 'qseqid' matches 'contig'
-        filtered_df = blast_df[blast_df["qseqid"] == contig]
+        filtered_df = blast_df[blast_df["qseqid"] == short_contig]
 
         length_of_df = len(filtered_df)
 
