@@ -28,8 +28,10 @@ def run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db)
         db_name = "repA_db"
     elif gene == "terL":
         db_name = "terL_db"
+    elif gene == "all":
+        db_name = "all_db"
 
-    # for chromosome, plasmid or phage
+    # for chromosome, plasmid or phage or all
     # runs blast
     if gene != "custom":
         # blast

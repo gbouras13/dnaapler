@@ -71,7 +71,7 @@ def validate_fasta_bulk(input_fasta: Path):
     Validates  FASTA input - that the input is a FASTA with > 1 sequence
     """
     logger.info(
-        f"Checking that the input file {input_fasta} is in FASTA format and has only 1 entry."
+        f"Checking that the input file {input_fasta} is in FASTA format and has more than 1 entry."
     )
     # to get extension
     with open(input_fasta, "r") as handle:

@@ -641,47 +641,23 @@ all subcommand
     help="e value for blastx",
     show_default=True,
 )
-@click.option(
-    "-m",
-    "--mode",
-    type=click.STRING,
-    callback=validate_choice_mode,
-    default="none",
-    help="Choose an mode to reorient in bulk.\nMust be one of: chromosome, plasmid, phage or custom [default: chromosome]",
-)
-@click.option(
-    "-c",
-    "--custom_db",
-    help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want. Must be specified if -m custom is specified.",
-    type=click.Path(),
-)
-def bulk(
+def all(
     ctx,
     input,
     output,
     threads,
     prefix,
     evalue,
-    mode,
     force,
-    custom_db,
     **kwargs,
 ):
-    """Reorients multiple genomes to begin with the same gene"""
+    """Reorients multiple contigs to begin with any of dnaA, repA or terL"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
     # defines gene
-    gene = "dnaA"
-    if mode == "chromosome":
-        gene = "dnaA"
-    elif mode == "plasmid":
-        gene = "repA"
-    elif mode == "phage":
-        gene = "terL"
-    elif mode == "custom":
-        gene == "custom"
+    gene = "all"
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
@@ -692,44 +668,8 @@ def bulk(
     # validate e value
     check_evalue(evalue)
 
-    # check custom db
-    if mode == "custom":
-        if custom_db == None:
-            logger.error(
-                "You have specified dnaapler bulk -m custom without specifying a custom database using -c. Please try again using -c to input a custom database."
-            )
-        else:  # makes the database
-            # validates custom fasta input for database
-            validate_custom_db_fasta(Path(custom_db))
-
-            # make db
-            db_dir = os.path.join(output, "custom_db")
-            Path(db_dir).mkdir(parents=True, exist_ok=True)
-            custom_db_fasta = os.path.join(db_dir, "custom_db.faa")
-            shutil.copy2(custom_db, custom_db_fasta)
-
-            logdir = Path(f"{output}/logs")
-
-            # custom db
-            # make custom db
-            custom_database = os.path.join(db_dir, "custom_db")
-            makeblastdb = ExternalTool(
-                tool="makeblastdb",
-                input=f"-in {custom_db_fasta}",
-                output=f"-out {custom_database}",
-                params="-dbtype prot ",
-                logdir=logdir,
-            )
-
-            ExternalTool.run_tool(makeblastdb, ctx)
-    else:
-        if custom_db != None:
-            logger.info(
-                f"You have specified a custom database using -c but you have specified -m {mode}  not -m custom. Ignoring the custom database and continuing."
-            )
-
-    # runs  BLAST
-    run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db)
+    # runs  bulk BLAST
+    run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db = None)
 
     # rerorients blast
     blast_file = os.path.join(output, f"{prefix}_blast_output.txt")
