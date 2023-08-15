@@ -8,6 +8,7 @@ from pathlib import Path
 import click
 from loguru import logger
 
+from dnaapler.utils.all import all_process_blast_output_and_reorient
 from dnaapler.utils.bulk import bulk_process_blast_output_and_reorient, run_bulk_blast
 from dnaapler.utils.cds_methods import run_blast_based_method, run_mystery, run_nearest
 from dnaapler.utils.constants import DNAAPLER_DB
@@ -27,10 +28,8 @@ from dnaapler.utils.validation import (
     validate_custom_db_fasta,
     validate_fasta,
     validate_fasta_bulk,
-    validate_ignore_file
+    validate_ignore_file,
 )
-
-from dnaapler.utils.all import (all_process_blast_output_and_reorient)
 
 """
 some code adapted from tbpore https://github.com/mbhall88/tbpore
@@ -629,6 +628,7 @@ def bulk(
 all subcommand
 """
 
+
 @main_cli.command()
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
@@ -646,7 +646,7 @@ all subcommand
     default="",
     help="TSV file listing contigs (one per row) that are to be ignored",
     type=click.Path(),
-    show_default=False
+    show_default=False,
 )
 def all(
     ctx,
@@ -677,17 +677,16 @@ def all(
     check_evalue(evalue)
 
     # checks if the ignore file exists and contains text
-    
+
     if ignore != "":
         logger.info(f"You have specified contigs to ignore in {ignore}.")
-        exists_contains_txt = validate_ignore_file(ignore) 
+        exists_contains_txt = validate_ignore_file(ignore)
 
     # runs bulk BLAST
-    run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db = None)
+    run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db=None)
 
     # rerorients blast
     blast_file = os.path.join(output, f"{prefix}_blast_output.txt")
-
 
     ### ignore
 
@@ -695,16 +694,19 @@ def all(
         logger.warning(f"{ignore} contains no text. No contigs will be ignored")
         ignore_list = []
     else:
-    # gets all contigs in the ignore
-    # will split by space so short_contig only (to match BLAST)
+        # gets all contigs in the ignore
+        # will split by space so short_contig only (to match BLAST)
         with open(ignore) as f:
             ignore_dict = {x.rstrip().split()[0] for x in f}
         ignore_list = list(ignore_dict)
 
-    all_process_blast_output_and_reorient(input, blast_file, output, prefix, ignore_list)
+    all_process_blast_output_and_reorient(
+        input, blast_file, output, prefix, ignore_list
+    )
 
     # end dnaapler
     end_dnaapler(start_time)
+
 
 @click.command()
 def citation(**kwargs):

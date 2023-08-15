@@ -186,10 +186,11 @@ def validate_choice_mode(ctx, param, value):
         raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
     return value
 
+
 def validate_ignore_file(ignore_file_path):
     try:
         # Open the file in read mode
-        with open(ignore_file_path, 'r') as file:
+        with open(ignore_file_path, "r") as file:
             # Read the first character
             first_char = file.read(1)
             # If the first character is not empty, will be true

@@ -159,7 +159,7 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
         contig = record.description
         # need this to match for BLAST
         short_contig = record.id
- 
+
         contigs.append(contig)
 
         # Filter the DataFrame where 'qseqid' matches 'contig'

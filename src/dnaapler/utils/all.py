@@ -12,7 +12,9 @@ from dnaapler.utils.processing import reorient_single_record_bulk
 from dnaapler.utils.validation import validate_custom_db_fasta
 
 
-def all_process_blast_output_and_reorient(input, blast_file, output, prefix, ignore_list):
+def all_process_blast_output_and_reorient(
+    input, blast_file, output, prefix, ignore_list
+):
     """Processes the blast output, reorients and saves all contigs into os.path.join(output, f"{prefix}_all_reoriented.fasta")
 
     :param input: input file
@@ -119,34 +121,40 @@ def all_process_blast_output_and_reorient(input, blast_file, output, prefix, ign
             idents.append(message)
             identitys.append(message)
 
-        else: # there is at least one BLAST hit
-
+        else:  # there is at least one BLAST hit
             # determine the numbers of repA, dnaA and terL
 
             # UniRef90 is in string for repA
             # phrog is in string for terL
             # DNAA is in string for dnaA
 
-
             # counts
             counts = {
-            'dnaA': filtered_df[filtered_df['sseqid'].str.contains('DNAA', case=False)].shape[0],
-            'terL': filtered_df[filtered_df['sseqid'].str.contains('phrog', case=False)].shape[0],
-            'repA': filtered_df[filtered_df['sseqid'].str.contains('UniRef90', case=False)].shape[0]
+                "dnaA": filtered_df[
+                    filtered_df["sseqid"].str.contains("DNAA", case=False)
+                ].shape[0],
+                "terL": filtered_df[
+                    filtered_df["sseqid"].str.contains("phrog", case=False)
+                ].shape[0],
+                "repA": filtered_df[
+                    filtered_df["sseqid"].str.contains("UniRef90", case=False)
+                ].shape[0],
             }
 
-
-            # if there are hits to more than 1 of dnaA, terL, repA, implement logic 
+            # if there are hits to more than 1 of dnaA, terL, repA, implement logic
             # to prefer dnaA, repA then terL (in that order)
-            if (counts['dnaA'] > 0) + (counts['terL'] > 0) + (counts['repA'] > 0) >= 2:
-
+            if (counts["dnaA"] > 0) + (counts["terL"] > 0) + (counts["repA"] > 0) >= 2:
                 # prefer dnaA if it is greater than zero
-                if counts['dnaA'] > 0:
+                if counts["dnaA"] > 0:
                     # keep only the hits where dnaA is found
-                    filtered_df = filtered_df[filtered_df['sseqid'].str.contains('DNAA')]
+                    filtered_df = filtered_df[
+                        filtered_df["sseqid"].str.contains("DNAA")
+                    ]
 
-                else: # where there is repA and terL, keep repA
-                    filtered_df = filtered_df[filtered_df['sseqid'].str.contains('UniRef90')]
+                else:  # where there is repA and terL, keep repA
+                    filtered_df = filtered_df[
+                        filtered_df["sseqid"].str.contains("UniRef90")
+                    ]
 
             # reset the index if you want to re-index the filtered DataFrame
             filtered_df.reset_index(drop=True, inplace=True)
@@ -155,9 +163,8 @@ def all_process_blast_output_and_reorient(input, blast_file, output, prefix, ign
             # take the top hit - blast sorts by bitscore
             # if the start is 1 of the top hit
             if filtered_df["qstart"][0] == 1:
-
                 # update the record description to contain 'rotated=True' akin to how unicycler does it
-                record.description = record.description + ' rotated=True'
+                record.description = record.description + " rotated=True"
 
                 # writes to file
                 with open(reoriented_output_file, "a") as out_fa:
@@ -188,20 +195,19 @@ def all_process_blast_output_and_reorient(input, blast_file, output, prefix, ign
                     if filtered_df["qseq"][i][0] in ["M", "V", "L"] and (
                         filtered_df["sstart"][i] == 1
                     ):
-                        
                         # update the record description to contain 'rotated=True' akin to how unicycler does it
-                        record.description = record.description + ' rotated=True'
+                        record.description = record.description + " rotated=True"
 
                         # get gene
                         # set as dnaA by default
-                        gene = 'dnaA'
+                        gene = "dnaA"
 
                         # for plasmids
-                        if 'UniRef90' in filtered_df["sseqid"][i]:
-                            gene = 'repA'
+                        if "UniRef90" in filtered_df["sseqid"][i]:
+                            gene = "repA"
                         # for phages
-                        if 'phrog' in filtered_df["sseqid"][i]:
-                            gene = 'terL'
+                        if "phrog" in filtered_df["sseqid"][i]:
+                            gene = "terL"
 
                         (
                             start,
