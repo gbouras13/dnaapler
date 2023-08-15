@@ -209,35 +209,57 @@ def all_process_blast_output_and_reorient(
                         if "phrog" in filtered_df["sseqid"][i]:
                             gene = "terL"
 
-                        (
-                            start,
-                            strand,
-                            top_hit,
-                            top_hit_length,
-                            covered_len,
-                            coverage,
-                            ident,
-                            identity,
-                        ) = reorient_single_record_bulk(
-                            filtered_df, reoriented_output_file, record, i
-                        )
+                        # if already reoriented
+                        if filtered_df["qstart"][i] == 1:
+                            # writes to file
+                            with open(reoriented_output_file, "a") as out_fa:
+                                SeqIO.write(record, out_fa, "fasta")
 
-                        # save all the stats
-                        genes.append(gene)
-                        starts.append(start)
-                        strands.append(strand)
-                        top_hits.append(top_hit)
-                        top_hit_lengths.append(top_hit_length)
-                        covered_lens.append(covered_len)
-                        coverages.append(coverage)
-                        idents.append(ident)
-                        identitys.append(identity)
+                            # no hit save for the output DF
+                            message = "Contig_already_reoriented"
+
+                            genes.append(message)
+                            starts.append(message)
+                            strands.append(message)
+                            top_hits.append(message)
+                            top_hit_lengths.append(message)
+                            covered_lens.append(message)
+                            coverages.append(message)
+                            idents.append(message)
+                            identitys.append(message)
+
+                        else:
+                            (
+                                start,
+                                strand,
+                                top_hit,
+                                top_hit_length,
+                                covered_len,
+                                coverage,
+                                ident,
+                                identity,
+                            ) = reorient_single_record_bulk(
+                                filtered_df, reoriented_output_file, record, i
+                            )
+
+                            # save all the stats
+                            genes.append(gene)
+                            starts.append(start)
+                            strands.append(strand)
+                            top_hits.append(top_hit)
+                            top_hit_lengths.append(top_hit_length)
+                            covered_lens.append(covered_len)
+                            coverages.append(coverage)
+                            idents.append(ident)
+                            identitys.append(identity)
 
                         gene_found = True
 
                         break
 
-                if gene_found is False:  # where there is no reorientiation
+                if (
+                    gene_found is False
+                ):  # where there is no reorientiation no blast hits at a;;
                     with open(reoriented_output_file, "a") as out_fa:
                         SeqIO.write(record, out_fa, "fasta")
 
