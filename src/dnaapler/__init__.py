@@ -676,9 +676,13 @@ def all(
     # validate e value
     check_evalue(evalue)
 
+    # create flag for ignore
+    if ignore == "":
+        ignore_flag = False
+    else:
+        ignore_flag = True 
     # checks if the ignore file exists and contains text
-
-    if ignore != "":
+    if ignore_flag == True:
         logger.info(f"You have specified contigs to ignore in {ignore}.")
         exists_contains_txt = validate_ignore_file(ignore)
 
@@ -689,16 +693,17 @@ def all(
     blast_file = os.path.join(output, f"{prefix}_blast_output.txt")
 
     ### ignore
-
-    if exists_contains_txt is False:
-        logger.warning(f"{ignore} contains no text. No contigs will be ignored")
-        ignore_list = []
-    else:
-        # gets all contigs in the ignore
-        # will split by space so short_contig only (to match BLAST)
-        with open(ignore) as f:
-            ignore_dict = {x.rstrip().split()[0] for x in f}
-        ignore_list = list(ignore_dict)
+    # list is empty
+    ignore_list = []
+    if ignore_flag == True:
+        if exists_contains_txt is False:
+            logger.warning(f"{ignore} contains no text. No contigs will be ignored")
+        else:
+            # gets all contigs in the ignore
+            # will split by space so short_contig only (to match BLAST)
+            with open(ignore) as f:
+                    ignore_dict = {x.rstrip().split()[0] for x in f}
+            ignore_list = list(ignore_dict)
 
     all_process_blast_output_and_reorient(
         input, blast_file, output, prefix, ignore_list

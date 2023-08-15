@@ -1,0 +1,1 @@
+Command line: blastx -db /Users/a1667917/Documents/dnaapler/src/dnaapler/db/dnaA_db -evalue 1e-10 -num_threads 1 -outfmt ' 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq ' -out tests/test_data/overall_inputs/phage_out/dnaapler_blast_output.txt -query tests/test_data/overall_inputs/SAOMS1.fasta
