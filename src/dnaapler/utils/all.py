@@ -12,13 +12,14 @@ from dnaapler.utils.processing import reorient_single_record_bulk
 from dnaapler.utils.validation import validate_custom_db_fasta
 
 
-def all_process_blast_output_and_reorient(input, blast_file, output, prefix):
+def all_process_blast_output_and_reorient(input, blast_file, output, prefix, ignore_list):
     """Processes the blast output, reorients and saves all contigs into os.path.join(output, f"{prefix}_all_reoriented.fasta")
 
     :param input: input file
     :param blast_file: blast output file
     :param output: output directory
     :param prefix: prefix
+    :param ignore_list: list containing contigs (short_contig) to ignore
     :return:
     """
 
@@ -76,8 +77,6 @@ def all_process_blast_output_and_reorient(input, blast_file, output, prefix):
         contig = record.description
         # need this to match for BLAST
         short_contig = record.id
-        print(contig)
-
         contigs.append(contig)
 
         # Filter the DataFrame where 'qseqid' matches 'contig'
@@ -85,8 +84,26 @@ def all_process_blast_output_and_reorient(input, blast_file, output, prefix):
 
         length_of_df = len(filtered_df)
 
+        if short_contig in ignore_list:
+            # write contig anyway
+            with open(reoriented_output_file, "a") as out_fa:
+                SeqIO.write(record, out_fa, "fasta")
+
+            # no hit save for the output DF
+            message = "Contig_ignored"
+            genes.append(message)
+            starts.append(message)
+            strands.append(message)
+            top_hits.append(message)
+            top_hit_lengths.append(message)
+            covered_lens.append(message)
+            coverages.append(message)
+            idents.append(message)
+            identitys.append(message)
+
         # no hits at all then just write to the file
-        if length_of_df == 0:
+        elif length_of_df == 0:
+            # write contig anyway
             with open(reoriented_output_file, "a") as out_fa:
                 SeqIO.write(record, out_fa, "fasta")
 
@@ -112,8 +129,6 @@ def all_process_blast_output_and_reorient(input, blast_file, output, prefix):
 
 
             # counts
-
-
             counts = {
             'dnaA': filtered_df[filtered_df['sseqid'].str.contains('DNAA', case=False)].shape[0],
             'terL': filtered_df[filtered_df['sseqid'].str.contains('phrog', case=False)].shape[0],
@@ -181,10 +196,7 @@ def all_process_blast_output_and_reorient(input, blast_file, output, prefix):
                         # set as dnaA by default
                         gene = 'dnaA'
 
-                        print(filtered_df["sseqid"][i])
                         # for plasmids
-                        print('UniRef90' in filtered_df["sseqid"][i])
-                        print('phrog' in filtered_df["sseqid"][i])
                         if 'UniRef90' in filtered_df["sseqid"][i]:
                             gene = 'repA'
                         # for phages
@@ -205,7 +217,6 @@ def all_process_blast_output_and_reorient(input, blast_file, output, prefix):
                         )
 
                         # save all the stats
-                        print(gene)
                         genes.append(gene)
                         starts.append(start)
                         strands.append(strand)
