@@ -1,0 +1,22 @@
+{
+  "version": "1.2",
+  "dbname": "all_db",
+  "dbtype": "Protein",
+  "db-version": 5,
+  "description": "all.faa",
+  "number-of-letters": 4304128,
+  "number-of-sequences": 8739,
+  "last-updated": "2023-08-15T10:44:00",
+  "number-of-volumes": 1,
+  "bytes-total": 5770444,
+  "bytes-to-cache": 4382868,
+  "files": [
+    "all_db.pdb",
+    "all_db.phr",
+    "all_db.pin",
+    "all_db.pot",
+    "all_db.psq",
+    "all_db.ptf",
+    "all_db.pto"
+  ]
+}

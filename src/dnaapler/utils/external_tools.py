@@ -14,6 +14,7 @@ to make the BLAST dbs
  makeblastdb -in dnaA.faa -dbtype prot -out dnaA_db
  makeblastdb -in terL.faa -dbtype prot -out terL_db
  makeblastdb -in repA.faa -dbtype prot -out repA_db
+ 
 """
 
 
