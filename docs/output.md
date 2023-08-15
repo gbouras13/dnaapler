@@ -32,4 +32,14 @@ For example for an input file with 3 contigs, where the first had no BLAST hit (
 | contig_2       | Contig_already_reoriented | Contig_already_reoriented | Contig_already_reoriented | Contig_already_reoriented | Contig_already_reoriented | Contig_already_reoriented | Contig_already_reoriented | Contig_already_reoriented |
 | contig_3     | 466148                    | reverse                   | sp\|Q6GD89\|DNAA_STAAS    | 453                       | 453                       | 100                       | 453                       | 100                       |
 
+### all
 
+If you run `dnaapler all`, the output will be different again. There will still be log files and a `{prefix}_blast_output.txt` file. 
+
+* There will be 1 output `.fasta` file. One will be `{prefix}_all_reoriented.fasta` containing all the contigs.
+  
+* In this FASTA file, all  contigs that were reoriented will be indicated in the contig FASTA header with `rotated=True`.
+
+* There will be a `{prefix}_all_reorientation_summary.tsv` summary file containing the reorientation information for each contig. 
+
+This summary file will be the same as for `bulk`, but with an extra column `Gene_Reoriented` that denotes which gene was detected in each contig (dnaA, repA or terL).

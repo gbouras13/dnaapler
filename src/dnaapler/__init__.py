@@ -644,7 +644,7 @@ all subcommand
 @click.option(
     "--ignore",
     default="",
-    help="TSV file listing contigs (one per row) that are to be ignored",
+    help="Text file listing contigs (one per row) that are to be ignored",
     type=click.Path(),
     show_default=False,
 )
