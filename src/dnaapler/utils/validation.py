@@ -71,7 +71,7 @@ def validate_fasta_bulk(input_fasta: Path):
     Validates  FASTA input - that the input is a FASTA with > 1 sequence
     """
     logger.info(
-        f"Checking that the input file {input_fasta} is in FASTA format and has only 1 entry."
+        f"Checking that the input file {input_fasta} is in FASTA format and has more than 1 entry."
     )
     # to get extension
     with open(input_fasta, "r") as handle:
@@ -185,3 +185,15 @@ def validate_choice_mode(ctx, param, value):
     if value not in choices:
         raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
     return value
+
+
+def validate_ignore_file(ignore_file_path):
+    try:
+        # Open the file in read mode
+        with open(ignore_file_path, "r") as file:
+            # Read the first character
+            first_char = file.read(1)
+            # If the first character is not empty, will be true
+            return bool(first_char)
+    except FileNotFoundError:
+        logger.error(f"{ignore_file_path} not found")

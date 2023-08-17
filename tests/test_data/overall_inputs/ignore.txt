@@ -1,0 +1,2 @@
+MW460250_1_subset
+1 length=181436 plasmid_copy_number_short=1.0x plasmid_copy_number_long=1.04x circular=true

@@ -8,6 +8,7 @@ from pathlib import Path
 import click
 from loguru import logger
 
+from dnaapler.utils.all import all_process_blast_output_and_reorient
 from dnaapler.utils.bulk import bulk_process_blast_output_and_reorient, run_bulk_blast
 from dnaapler.utils.cds_methods import run_blast_based_method, run_mystery, run_nearest
 from dnaapler.utils.constants import DNAAPLER_DB
@@ -27,6 +28,7 @@ from dnaapler.utils.validation import (
     validate_custom_db_fasta,
     validate_fasta,
     validate_fasta_bulk,
+    validate_ignore_file,
 )
 
 """
@@ -617,6 +619,95 @@ def bulk(
     # rerorients blast
     blast_file = os.path.join(output, f"{prefix}_blast_output.txt")
     bulk_process_blast_output_and_reorient(input, blast_file, output, prefix)
+
+    # end dnaapler
+    end_dnaapler(start_time)
+
+
+"""
+all subcommand
+"""
+
+
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+@click.option(
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
+)
+@click.option(
+    "--ignore",
+    default="",
+    help="Text file listing contigs (one per row) that are to be ignored",
+    type=click.Path(),
+    show_default=False,
+)
+def all(
+    ctx,
+    input,
+    output,
+    threads,
+    prefix,
+    evalue,
+    force,
+    ignore,
+    **kwargs,
+):
+    """Reorients multiple contigs to begin with any of dnaA, repA or terL"""
+
+    # validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force)
+
+    # defines gene
+    gene = "all"
+
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
+
+    # validates fasta
+    validate_fasta_bulk(input)
+
+    # validate e value
+    check_evalue(evalue)
+
+    # create flag for ignore
+    if ignore == "":
+        ignore_flag = False
+    else:
+        ignore_flag = True
+    # checks if the ignore file exists and contains text
+    if ignore_flag == True:
+        logger.info(f"You have specified contigs to ignore in {ignore}.")
+        exists_contains_txt = validate_ignore_file(ignore)
+
+    # runs bulk BLAST
+    run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db=None)
+
+    # rerorients blast
+    blast_file = os.path.join(output, f"{prefix}_blast_output.txt")
+
+    ### ignore
+    # list is empty
+    ignore_list = []
+    if ignore_flag == True:
+        if exists_contains_txt is False:
+            logger.warning(f"{ignore} contains no text. No contigs will be ignored")
+        else:
+            # gets all contigs in the ignore
+            # will split by space so short_contig only (to match BLAST)
+            with open(ignore) as f:
+                ignore_dict = {x.rstrip().split()[0] for x in f}
+            ignore_list = list(ignore_dict)
+
+    all_process_blast_output_and_reorient(
+        input, blast_file, output, prefix, ignore_list
+    )
 
     # end dnaapler
     end_dnaapler(start_time)

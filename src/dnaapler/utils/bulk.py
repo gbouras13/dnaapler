@@ -28,8 +28,10 @@ def run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db)
         db_name = "repA_db"
     elif gene == "terL":
         db_name = "terL_db"
+    elif gene == "all":
+        db_name = "all_db"
 
-    # for chromosome, plasmid or phage
+    # for chromosome, plasmid or phage or all
     # runs blast
     if gene != "custom":
         # blast
@@ -154,12 +156,14 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
 
     # Read the FASTA file and extract the IDs
     for record in SeqIO.parse(input, "fasta"):
-        contig = record.id
+        contig = record.description
+        # need this to match for BLAST
+        short_contig = record.id
 
         contigs.append(contig)
 
         # Filter the DataFrame where 'qseqid' matches 'contig'
-        filtered_df = blast_df[blast_df["qseqid"] == contig]
+        filtered_df = blast_df[blast_df["qseqid"] == short_contig]
 
         length_of_df = len(filtered_df)
 
@@ -215,28 +219,47 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
                     if filtered_df["qseq"][i][0] in ["M", "V", "L"] and (
                         filtered_df["sstart"][i] == 1
                     ):
-                        (
-                            start,
-                            strand,
-                            top_hit,
-                            top_hit_length,
-                            covered_len,
-                            coverage,
-                            ident,
-                            identity,
-                        ) = reorient_single_record_bulk(
-                            filtered_df, reoriented_output_file, record, i
-                        )
+                        # if already reoriented
+                        if filtered_df["qstart"][i] == 1:
+                            # writes to file
+                            with open(reoriented_output_file, "a") as out_fa:
+                                SeqIO.write(record, out_fa, "fasta")
 
-                        # save all the stats
-                        starts.append(start)
-                        strands.append(strand)
-                        top_hits.append(top_hit)
-                        top_hit_lengths.append(top_hit_length)
-                        covered_lens.append(covered_len)
-                        coverages.append(coverage)
-                        idents.append(ident)
-                        identitys.append(identity)
+                            # no hit save for the output DF
+                            message = "Contig_already_reoriented"
+
+                            starts.append(message)
+                            strands.append(message)
+                            top_hits.append(message)
+                            top_hit_lengths.append(message)
+                            covered_lens.append(message)
+                            coverages.append(message)
+                            idents.append(message)
+                            identitys.append(message)
+
+                        else:
+                            (
+                                start,
+                                strand,
+                                top_hit,
+                                top_hit_length,
+                                covered_len,
+                                coverage,
+                                ident,
+                                identity,
+                            ) = reorient_single_record_bulk(
+                                filtered_df, reoriented_output_file, record, i
+                            )
+
+                            # save all the stats
+                            starts.append(start)
+                            strands.append(strand)
+                            top_hits.append(top_hit)
+                            top_hit_lengths.append(top_hit_length)
+                            covered_lens.append(covered_len)
+                            coverages.append(coverage)
+                            idents.append(ident)
+                            identitys.append(identity)
 
                         gene_found = True
 

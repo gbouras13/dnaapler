@@ -168,6 +168,21 @@ def test_bulk_custom(tmp_dir):
     exec_command(cmd)
 
 
+def test_all(tmp_dir):
+    """test all"""
+    input_fasta: Path = f"{overall_test_data}/all_test.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_all_ignore(tmp_dir):
+    """test all"""
+    input_fasta: Path = f"{overall_test_data}/all_test.fasta"
+    ignore_file: Path = f"{overall_test_data}/ignore.txt"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f --ignore {ignore_file}"
+    exec_command(cmd)
+
+
 def test_citation():
     """test citation"""
     cmd = f"dnaapler citation"
@@ -242,6 +257,14 @@ class TestExits(unittest.TestCase):
             input_fasta: Path = f"{overall_test_data}/bulk_phage.fasta"
             outdir: Path = f"{overall_test_data}/chrom_out"
             cmd = f"dnaapler bulk -m chromosome -i {input_fasta} -o {outdir} -t 1 -f"
+            exec_command(cmd)
+
+    def test_all_no_hits(self):
+        """test all with no blast hits"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{test_data}/nucl_test.fna"
+            outdir: Path = f"{overall_test_data}/bulk_out"
+            cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f "
             exec_command(cmd)
 
 

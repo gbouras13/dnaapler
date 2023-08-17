@@ -55,6 +55,8 @@ For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome br
 
 Additionally, you can also reorient multiple bacterial chromosomes/plasmids/phages at once using the `dnaapler bulk` subcommand.
 
+If your input FASTA is mixed (e.g. has chromosome and plasmids), you can also use `dnaapler all`, with the option to ignore some contigs with the `--ignore` parameter. 
+
 ## Documentation
 
 The full documentation for `dnaapler` can be found [here](https://dnaapler.readthedocs.io).
@@ -68,6 +70,8 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 * `dnaapler mystery`: Reorients your sequence to begin with a random CDS
 * `dnaapler nearest`: Reorients your sequence to begin with the first CDS (nearest to the start). Designed for fixing sequences where a CDS spans the breakpoint.
 * `dnaapler bulk`: Reorients multiple contigs to begin with the desired start gene - either dnaA, terL, repA or a custom gene.
+* `dnaapler all`: Reorients multiple contigs to begin with any of dnaA, terL, repA.
+
 
 ## Installation
 
@@ -109,6 +113,7 @@ Options:
   -V, --version  Show the version and exit.
 
 Commands:
+  all         Reorients multiple contigs to begin with any of dnaA, repA...
   bulk        Reorients multiple genomes to begin with the same gene
   chromosome  Reorients your genome to begin with the dnaA chromosomal...
   citation    Print the citation(s) for this tool
@@ -174,6 +179,10 @@ dnaapler nearest -i input.fasta -o output_directory_path -p my_genome_name
 dnaapler bulk -i input_file_with_multiple_chromosomes.fasta -m chromosome -o output_directory_path -p my_genome_name 
 ```
 
+```
+dnaapler all -i input_file_with_multiple_contigs.fasta -o output_directory_path -p my_genome_name --ignore list_of_contigs_to_ignore.txt
+```
+
 ## Databases
 
 `dnaapler chromosome` uses 584 proteins downloaded from Swissprot with the query "Chromosomal replication initiator protein DnaA" on 24 May 2023 as its database for dnaA. All hits from the query were also filtered to ensure "GN=dnaA" was included in the header of the FASTA entry.
@@ -181,6 +190,8 @@ dnaapler bulk -i input_file_with_multiple_chromosomes.fasta -m chromosome -o out
 `dnaapler plasmid` uses the repA database curated by Ryan Wick in [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta).
 
 `dnaapler phage` uses a terL database curated using [PHROGs](https://phrogs.lmge.uca.fr). All the AA sequences of the 55 phrogs annotated as 'large terminase subunit' were downloaded, combined and depduplicated using [seqkit](https://github.com/shenwei356/seqkit) `seqkit rmdup -s -o terL.faa phrog_terL.faa`.
+
+`dnaapler all` uses all three databases combined into one. 
 
 `dnaapler custom` uses a custom amino acid FASTA format file that you specify using `-c`. 
 

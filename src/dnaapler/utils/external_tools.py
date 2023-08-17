@@ -11,9 +11,14 @@ from loguru import logger
 """
 to make the BLAST dbs
 
+# v 2.14.0
+
  makeblastdb -in dnaA.faa -dbtype prot -out dnaA_db
  makeblastdb -in terL.faa -dbtype prot -out terL_db
  makeblastdb -in repA.faa -dbtype prot -out repA_db
+ makeblastdb -in all.faa -dbtype prot -out all_db
+ 
+
 """
 
 
