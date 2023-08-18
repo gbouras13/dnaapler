@@ -93,6 +93,31 @@ def validate_fasta_bulk(input_fasta: Path):
             logger.info(f"{input_fasta} has more than one entry.")
 
 
+def validate_fasta_all(input_fasta: Path):
+    """
+    Validates  FASTA input - that the input is a FASTA with >= 1 sequence
+    """
+    logger.info(
+        f"Checking that the input file {input_fasta} is in FASTA format and has at least 1 entry."
+    )
+    # to get extension
+    with open(input_fasta, "r") as handle:
+        fasta = SeqIO.parse(handle, "fasta")
+        if any(fasta):
+            logger.info(f"{input_fasta} file checked.")
+        else:
+            logger.error(
+                f"Error: {input_fasta} file is not in the FASTA format. Please check your input file"
+            )
+
+    with open(input_fasta, "r") as handle:
+        # Check the number of records
+        if len(list(SeqIO.parse(handle, "fasta"))) == 1:
+            logger.info(f"{input_fasta} has more only one entry.")
+        else:
+            logger.info(f"{input_fasta} has more than one entry.")
+
+
 def validate_custom_db_fasta(custom_fasta: Path):
     """
     Validates custom db FASTA input - ensures it is FASTA file with amino acids (.faa)

@@ -2,6 +2,13 @@
 History
 =======
 
+0.3.0 (2023-08-18)
+------------------
+
+* `dnaapler all` subcommand added thanks @alexweisberg
+* `dnaapler all` implements `--ignore` to ignore some contigs
+
+
 0.2.0 (2023-08-08)
 ------------------
 

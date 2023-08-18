@@ -75,7 +75,7 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 
 ## Installation
 
-`dnaapler` requires only BLAST v2.9 or higher as an external dependency. 
+`dnaapler` requires only BLAST v2.10 or higher as an external dependency. 
 
 Installation from conda is recommended as this will install BLAST automatically.
 
@@ -95,12 +95,12 @@ You can also install `dnaapler` with pip.
 pip install dnaapler
 ```
 
-You will need to install BLAST v2.9 or higher separately.
+You will need to install BLAST v2.10 or higher separately.
 
 e.g.
 
 ```
-conda install -c bioconda blast>2.8
+conda install -c bioconda blast>2.9
 ```
 
 ## Usage
