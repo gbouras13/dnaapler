@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dnaapler"
-version = "0.2.0" # change VERSION too
+version = "0.3.0" # change VERSION too
 description = "Reorients assembled microbial sequences"
 authors = ["George Bouras <george.bouras@adelaide.edu.au>"]
 license = "MIT"
