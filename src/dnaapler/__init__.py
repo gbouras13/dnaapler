@@ -27,6 +27,7 @@ from dnaapler.utils.validation import (
     validate_choice_mode,
     validate_custom_db_fasta,
     validate_fasta,
+    validate_fasta_all,
     validate_fasta_bulk,
     validate_ignore_file,
 )
@@ -149,7 +150,7 @@ def chromosome(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
     logger.info(
-        f"You have chosen {autocomplete} method to reoirent your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
     )
 
     # validates fasta
@@ -227,7 +228,7 @@ def plasmid(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
     logger.info(
-        f"You have chosen {autocomplete} method to reoirent your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
     )
 
     # validates fasta
@@ -305,7 +306,7 @@ def phage(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
     logger.info(
-        f"You have chosen {autocomplete} method to reoirent your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
     )
 
     # validates fasta
@@ -391,7 +392,7 @@ def custom(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
     logger.info(
-        f"You have chosen {autocomplete} method to reoirent your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
     )
 
     # validates fasta
@@ -671,7 +672,7 @@ def all(
     start_time = begin_dnaapler(input, output, threads, gene)
 
     # validates fasta
-    validate_fasta_bulk(input)
+    validate_fasta_all(input)
 
     # validate e value
     check_evalue(evalue)

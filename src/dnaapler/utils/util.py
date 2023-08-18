@@ -108,8 +108,8 @@ def check_blast_version():
         message = "BLAST not found. Please install BLAST, see instructions at https://github.com/gbouras13/dnaapler."
         logger.error(message)
 
-    if blast_minor_version < 9 or blast_major_version < 2:
-        message = "BLAST is too old - please reinstall BLAST v2.9 or newer, see instructions at https://github.com/gbouras13/dnaapler."
+    if blast_minor_version < 10 or blast_major_version < 2:
+        message = "BLAST is too old - please reinstall BLAST v2.10 or newer, see instructions at https://github.com/gbouras13/dnaapler."
         logger.error(message)
     else:
         message = "BLAST version is ok."
