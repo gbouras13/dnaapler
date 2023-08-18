@@ -113,7 +113,7 @@ def validate_fasta_all(input_fasta: Path):
     with open(input_fasta, "r") as handle:
         # Check the number of records
         if len(list(SeqIO.parse(handle, "fasta"))) == 1:
-            logger.info(f"{input_fasta} has more only one entry.")
+            logger.info(f"{input_fasta} has only one entry.")
         else:
             logger.info(f"{input_fasta} has more than one entry.")
 
