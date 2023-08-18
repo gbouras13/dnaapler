@@ -27,9 +27,9 @@ from dnaapler.utils.validation import (
     validate_choice_mode,
     validate_custom_db_fasta,
     validate_fasta,
+    validate_fasta_all,
     validate_fasta_bulk,
     validate_ignore_file,
-    validate_fasta_all
 )
 
 """
