@@ -71,7 +71,7 @@ def begin_dnaapler(input, output, threads, gene):
     logger.info(f"Your input FASTA is {input}")
     logger.info(f"Your output directory  is {output}")
     logger.info(f"You have specified {threads} threads to use with blastx")
-    logger.info(f"You have specified {gene} gene(s) to reoirent your sequence")
+    logger.info(f"You have specified {gene} gene(s) to reorient your sequence")
     # check BLAST version
     check_blast_version()
     return start_time
