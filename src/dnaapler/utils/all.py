@@ -266,7 +266,7 @@ def all_process_blast_output_and_reorient(
                     # no hit save for the output DF
                     message = "No_BLAST_hits"
 
-                    genes.append(gene)
+                    genes.append(message)
                     starts.append(message)
                     strands.append(message)
                     top_hits.append(message)
