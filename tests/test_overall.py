@@ -183,6 +183,13 @@ def test_all_ignore(tmp_dir):
     exec_command(cmd)
 
 
+def test_all_no_reorientation(tmp_dir):
+    """test all where there is already orientation or no orientation"""
+    input_fasta: Path = f"{overall_test_data}/all_reorient_and_no_reorient.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
 def test_citation():
     """test citation"""
     cmd = f"dnaapler citation"
