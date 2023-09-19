@@ -8,6 +8,7 @@ import sys
 import time
 
 import click
+import pyrodigal
 from loguru import logger
 
 from dnaapler.utils.cds_methods import run_mystery, run_nearest
@@ -74,7 +75,33 @@ def begin_dnaapler(input, output, threads, gene):
     logger.info(f"You have specified {gene} gene(s) to reorient your sequence")
     # check BLAST version
     check_blast_version()
+    check_pyrodigal_version()
     return start_time
+
+
+def check_pyrodigal_version():
+    """
+    checks the pyrodigal version
+    """
+    # blast
+    message = "Checking pyrodigal installation."
+    logger.info(message)
+
+    try:
+        pyrodigal_version = pyrodigal.__version__
+        pyrodigal_major_version = int(pyrodigal_version.split(".")[0])
+
+        if pyrodigal_major_version < 3:
+            logger.error(
+                "Pyrodigal is the wrong version. It needs to be v3.0.0 or higher. Please reinstall Dnaapler."
+            )
+
+        logger.info(f"Pyrodigal version is v{pyrodigal_version}")
+        logger.info(f"Pyrodigal version is ok.")
+
+    except Exception:
+        message = "Pyrodigal not found."
+        logger.error(message)
 
 
 def check_blast_version():
