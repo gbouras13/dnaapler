@@ -17,7 +17,7 @@ from dnaapler.utils.processing import (
 def run_mystery(ctx, input, seed_value, output, prefix):
     # get number of records of input
     logger.info("Searching for CDS with pyrodigal")
-    orf_finder = pyrodigal.OrfFinder(meta=True)
+    orf_finder = pyrodigal.GeneFinder(meta=True)
 
     # set seed
     random.seed(int(seed_value))
@@ -59,7 +59,7 @@ def run_mystery(ctx, input, seed_value, output, prefix):
 def run_nearest(ctx, input, output, prefix):
     # get number of records of input
     logger.info("Searching for CDS with pyrodigal")
-    orf_finder = pyrodigal.OrfFinder(meta=True)
+    orf_finder = pyrodigal.GeneFinder(meta=True)
 
     # there will only be 1 record
     for i, record in enumerate(SeqIO.parse(input, "fasta")):
