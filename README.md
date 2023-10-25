@@ -63,7 +63,7 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 
 ## Commands
 
-* `dnaapler all`: Reorients multiple contigs to begin with any of dnaA, terL, repA. 
+* `dnaapler all`: Reorients 1 or more contigs to begin with any of dnaA, terL, repA. 
   - Practically, this should be the most useful command for most users.
 
 * `dnaapler chromosome`: Reorients your sequence to begin with the dnaA chromosomal replication initiator gene
@@ -116,7 +116,7 @@ Options:
   -V, --version  Show the version and exit.
 
 Commands:
-  all         Reorients multiple contigs to begin with any of dnaA, repA...
+  all         Reorients contigs to begin with any of dnaA, repA...
   bulk        Reorients multiple genomes to begin with the same gene
   chromosome  Reorients your genome to begin with the dnaA chromosomal...
   citation    Print the citation(s) for this tool
@@ -131,7 +131,7 @@ Commands:
   ```
 Usage: dnaapler all [OPTIONS]
 
-  Reorients multiple contigs to begin with any of dnaA, repA or terL
+  Reorients contigs to begin with any of dnaA, repA or terL
 
 Options:
   -h, --help               Show this message and exit.
@@ -154,6 +154,10 @@ Options:
 The reoriented output FASTA will be `{prefix}_reoriented.fasta` in the specified output directory.
 
 ## Example Usage
+
+```
+dnaapler all -i input.fasta -o output_directory_path -p my_genome_name --ignore list_of_contigs_to_ignore.txt
+```
 
 ```
 dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name -t 8
@@ -180,13 +184,14 @@ dnaapler nearest -i input.fasta -o output_directory_path -p my_genome_name
 ```
 
 ```
+dnaapler largest -i input.fasta -o output_directory_path -p my_genome_name
+```
+
+```
 # to reorient multiple bacterial chromosomes
 dnaapler bulk -i input_file_with_multiple_chromosomes.fasta -m chromosome -o output_directory_path -p my_genome_name 
 ```
 
-```
-dnaapler all -i input_file_with_multiple_contigs.fasta -o output_directory_path -p my_genome_name --ignore list_of_contigs_to_ignore.txt
-```
 
 ## Databases
 

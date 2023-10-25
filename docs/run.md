@@ -17,6 +17,53 @@ However, you can decide to autocomplete `dnaapler` using the `-a` or `--autocomp
 
 Also, a seed value using `--seed_value` can be specified with `dnaapler` to ensure that `dnaapler mystery` (or when austocomplete is used with `-a mystery`) to ensure `dnaapler` is reproducible in workflows.
 
+
+### all
+
+`dnaapler all` is designed to simultaneously orient multiple contigs that can be a mix of chromosomes, plasmids and phages. It will also work on just 1 contig.
+
+If a contig has BLAST hits for both dnaA and terL or repA, dnaA will be chosen for reorientation.
+
+If a contig has BLAST hits for both terL and repA (but not dnaA), repA will be chosen for reorientation.
+
+You can also specify a text file with `--ignore` that lists all contigs (based on their header) to be ignored during reorientation.
+
+e.g. the file (`ignored_contigs.txt`) needs to be formatted as follows:
+
+```
+contig_1
+contig_2
+```
+
+Example usage to reorient a number of contigs in `input.fasta`, ignoring all contigs with headers denoted in  `ignored_contigs.txt`
+
+```
+dnaapler all -i input.fasta -o output_directory_path -t 8  --ignore ignored_contigs.txt
+```
+
+```
+Usage: dnaapler all [OPTIONS]
+
+  Reorients contigs to begin with any of dnaA, repA or terL
+
+Options:
+  -h, --help               Show this message and exit.
+  -V, --version            Show the version and exit.
+  -i, --input PATH         Path to input file in FASTA format  [required]
+  -o, --output PATH        Output directory   [default: output.dnaapler]
+  -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
+  -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
+  -f, --force              Force overwrites the output directory
+  -e, --evalue TEXT        e value for blastx  [default: 1e-10]
+  --ignore PATH            Text file listing contigs (one per row) that are to
+                           be ignored
+  -a, --autocomplete TEXT  Choose an option to autocomplete reorientation if
+                           BLAST based approach fails. Must be one of: none,
+                           mystery, largest, or nearest [default: none]
+  --seed_value INTEGER     Rand
+```
+
+
 ### chromosome
 
 Example usage with `mystery` as the autocomplete command and a random seed of 245 for reproducibility and with 8 threads for BLAST:
@@ -228,46 +275,3 @@ Options:
                          specified.
 ```
 
-### all
-
-
-`dnaapler all` is designed to simultaneously orient multiple contigs that can be a mix of chromosomes, plasmids and phages.
-
-If a contig has BLAST hits for both dnaA and terL or repA, dnaA will be chosen for reorientation.
-
-If a contig has BLAST hits for both terL and repA (but not dnaA), repA will be chosen for reorientation.
-
-You can also specify a text file with `--ignore` that lists all contigs (based on their header) to be ignored during reorientation.
-
-e.g. the file (`ignored_contigs.txt`) needs to be formatted as follows:
-
-```
-contig_1
-contig_2
-```
-
-Your input FASTA must also have at least 2 contigs.
-
-Example usage to reorient a number of contigs in `input.fasta`, ignoring all contigs with headers denoted in  `ignored_contigs.txt`
-
-```
-dnaapler all -i input.fasta -o output_directory_path -t 8  --ignore ignored_contigs.txt
-```
-
-```
-Usage: dnaapler all [OPTIONS]
-
-  Reorients multiple contigs to begin with any of dnaA, repA or terL
-
-Options:
-  -h, --help             Show this message and exit.
-  -V, --version          Show the version and exit.
-  -i, --input PATH       Path to input file in FASTA format  [required]
-  -o, --output PATH      Output directory   [default: output.dnaapler]
-  -t, --threads INTEGER  Number of threads to use with BLAST  [default: 1]
-  -p, --prefix TEXT      Prefix for output files  [default: dnaapler]
-  -f, --force            Force overwrites the output directory
-  -e, --evalue TEXT      e value for blastx  [default: 1e-10]
-  --ignore PATH          TSV file listing contigs (one per row) that are to be
-                         ignored
-```

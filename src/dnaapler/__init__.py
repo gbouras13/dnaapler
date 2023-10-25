@@ -672,7 +672,7 @@ def all(
     ignore,
     **kwargs,
 ):
-    """Reorients multiple contigs to begin with any of dnaA, repA or terL"""
+    """Reorients contigs to begin with any of dnaA, repA or terL"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
