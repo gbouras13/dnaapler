@@ -12,10 +12,31 @@ from dnaapler.utils.processing import reorient_single_record_bulk
 from dnaapler.utils.validation import validate_custom_db_fasta
 
 
-def run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db):
+def run_bulk_blast(
+    ctx,
+    input: Path,
+    output: Path,
+    prefix: str,
+    gene: str,
+    evalue: float,
+    threads: int,
+    custom_db: Path,
+) -> bool:
     """
-    runs the BLAST part for dnaapler bulk (not processing)
-    returns: bool -  blast_success, whether or not the BLAST based approach succeeded
+    Run the BLAST part for dnaapler bulk (not processing).
+
+    Args:
+        ctx (): The context manager for managing the execution context.
+        input (Path): Path to the input data for BLAST.
+        output (Path): Directory where BLAST results and logs will be saved.
+        prefix (str): Prefix for output files.
+        gene (str): Gene name to specify the BLAST database ("dnaA", "repA", "terL", "all", or "custom").
+        evalue (float): The E-value threshold for BLAST.
+        threads (int): The number of threads to use for BLAST.
+        custom_db (Path): Path to a custom database file (amino acid Fasta format) if 'gene' is set to 'custom'.
+
+    Yields:
+        bool: True if the BLAST process succeeded, False otherwise.
     """
 
     # sets DB directory based of the gene name
@@ -91,16 +112,25 @@ def run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db)
         ExternalTool.run_tools(tools_to_run, ctx)
 
 
-def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
-    """Processes the blast output and saves all contigs into one of 2 files
+def bulk_process_blast_output_and_reorient(
+    input: Path, blast_file: Path, output: Path, prefix: str
+) -> None:
+    """
+    Processes the BLAST output and saves reoriented and failed-to-reorient contigs.
 
-    the successfully reoriented contigs will be output to os.path.join(output, f"{prefix}_reoriented.fasta")
-    the unsuccessfully reoriented contigs will be output to os.path.join(output, f"{prefix}_failed_to_reoriented.fasta")
+    For dnaapler bulk
 
-    :param input: input file
-    :param blast_file: blast output file
-    :param output: output directory
-    :return:
+    Reoriented contigs are saved to 'output/prefix_reoriented.fasta'.
+    Failed-to-reorient contigs are saved to 'output/prefix_failed_to_reorient.fasta'.
+
+    Args:
+        input (Path): Input file containing nucleotide sequences.
+        blast_file (Path): BLAST output file.
+        output (Path): Output directory for saving files.
+        prefix (str): Prefix for output files.
+
+    Returns:
+        None
     """
 
     # define colnames

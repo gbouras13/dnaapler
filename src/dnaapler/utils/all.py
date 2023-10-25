@@ -1,10 +1,12 @@
 import os
 import random
 from pathlib import Path
+from typing import Tuple
 
 import pandas as pd
 import pyrodigal
 from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
 from loguru import logger
 
 from dnaapler.utils.processing import (
@@ -306,8 +308,20 @@ def all_process_blast_output_and_reorient(
 
 
 def run_autocomplete_record(
-    record, autocomplete: str, reoriented_output_file, seed_value
-):
+    record: SeqRecord, autocomplete: str, reoriented_output_file: Path, seed_value: int
+) -> Tuple[int, int]:
+    """
+    Perform sequence reorientation and annotation based on specified autocomplete method.
+
+    Args:
+        record (SeqRecord): A Bio.SeqRecord object representing a nucleotide sequence.
+        autocomplete (str): The autocomplete method to determine the gene to annotate ('mystery', 'nearest', 'largest').
+        reoriented_output_file (Path): The output file path where the reoriented sequence will be saved.
+        seed_value (int): Seed value for random number generation.
+
+    Returns:
+        Tuple[int, int]: A tuple containing the start coordinate and strand information of the chosen gene.
+    """
     logger.warning(f"There was no blastx hit for contig {record.id}.")
     logger.warning(f"Running {autocomplete} on contig {record.id}.")
 

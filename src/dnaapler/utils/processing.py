@@ -8,14 +8,20 @@ from Bio.SeqRecord import SeqRecord
 from loguru import logger
 
 
-def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
-    """Processes
+def process_blast_output_and_reorient(
+    input: Path, blast_file: Path, out_file: Path, gene: str
+) -> bool:
+    """
+    Processes BLAST output and reorients the input sequence if necessary based on the top BLAST hit.
 
-    :param input: input file
-    :param blast_file: blast output file
-    :param out_file: output file
-    :param gene: str - type of gene (dnaA etc)
-    :return: blast_success: bool - whether a BLAST hit with a valid start codon was identified
+    Args:
+        input (Path): Input file containing a nucleotide sequence.
+        blast_file (Path): BLAST output file.
+        out_file (Path): Output file to save the reoriented sequence.
+        gene (str): The type of gene (e.g., "dnaA").
+
+    Returns:
+        bool: Whether a BLAST hit with a valid start codon was identified.
     """
 
     #  instantiate the returned bool
@@ -106,6 +112,19 @@ def reorient_sequence(
     gene: str,
     overlapping_orf: bool,
 ) -> None:
+    """
+    Reorients the input sequence based on BLAST results and a gene of interest.
+
+    Args:
+        blast_df (pd.DataFrame): DataFrame containing BLAST results.
+        input (Path): Input file containing a nucleotide sequence.
+        out_file (Path): Output file to save the reoriented sequence.
+        gene (str): The type of gene (e.g., "dnaA").
+        overlapping_orf (bool): Indicates whether the top BLAST hit overlaps with an existing open reading frame.
+
+    Returns:
+        None
+    """
     # get the start
 
     ident = blast_df["nident"][0]
@@ -224,11 +243,23 @@ def reorient_sequence(
             reorient_sequence_random(input, out_file, start, strand)
 
 
-def reorient_sequence_random(input, out_file, start, strand):
+def reorient_sequence_random(
+    input: Path, out_file: Path, start: int, strand: int
+) -> None:
     """
-    for dnaapler mystery and nearest
-    """
+    Reorients the input sequence based on the provided start coordinate and strand information.
 
+    For mystery nearest and largest
+
+    Args:
+        input (Path): Input file containing a nucleotide sequence.
+        out_file (Path): Output file to save the reoriented sequence.
+        start (int): The start coordinate for reorientation.
+        strand (int): The strand information for reorientation (1 for forward, -1 for reverse).
+
+    Returns:
+        None
+    """
     ####################
     # reorientation
     ####################
@@ -259,10 +290,30 @@ def reorient_sequence_random(input, out_file, start, strand):
 
 
 def reorient_single_record_bulk(
-    blast_df: pd.DataFrame, out_file: Path, record: SeqRecord, overlapping_orf: bool
-) -> None:
+    blast_df: pd.DataFrame,
+    out_file: Path,
+    record: SeqIO.SeqRecord,
+    overlapping_orf: bool,
+) -> tuple:
     """
-    reorients a single record in dnaapler bulk or dnaapler all
+    Reorients a single DNA sequence record in dnaapler bulk or dnaapler all based on BLAST results.
+
+    Args:
+        blast_df (pd.DataFrame): DataFrame containing BLAST results for the record.
+        out_file (Path): Output file to save the reoriented sequence.
+        record (SeqIO.SeqRecord): Sequence record to be reoriented.
+        overlapping_orf (bool): Indicates whether the top BLAST hit starts with a valid start codon (False) or not (True).
+
+    Returns:
+        Tuple of reorientation details:
+        - start (int): Start coordinate after reorientation.
+        - strand (str): Reoriented strand ('forward' or 'reverse').
+        - top_hit (str): Identifier of the top BLAST hit.
+        - top_hit_length (int): Length of the top BLAST hit.
+        - covered_len (int): Length of the sequence covered by the top BLAST hit.
+        - coverage (float): Percentage coverage of the sequence.
+        - ident (int): Number of identical amino acids.
+        - identity (float): Percentage identity.
     """
 
     top_hit = blast_df["sseqid"][0]
@@ -396,9 +447,20 @@ def reorient_single_record_bulk(
         )
 
 
-def reorient_sequence_and_append(record, out_file, start, strand):
+def reorient_sequence_and_append(
+    record: SeqIO.SeqRecord, out_file: Path, start: int, strand: int
+) -> None:
     """
-    for dnaapler all when -a or --autocomplete is not none
+    Reorients a DNA sequence record and appends it to an output file.
+
+    Args:
+        record (SeqIO.SeqRecord): Sequence record to be reoriented.
+        out_file (Path): Output file to save the reoriented sequence.
+        start (int): Start coordinate after reorientation.
+        strand (int): Strand orientation (1 for forward, -1 for reverse).
+
+    Returns:
+        None
     """
 
     ####################
