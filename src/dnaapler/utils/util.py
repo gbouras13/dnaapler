@@ -6,9 +6,11 @@ import os
 import subprocess as sp
 import sys
 import time
+from pathlib import Path
 
 import click
 import pyrodigal
+from Bio import SeqIO
 from loguru import logger
 
 from dnaapler.utils.cds_methods import run_largest, run_mystery, run_nearest
@@ -195,3 +197,27 @@ def run_autocomplete(
                 f"Running {autocomplete}."
             )
             run_largest(ctx, input, output, prefix)
+
+
+"""
+for all and bulk
+"""
+
+
+def check_duplicate_headers(fasta_file: Path) -> None:
+    """
+    checks if there are duplicated in the FASTA header
+    https://github.com/gbouras13/pharokka/issues/293
+    """
+    header_set = set()
+
+    # Iterate through the FASTA file and check for duplicate headers
+    for record in SeqIO.parse(fasta_file, "fasta"):
+        header = record.description
+        if header in header_set:
+            logger.error(
+                f"Duplicate FASTA header {header} found in the input file {fasta_file}."
+            )  # errors if duplicate header found
+        else:
+            header_set.add(header)
+    # if it finished it will be fine

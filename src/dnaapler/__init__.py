@@ -20,6 +20,7 @@ from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
 from dnaapler.utils.util import (
     begin_dnaapler,
+    check_duplicate_headers,
     end_dnaapler,
     get_version,
     print_citation,
@@ -581,6 +582,7 @@ def bulk(
 
     # validates fasta
     validate_fasta_bulk(input)
+    check_duplicate_headers(input)
 
     # validate e value
     check_evalue(evalue)
@@ -683,6 +685,7 @@ def all(
 
     # validates fasta
     validate_fasta_all(input)
+    check_duplicate_headers(input)
 
     # validate e value
     check_evalue(evalue)

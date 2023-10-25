@@ -1,6 +1,5 @@
 import os
 import random
-import shutil
 from pathlib import Path
 
 import pandas as pd
@@ -8,13 +7,10 @@ import pyrodigal
 from Bio import SeqIO
 from loguru import logger
 
-from dnaapler.utils.constants import DNAAPLER_DB
-from dnaapler.utils.external_tools import ExternalTool
 from dnaapler.utils.processing import (
     reorient_sequence_and_append,
     reorient_single_record_bulk,
 )
-from dnaapler.utils.validation import validate_custom_db_fasta
 
 
 def all_process_blast_output_and_reorient(

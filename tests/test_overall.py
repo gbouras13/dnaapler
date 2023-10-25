@@ -221,21 +221,21 @@ def test_all_no_reorientation(tmp_dir):
 def test_all_autocomplete_mystery(tmp_dir):
     """test all where autcompletion is required mystery"""
     input_fasta: Path = f"{overall_test_data}/all_test_autocomplete.fasta"
-    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f a mystery"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f -a mystery"
     exec_command(cmd)
 
 
 def test_all_autocomplete_nearest(tmp_dir):
     """test all where autcompletion is required nearest"""
     input_fasta: Path = f"{overall_test_data}/all_test_autocomplete.fasta"
-    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f a nearest"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f -a nearest"
     exec_command(cmd)
 
 
 def test_all_autocomplete_largest(tmp_dir):
     """test all where autcompletion is required largest"""
     input_fasta: Path = f"{overall_test_data}/all_test_autocomplete.fasta"
-    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f a largest"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f -a largest"
     exec_command(cmd)
 
 
@@ -345,6 +345,22 @@ class TestExits(unittest.TestCase):
             input_fasta: Path = f"{test_data}/nucl_test.fna"
             outdir: Path = f"{overall_test_data}/bulk_out"
             cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f -a nearest "
+            exec_command(cmd)
+
+    def test_all_dupe_header(self):
+        """test all with autcomplete no hits"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{test_data}/dupe_header.fasta"
+            outdir: Path = f"{overall_test_data}/bulk_out"
+            cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f  "
+            exec_command(cmd)
+
+    def test_bulk_dupe_header(self):
+        """test bulk with autcomplete no hits"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{test_data}/dupe_header.fasta"
+            outdir: Path = f"{overall_test_data}/bulk_out"
+            cmd = f"dnaapler bulk -i {input_fasta} -o {outdir} -t 1 -f  "
             exec_command(cmd)
 
 
