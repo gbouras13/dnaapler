@@ -24,7 +24,7 @@ def all_process_blast_output_and_reorient(
     autocomplete: str,
     seed_value: int,
 ) -> None:
-    """Processes the blast output,reorients and saves all contigs into os.path.join(output, f"{prefix}_all_reoriented.fasta")
+    """Processes the blast output,reorients and saves all contigs into os.path.join(output, f"{prefix}_reoriented.fasta")
 
     :param input: input file
     :param blast_file: blast output file
@@ -81,7 +81,7 @@ def all_process_blast_output_and_reorient(
     idents = []
     identitys = []
 
-    reoriented_output_file = os.path.join(output, f"{prefix}_all_reoriented.fasta")
+    reoriented_output_file = os.path.join(output, f"{prefix}_reoriented.fasta")
 
     # Read the FASTA file and extract the IDs
     for record in SeqIO.parse(input, "fasta"):

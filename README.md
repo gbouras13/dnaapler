@@ -63,14 +63,17 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 
 ## Commands
 
+* `dnaapler all`: Reorients multiple contigs to begin with any of dnaA, terL, repA. 
+  - Practically, this should be the most useful command for most users.
+
 * `dnaapler chromosome`: Reorients your sequence to begin with the dnaA chromosomal replication initiator gene
 * `dnaapler plasmid`: Reorients your sequence to begin with the repA plasmid replication initiation gene
 * `dnaapler phage`: Reorients your sequence to begin with the terL large terminase subunit gene
 * `dnaapler custom`: Reorients your sequence to begin with a custom amino acid FASTA format gene that you specify
 * `dnaapler mystery`: Reorients your sequence to begin with a random CDS
+* `dnaapler mystery`: Reorients your sequence to begin with a random CDS
 * `dnaapler nearest`: Reorients your sequence to begin with the first CDS (nearest to the start). Designed for fixing sequences where a CDS spans the breakpoint.
 * `dnaapler bulk`: Reorients multiple contigs to begin with the desired start gene - either dnaA, terL, repA or a custom gene.
-* `dnaapler all`: Reorients multiple contigs to begin with any of dnaA, terL, repA.
 
 
 ## Installation
@@ -118,6 +121,7 @@ Commands:
   chromosome  Reorients your genome to begin with the dnaA chromosomal...
   citation    Print the citation(s) for this tool
   custom      Reorients your genome with a custom database
+  largest     Reorients your genome the begin with the largest CDS as...
   mystery     Reorients your genome with a random CDS
   nearest     Reorients your genome the begin with the first CDS as...
   phage       Reorients your genome to begin with the terL large...
@@ -125,10 +129,9 @@ Commands:
   ```
 
   ```
-  Usage: dnaapler chromosome [OPTIONS]
+Usage: dnaapler all [OPTIONS]
 
-  Reorients your genome to begin with the dnaA chromosomal replication
-  initiation gene
+  Reorients multiple contigs to begin with any of dnaA, repA or terL
 
 Options:
   -h, --help               Show this message and exit.
@@ -139,9 +142,11 @@ Options:
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
   -f, --force              Force overwrites the output directory
   -e, --evalue TEXT        e value for blastx  [default: 1e-10]
+  --ignore PATH            Text file listing contigs (one per row) that are to
+                           be ignored
   -a, --autocomplete TEXT  Choose an option to autocomplete reorientation if
                            BLAST based approach fails. Must be one of: none,
-                           mystery or nearest [default: none]
+                           mystery, largest, or nearest [default: none]
   --seed_value INTEGER     Random seed to ensure reproducibility.  [default:
                            13]
   ```
