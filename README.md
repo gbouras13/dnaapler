@@ -1,6 +1,7 @@
 [![CI](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yaml/badge.svg)](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/gbouras13/dnaapler/branch/main/graph/badge.svg?token=4B1T2PGM9V)](https://codecov.io/gh/gbouras13/dnaapler)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![DOI](https://zenodo.org/badge/550095292.svg)](https://zenodo.org/doi/10.5281/zenodo.10039420)
 
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/dnaapler/badges/version.svg)](https://anaconda.org/bioconda/dnaapler)
 [![Bioconda Downloads](https://img.shields.io/conda/dn/bioconda/dnaapler)](https://img.shields.io/conda/dn/bioconda/dnaapler)
