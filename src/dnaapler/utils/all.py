@@ -208,7 +208,6 @@ def all_process_blast_output_and_reorient(
                 if filtered_df["qseq"][0][0] in ["M", "V", "L"] and (
                     filtered_df["sstart"][0] == 1
                 ):
-                        
                     (
                         start,
                         strand,
@@ -219,11 +218,13 @@ def all_process_blast_output_and_reorient(
                         ident,
                         identity,
                     ) = reorient_single_record_bulk(
-                        filtered_df, reoriented_output_file, record, overlapping_orf=False
+                        filtered_df,
+                        reoriented_output_file,
+                        record,
+                        overlapping_orf=False,
                     )
-                        
-                else: # top hit doesn't have a valid start codon - get most overlapping CDS
 
+                else:  # top hit doesn't have a valid start codon - get most overlapping CDS
                     (
                         start,
                         strand,
@@ -234,9 +235,11 @@ def all_process_blast_output_and_reorient(
                         ident,
                         identity,
                     ) = reorient_single_record_bulk(
-                        filtered_df, reoriented_output_file, record, overlapping_orf=True
+                        filtered_df,
+                        reoriented_output_file,
+                        record,
+                        overlapping_orf=True,
                     )
-                    
 
                 # save all the stats
                 genes.append(gene)
@@ -248,8 +251,6 @@ def all_process_blast_output_and_reorient(
                 coverages.append(coverage)
                 idents.append(ident)
                 identitys.append(identity)
-
-
 
     # write the example info to file
     #

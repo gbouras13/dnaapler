@@ -1,11 +1,11 @@
 import os
+from pathlib import Path
 
 import pandas as pd
-from Bio import SeqIO
-from loguru import logger
-from pathlib import Path
 import pyrodigal
+from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+from loguru import logger
 
 
 def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
@@ -82,44 +82,41 @@ def process_blast_output_and_reorient(input, blast_file, out_file, gene: str):
     # https://github.com/gbouras13/dnaapler/issues/44
 
     else:
-        if blast_df["qseq"][0][0] in ["M", "V", "L"] and (
-            blast_df["sstart"][0] == 1
-        ):
+        if blast_df["qseq"][0][0] in ["M", "V", "L"] and (blast_df["sstart"][0] == 1):
             reorient_sequence(blast_df, input, out_file, gene, overlapping_orf=False)
-        else: # this will reorient the sequence with the orf that overlaps the tophit by the most
+        else:  # this will reorient the sequence with the orf that overlaps the tophit by the most
             # warn if the top hit doesnt begin with a valid start codon
             logger.warning(
-                    f"The top {gene} blastx hit did not have a BLAST alignment beginning with a valid start codon M, V or L."
-                )
+                f"The top {gene} blastx hit did not have a BLAST alignment beginning with a valid start codon M, V or L."
+            )
             logger.warning(
-                    "The CDS with the most overlap with this blastx hit according to Pyrodigal will instead be used to reorient the genome."
-                )
+                "The CDS with the most overlap with this blastx hit according to Pyrodigal will instead be used to reorient the genome."
+            )
             reorient_sequence(blast_df, input, out_file, gene, overlapping_orf=True)
-               
-
 
         blast_success = True
 
     return blast_success
 
 
-def reorient_sequence(blast_df: pd.DataFrame, input: Path, 
-                      out_file: Path, 
-                      gene: str, 
-                      overlapping_orf: bool) -> None:
-    
+def reorient_sequence(
+    blast_df: pd.DataFrame,
+    input: Path,
+    out_file: Path,
+    gene: str,
+    overlapping_orf: bool,
+) -> None:
     # get the start
-    
+
     ident = blast_df["nident"][0]
     top_hit = blast_df["sseqid"][0]
     top_hit_length = blast_df["slen"][0]
     covered_len = blast_df["length"][0]
     identity = round(ident / covered_len * 100, 2)
     coverage = round(covered_len / top_hit_length * 100, 2)
-    
+
     # top blast hit starts at 1
     if overlapping_orf is False:
-
         # basic stats
         dnaa_start_on_chromosome = blast_df["qstart"][0]
         strand = "forward"
@@ -135,7 +132,9 @@ def reorient_sequence(blast_df: pd.DataFrame, input: Path,
         logger.info(
             f"{covered_len} AAs were covered by the best hit, with an overall coverage of {coverage}%."
         )
-        logger.info(f"{ident} AAs were identical, with an overall identity of {identity}%.")
+        logger.info(
+            f"{ident} AAs were identical, with an overall identity of {identity}%."
+        )
         logger.info("Re-orienting.")
 
         ####################
@@ -167,7 +166,6 @@ def reorient_sequence(blast_df: pd.DataFrame, input: Path,
 
     # top blastx hit does not start at 1
     else:
-
         # get start and end of tophit
         start_tophit = blast_df["qstart"][0]
         end_tophit = blast_df["qend"][0]
@@ -177,13 +175,15 @@ def reorient_sequence(blast_df: pd.DataFrame, input: Path,
 
         # there will only be 1 record
         for i, record in enumerate(SeqIO.parse(input, "fasta")):
-
-
-            logger.info(f"The top blastx hit for {gene} is {top_hit}, which has length of {top_hit_length} AAs.  The alignment did not begin with a valid start codon.")
+            logger.info(
+                f"The top blastx hit for {gene} is {top_hit}, which has length of {top_hit_length} AAs.  The alignment did not begin with a valid start codon."
+            )
             logger.info(
                 f"{covered_len} AAs were covered in the best hit, with an overall coverage of {coverage}%."
             )
-            logger.info(f"{ident} AAs were identical, with an overall identity of {identity}%.")
+            logger.info(
+                f"{ident} AAs were identical, with an overall identity of {identity}%."
+            )
 
             orf_finder = pyrodigal.GeneFinder(meta=True)
             genes = orf_finder.find_genes(str(record.seq))
@@ -197,13 +197,14 @@ def reorient_sequence(blast_df: pd.DataFrame, input: Path,
                 overlap_start = max(tophit_min, min(gene.begin, gene.end))
                 overlap_end = min(tophit_max, max(gene.begin, gene.end))
 
-                overlap_dict[gene_index] = max(0, overlap_end - overlap_start)  #Ensure non-negative length
-                gene_index +=1
-
+                overlap_dict[gene_index] = max(
+                    0, overlap_end - overlap_start
+                )  # Ensure non-negative length
+                gene_index += 1
 
             # Find the gene with the max overlap
             closest_gene_index = max(overlap_dict, key=lambda key: overlap_dict[key])
-            
+
             start = genes[closest_gene_index].begin
             strand = genes[closest_gene_index].strand
 
@@ -212,12 +213,15 @@ def reorient_sequence(blast_df: pd.DataFrame, input: Path,
             else:
                 strand_eng = "negative"
 
-            logger.info(f"The CDS most overlapping the tophit has a start coordinate of {start}.")
-            logger.info(f"The CDS most overlapping the tophit is on the {strand_eng} strand.")
+            logger.info(
+                f"The CDS most overlapping the tophit has a start coordinate of {start}."
+            )
+            logger.info(
+                f"The CDS most overlapping the tophit is on the {strand_eng} strand."
+            )
             logger.info("Re-orienting.")
 
             reorient_sequence_random(input, out_file, start, strand)
-
 
 
 def reorient_sequence_random(input, out_file, start, strand):
@@ -254,10 +258,9 @@ def reorient_sequence_random(input, out_file, start, strand):
         SeqIO.write(record, out_fa, "fasta")
 
 
-def reorient_single_record_bulk(blast_df: pd.DataFrame, 
-                                out_file: Path, 
-                                record: SeqRecord,  
-                                overlapping_orf: bool) -> None:
+def reorient_single_record_bulk(
+    blast_df: pd.DataFrame, out_file: Path, record: SeqRecord, overlapping_orf: bool
+) -> None:
     """
     reorients a single record in dnaapler bulk or dnaapler all
     """
@@ -268,10 +271,9 @@ def reorient_single_record_bulk(blast_df: pd.DataFrame,
     coverage = round(covered_len / top_hit_length * 100, 2)
     ident = blast_df["nident"][0]
     identity = round(ident / covered_len * 100, 2)
-    
+
     # default - when tophit starts with a valid start codon
     if overlapping_orf is False:
-
         # get the start
         dnaa_start_on_chromosome = blast_df["qstart"][0]
         strand = "forward"
@@ -317,7 +319,6 @@ def reorient_single_record_bulk(blast_df: pd.DataFrame,
         )
     # tophit does not start with 1
     else:
-
         # get start and end of tophit
         start_tophit = blast_df["qstart"][0]
         end_tophit = blast_df["qend"][0]
@@ -325,10 +326,13 @@ def reorient_single_record_bulk(blast_df: pd.DataFrame,
         tophit_min = min(start_tophit, end_tophit)
         tophit_max = max(start_tophit, end_tophit)
 
-
         # find the genes
-        logger.info(f"The top blastx hit for the contig {record.id} did not begin with a valid start codon.")
-        logger.info("Searching with pyrodigal for the CDS overlapping the most with the top blastx hit to reorient with.")
+        logger.info(
+            f"The top blastx hit for the contig {record.id} did not begin with a valid start codon."
+        )
+        logger.info(
+            "Searching with pyrodigal for the CDS overlapping the most with the top blastx hit to reorient with."
+        )
 
         orf_finder = pyrodigal.GeneFinder(meta=True)
         genes = orf_finder.find_genes(str(record.seq))
@@ -342,13 +346,14 @@ def reorient_single_record_bulk(blast_df: pd.DataFrame,
             overlap_start = max(tophit_min, min(gene.begin, gene.end))
             overlap_end = min(tophit_max, max(gene.begin, gene.end))
 
-            overlap_dict[gene_index] = max(0, overlap_end - overlap_start)  #Ensure non-negative length
-            gene_index +=1
-
+            overlap_dict[gene_index] = max(
+                0, overlap_end - overlap_start
+            )  # Ensure non-negative length
+            gene_index += 1
 
         # Find the gene with the max overlap
         closest_gene_index = max(overlap_dict, key=lambda key: overlap_dict[key])
-        
+
         start = genes[closest_gene_index].begin
         strand = genes[closest_gene_index].strand
 
@@ -389,8 +394,6 @@ def reorient_single_record_bulk(blast_df: pd.DataFrame,
             ident,
             identity,
         )
-
-        
 
 
 # function to touch create a file

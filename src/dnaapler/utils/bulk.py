@@ -217,7 +217,7 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
                 if filtered_df["qseq"][0][0] in ["M", "V", "L"] and (
                     filtered_df["sstart"][0] == 1
                 ):
-                        # starts with valid start codon but needs orientation
+                    # starts with valid start codon but needs orientation
                     (
                         start,
                         strand,
@@ -228,11 +228,13 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
                         ident,
                         identity,
                     ) = reorient_single_record_bulk(
-                        filtered_df, reoriented_output_file, record,  overlapping_orf=False
+                        filtered_df,
+                        reoriented_output_file,
+                        record,
+                        overlapping_orf=False,
                     )
 
-                else: # top hit does not start with a valid start codon
-
+                else:  # top hit does not start with a valid start codon
                     (
                         start,
                         strand,
@@ -243,10 +245,13 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
                         ident,
                         identity,
                     ) = reorient_single_record_bulk(
-                        filtered_df, reoriented_output_file, record,  overlapping_orf=True
+                        filtered_df,
+                        reoriented_output_file,
+                        record,
+                        overlapping_orf=True,
                     )
 
-                    # because pyrodigal 
+                    # because pyrodigal
                     if strand == -1:
                         strand = "reverse"
                     else:
@@ -261,8 +266,6 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
                 coverages.append(coverage)
                 idents.append(ident)
                 identitys.append(identity)
-
-
 
     # write the example info to file
     #

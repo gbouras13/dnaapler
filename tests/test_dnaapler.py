@@ -132,7 +132,9 @@ class TestReorientSequence(unittest.TestCase):
             blast_file, delimiter="\t", index_col=False, names=col_list
         )
         input = os.path.join(overall_inputs_test_data, "NC_007458.fasta")
-        out_file = os.path.join(overall_inputs_test_data, "fake_reoriented_NC_007458.fasta")
+        out_file = os.path.join(
+            overall_inputs_test_data, "fake_reoriented_NC_007458.fasta"
+        )
         gene = "terL"
         overlapping_orf = False
         reorient_sequence(blast_df, input, out_file, gene, overlapping_orf)
@@ -186,7 +188,6 @@ class TestBlastOutput(unittest.TestCase):
             input, blast_file, output, gene
         )
         assert blast_success == True
-
 
     def test_process_blast_output_and_reorient_correct(self):
         # Test scenario where the no BLAST hit begins with 1 (start of gene)
