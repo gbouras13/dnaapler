@@ -196,9 +196,11 @@ def validate_choice_autocomplete(ctx, param, value):
     """
     checks the click.Choice option for the autocomplete flag
     """
-    choices = ["mystery", "nearest", "none"]
+    choices = ["mystery", "nearest", "largest", "none"]
     if value not in choices:
-        raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
+        raise click.BadParameter(
+            f"Invalid choice. Please choose from {', '.join(choices)}"
+        )
     return value
 
 

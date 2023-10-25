@@ -152,6 +152,13 @@ def test_nearest(tmp_dir):
     exec_command(cmd)
 
 
+def test_largest(tmp_dir):
+    """test largest"""
+    input_fasta: Path = f"{overall_test_data}/chromosome.fasta"
+    cmd = f"dnaapler largest -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
 def test_custom(tmp_dir):
     """test custom"""
     input_fasta: Path = f"{overall_test_data}/chromosome.fasta"
@@ -208,6 +215,27 @@ def test_all_no_reorientation(tmp_dir):
     """test all where there is already orientation or no orientation"""
     input_fasta: Path = f"{overall_test_data}/all_reorient_and_no_reorient.fasta"
     cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_all_autocomplete_mystery(tmp_dir):
+    """test all where autcompletion is required mystery"""
+    input_fasta: Path = f"{overall_test_data}/all_test_autocomplete.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f a mystery"
+    exec_command(cmd)
+
+
+def test_all_autocomplete_nearest(tmp_dir):
+    """test all where autcompletion is required nearest"""
+    input_fasta: Path = f"{overall_test_data}/all_test_autocomplete.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f a nearest"
+    exec_command(cmd)
+
+
+def test_all_autocomplete_largest(tmp_dir):
+    """test all where autcompletion is required largest"""
+    input_fasta: Path = f"{overall_test_data}/all_test_autocomplete.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f a largest"
     exec_command(cmd)
 
 
@@ -295,7 +323,32 @@ class TestExits(unittest.TestCase):
             cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f "
             exec_command(cmd)
 
+    def test_all_autocomplete_mystery_too_small(self):
+        """test all where the autocompletion mystery fails as the contig has < 4 CDS"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{test_data}/no_hit_plasmid.fasta"
+            outdir: Path = f"{overall_test_data}/plas_out"
+            cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f -a mystery"
+            exec_command(cmd)
+
+    def test_all_autocomplete_largest_too_small(self):
+        """test all where the autocompletion largest fails as the contig has < 4 CDS"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{test_data}/no_hit_plasmid.fasta"
+            outdir: Path = f"{overall_test_data}/plas_out"
+            cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f -a largest"
+            exec_command(cmd)
+
+    def test_all_autocomplete_nearest_no_hits(self):
+        """test all with autcomplete no hits"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{test_data}/nucl_test.fna"
+            outdir: Path = f"{overall_test_data}/bulk_out"
+            cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f -a nearest "
+            exec_command(cmd)
+
 
 remove_directory(f"{overall_test_data}/phage_out")
 remove_directory(f"{overall_test_data}/chrom_out")
 remove_directory(f"{overall_test_data}/bulk_out")
+remove_directory(f"{overall_test_data}/plas_out")

@@ -93,6 +93,60 @@ def run_nearest(ctx, input, output, prefix):
         reorient_sequence_random(input, output_processed_file, start, strand)
 
 
+def run_largest(ctx, input, seed_value, output, prefix):
+    # get number of records of input
+    logger.info("Searching for CDS with pyrodigal")
+    orf_finder = pyrodigal.GeneFinder(meta=True)
+
+    # set seed
+    random.seed(int(seed_value))
+
+    # there will only be 1 record
+    for i, record in enumerate(SeqIO.parse(input, "fasta")):
+        genes = orf_finder.find_genes(str(record.seq))
+        # get number of genes
+        gene_count = len(genes)
+
+        # ensure has > 3 genes
+        if gene_count < 4:
+            logger.error(
+                f"{input} has less than 4 CDS. You probably shouldn't be using dnaapler mystery!"
+            )
+            ctx.exit(2)
+
+        logger.info("Reorienting with the largest CDS.")
+
+        # iterate over dict
+
+        size_dict = {}
+        gene_index = 0
+
+        for gene in genes:
+            size = abs(gene.end - gene.begin)
+            size_dict[gene_index] = size
+            gene_index += 1
+
+        # Find the gene with the max overlap
+        largest_gene_index = max(size_dict, key=lambda key: size_dict[key])
+
+        start = genes[largest_gene_index].begin
+        strand = genes[largest_gene_index].strand
+        max_size = size_dict[largest_gene_index] / 3
+
+        if strand == 1:
+            strand_eng = "forward"
+        else:
+            strand_eng = "negative"
+
+        logger.info(
+            f"Your largest CDS has a start coordinate of {start} and has a size of {max_size} AAs."
+        )
+        logger.info(f"Your largest CDS is on the {strand_eng} strand.")
+
+        output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
+        reorient_sequence_random(input, output_processed_file, start, strand)
+
+
 def run_blast_based_method(ctx, input, output, prefix, gene, evalue, threads):
     """
     returns: bool -  blast_success, whether or not the BLAST based approach succeeded

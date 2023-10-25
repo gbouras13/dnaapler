@@ -327,10 +327,10 @@ def reorient_single_record_bulk(
         tophit_max = max(start_tophit, end_tophit)
 
         # find the genes
-        logger.info(
+        logger.warning(
             f"The top blastx hit for the contig {record.id} did not begin with a valid start codon."
         )
-        logger.info(
+        logger.warning(
             "Searching with pyrodigal for the CDS overlapping the most with the top blastx hit to reorient with."
         )
 
@@ -394,6 +394,42 @@ def reorient_single_record_bulk(
             ident,
             identity,
         )
+
+
+def reorient_sequence_and_append(record, out_file, start, strand):
+    """
+    for dnaapler all when -a or --autocomplete is not none
+    """
+
+    ####################
+    # reorientation
+    ####################
+
+    # length of record
+    length = len(record.seq)
+
+    # reorient to start at the terminase
+    # forward is 1 from pyrodigal
+    if strand == 1:
+        left = record.seq[(int(start) - 1) : length]
+        right = record.seq[0 : int(start) - 1]
+        total_seq = left + right
+
+    # revese compliment if the strand is -1 from pyrodigal
+    if strand == -1:
+        record.seq = record.seq.reverse_complement()
+        left = record.seq[(length - int(start)) : length]
+        right = record.seq[0 : (length - int(start))]
+        total_seq = left + right
+
+    # updates the sequence
+    record.seq = total_seq
+    # update that it has been rotated
+    record.description = record.description + " rotated=True"
+
+    # writes to file
+    with open(out_file, "a") as out_fa:
+        SeqIO.write(record, out_fa, "fasta")
 
 
 # function to touch create a file

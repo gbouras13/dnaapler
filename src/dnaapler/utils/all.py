@@ -1,20 +1,31 @@
 import os
+import random
 import shutil
 from pathlib import Path
 
 import pandas as pd
+import pyrodigal
 from Bio import SeqIO
 from loguru import logger
 
 from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
-from dnaapler.utils.processing import reorient_single_record_bulk
+from dnaapler.utils.processing import (
+    reorient_sequence_and_append,
+    reorient_single_record_bulk,
+)
 from dnaapler.utils.validation import validate_custom_db_fasta
 
 
 def all_process_blast_output_and_reorient(
-    input, blast_file, output, prefix, ignore_list
-):
+    input: Path,
+    blast_file: Path,
+    output: Path,
+    prefix: str,
+    ignore_list: Path,
+    autocomplete: str,
+    seed_value: int,
+) -> None:
     """Processes the blast output,reorients and saves all contigs into os.path.join(output, f"{prefix}_all_reoriented.fasta")
 
     :param input: input file
@@ -22,7 +33,6 @@ def all_process_blast_output_and_reorient(
     :param output: output directory
     :param prefix: prefix
     :param ignore_list: list containing contigs (short_contig) to ignore
-    :param autocomplete (str): autocomplete method
     :return:
     """
 
@@ -104,23 +114,45 @@ def all_process_blast_output_and_reorient(
             idents.append(message)
             identitys.append(message)
 
-        # no hits at all then just write to the file
+        # no hits at all then autcomplete
         elif length_of_df == 0:
-            # write contig anyway
-            with open(reoriented_output_file, "a") as out_fa:
-                SeqIO.write(record, out_fa, "fasta")
+            if autocomplete == "none":
+                # write contig anyway
+                with open(reoriented_output_file, "a") as out_fa:
+                    SeqIO.write(record, out_fa, "fasta")
 
-            # no hit save for the output DF
-            message = "No_BLAST_hits"
-            genes.append(message)
-            starts.append(message)
-            strands.append(message)
-            top_hits.append(message)
-            top_hit_lengths.append(message)
-            covered_lens.append(message)
-            coverages.append(message)
-            idents.append(message)
-            identitys.append(message)
+                # no hit save for the output DF
+                message = "No_BLAST_hits"
+                genes.append(message)
+                starts.append(message)
+                strands.append(message)
+                top_hits.append(message)
+                top_hit_lengths.append(message)
+                covered_lens.append(message)
+                coverages.append(message)
+                idents.append(message)
+                identitys.append(message)
+
+            else:
+                message = f"autocomplete_method_{autocomplete}"
+                (start, strand) = run_autocomplete_record(
+                    record, autocomplete, reoriented_output_file, seed_value
+                )
+
+                if strand == 1:
+                    strand_eng = "forward"
+                else:
+                    strand_eng = "negative"
+
+                genes.append(message)
+                starts.append(start)
+                strands.append(strand_eng)
+                top_hits.append(message)
+                top_hit_lengths.append(message)
+                covered_lens.append(message)
+                coverages.append(message)
+                idents.append(message)
+                identitys.append(message)
 
         else:  # there is at least one BLAST hit
             # determine the numbers of repA, dnaA and terL
@@ -275,3 +307,112 @@ def all_process_blast_output_and_reorient(
         sep="\t",
         index=False,
     )
+
+
+def run_autocomplete_record(
+    record, autocomplete: str, reoriented_output_file, seed_value
+):
+    logger.warning(f"There was no blastx hit for contig {record.id}.")
+    logger.warning(f"Running {autocomplete} on contig {record.id}.")
+
+    # get number of records of input
+    orf_finder = pyrodigal.GeneFinder(meta=True)
+
+    # set seed
+    random.seed(int(seed_value))
+
+    # there will only be 1 record
+    genes = orf_finder.find_genes(str(record.seq))
+    # get number of genes
+    gene_count = len(genes)
+
+    if autocomplete == "mystery":
+        # ensure has > 3 genes
+        if gene_count < 4:
+            logger.error(
+                f"{record.id} has less than 4 CDS. You shouldn't be using -a mystery "
+            )
+
+        # ensure not first or last gene
+        reorient_gene_number = random.randint(2, gene_count - 1)
+
+        logger.info(
+            f"Gene number {reorient_gene_number} was selected for contig {record.id}."
+        )
+        start = genes[reorient_gene_number].begin
+        strand = genes[reorient_gene_number].strand
+
+        if strand == 1:
+            strand_eng = "forward"
+        else:
+            strand_eng = "negative"
+
+        logger.info(
+            f"Your random CDS has a start coordinate of {start} for contig {record.id}."
+        )
+        logger.info(
+            f"Your random CDS is on the {strand_eng} strand for contig {record.id}."
+        )
+
+    elif autocomplete == "nearest":
+        # ensure has > 1 genes
+        if gene_count < 2:
+            logger.error(
+                f"{record.id} has less than 2 CDS. You shouldn't be using -a nearest"
+            )
+
+        reorient_gene_number = 1
+
+        start = genes[reorient_gene_number].begin
+        strand = genes[reorient_gene_number].strand
+
+        if strand == 1:
+            strand_eng = "forward"
+        else:
+            strand_eng = "negative"
+
+        logger.info(
+            f"Your nearest CDS has a start coordinate of {start} for contig {record.id}."
+        )
+        logger.info(
+            f"Your nearest CDS is on the {strand_eng} strand for contig {record.id}."
+        )
+
+    elif autocomplete == "largest":
+        if gene_count < 4:
+            logger.error(
+                f"{record.id} has less than 4 CDS. You probably shouldn't be using -a largest"
+            )
+
+        # iterate over dict
+
+        size_dict = {}
+        gene_index = 0
+
+        for gene in genes:
+            size = abs(gene.end - gene.begin)
+            size_dict[gene_index] = size
+            gene_index += 1
+
+        # Find the gene with the max overlap
+        largest_gene_index = max(size_dict, key=lambda key: size_dict[key])
+
+        start = genes[largest_gene_index].begin
+        strand = genes[largest_gene_index].strand
+        max_size = round((size_dict[largest_gene_index] / 3), 2)
+
+        if strand == 1:
+            strand_eng = "forward"
+        else:
+            strand_eng = "negative"
+
+        logger.info(
+            f"Your largest CDS has a start coordinate of {start} for contig {record.id} with max size {max_size}."
+        )
+        logger.info(
+            f"Your largest CDS is on the {strand_eng} strand for contig {record.id}."
+        )
+
+    reorient_sequence_and_append(record, reoriented_output_file, start, strand)
+
+    return start, strand

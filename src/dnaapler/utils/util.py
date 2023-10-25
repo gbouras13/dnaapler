@@ -11,7 +11,7 @@ import click
 import pyrodigal
 from loguru import logger
 
-from dnaapler.utils.cds_methods import run_mystery, run_nearest
+from dnaapler.utils.cds_methods import run_largest, run_mystery, run_nearest
 
 
 class OrderedCommands(click.Group):
@@ -188,3 +188,10 @@ def run_autocomplete(
                 f"Running {autocomplete}."
             )
             run_nearest(ctx, input, output, prefix)
+        elif autocomplete == "largest":
+            logger.info(
+                "BLAST based reorientation failed.\n"
+                f"You chose the {autocomplete} autocomplete strategy as a backup strategy for reorientation.\n "
+                f"Running {autocomplete}."
+            )
+            run_largest(ctx, input, output, prefix)

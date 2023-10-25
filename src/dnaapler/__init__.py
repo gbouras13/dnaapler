@@ -10,7 +10,12 @@ from loguru import logger
 
 from dnaapler.utils.all import all_process_blast_output_and_reorient
 from dnaapler.utils.bulk import bulk_process_blast_output_and_reorient, run_bulk_blast
-from dnaapler.utils.cds_methods import run_blast_based_method, run_mystery, run_nearest
+from dnaapler.utils.cds_methods import (
+    run_blast_based_method,
+    run_largest,
+    run_mystery,
+    run_nearest,
+)
 from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
 from dnaapler.utils.util import (
@@ -88,6 +93,32 @@ def common_options(func):
     return func
 
 
+def autocomplete_options(func):
+    """
+    autocomplete options
+    """
+    options = [
+        click.option(
+            "-a",
+            "--autocomplete",
+            type=click.STRING,
+            callback=validate_choice_autocomplete,
+            default="none",
+            help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nMust be one of: none, mystery, largest, or nearest [default: none]",
+        ),
+        click.option(
+            "--seed_value",
+            help="Random seed to ensure reproducibility.",
+            type=int,
+            default=13,
+            show_default=True,
+        ),
+    ]
+    for option in reversed(options):
+        func = option(func)
+    return func
+
+
 @click.group()
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
@@ -112,21 +143,7 @@ Chromosome command
     help="e value for blastx",
     show_default=True,
 )
-@click.option(
-    "-a",
-    "--autocomplete",
-    type=click.STRING,
-    callback=validate_choice_autocomplete,
-    default="none",
-    help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nMust be one of: none, mystery or nearest [default: none]",
-)
-@click.option(
-    "--seed_value",
-    help="Random seed to ensure reproducibility.",
-    type=int,
-    default=13,
-    show_default=True,
-)
+@autocomplete_options
 def chromosome(
     ctx,
     input,
@@ -190,21 +207,7 @@ Plasmid command
     help="e value for blastx",
     show_default=True,
 )
-@click.option(
-    "-a",
-    "--autocomplete",
-    type=click.STRING,
-    callback=validate_choice_autocomplete,
-    default="none",
-    help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nbe one of: none, mystery or nearest [default: none]",
-)
-@click.option(
-    "--seed_value",
-    help="Random seed to ensure reproducibility.",
-    type=int,
-    default=13,
-    show_default=True,
-)
+@autocomplete_options
 def plasmid(
     ctx,
     input,
@@ -268,21 +271,7 @@ Phage command
     help="e value for blastx",
     show_default=True,
 )
-@click.option(
-    "-a",
-    "--autocomplete",
-    type=click.STRING,
-    callback=validate_choice_autocomplete,
-    default="none",
-    help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nMust be one of: none, mystery or nearest [default: none]",
-)
-@click.option(
-    "--seed_value",
-    help="Random seed to ensure reproducibility.",
-    type=int,
-    default=13,
-    show_default=True,
-)
+@autocomplete_options
 def phage(
     ctx,
     input,
@@ -353,21 +342,7 @@ custom command
     type=click.Path(),
     required=True,
 )
-@click.option(
-    "-a",
-    "--autocomplete",
-    type=click.STRING,
-    callback=validate_choice_autocomplete,
-    default="none",
-    help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nMust be one of: none, mystery or nearest [default: none]",
-)
-@click.option(
-    "--seed_value",
-    help="Random seed to ensure reproducibility.",
-    type=int,
-    default=13,
-    show_default=True,
-)
+@autocomplete_options
 def custom(
     ctx,
     input,
@@ -511,6 +486,38 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
 
 
 """
+nearest command
+"""
+
+
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+def largest(ctx, input, output, threads, prefix, force, **kwargs):
+    """Reorients your genome the begin with the largest CDS as called by pyrodigal"""
+
+    # validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force)
+
+    # defines gene
+    gene = "nearest"
+
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene)
+
+    # validates fasta
+    validate_fasta(input)
+
+    # run the nearest workflow
+    run_largest(ctx, input, output, prefix)
+
+    # finish dnaapler
+    end_dnaapler(start_time)
+
+
+"""
 bulk subcommand
 """
 
@@ -643,20 +650,13 @@ all subcommand
     show_default=True,
 )
 @click.option(
-    "-a",
-    "--autocomplete",
-    type=click.STRING,
-    callback=validate_choice_autocomplete,
-    default="none",
-    help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nMust be one of: none, mystery or nearest [default: none]",
-)
-@click.option(
     "--ignore",
     default="",
     help="Text file listing contigs (one per row) that are to be ignored",
     type=click.Path(),
     show_default=False,
 )
+@autocomplete_options
 def all(
     ctx,
     input,
@@ -664,8 +664,9 @@ def all(
     threads,
     prefix,
     evalue,
-    autocomplete,
     force,
+    autocomplete,
+    seed_value,
     ignore,
     **kwargs,
 ):
@@ -716,7 +717,7 @@ def all(
             ignore_list = list(ignore_dict)
 
     all_process_blast_output_and_reorient(
-        input, blast_file, output, prefix, ignore_list
+        input, blast_file, output, prefix, ignore_list, autocomplete, seed_value
     )
 
     # end dnaapler
