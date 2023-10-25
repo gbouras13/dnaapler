@@ -15,13 +15,14 @@ from dnaapler.utils.validation import validate_custom_db_fasta
 def all_process_blast_output_and_reorient(
     input, blast_file, output, prefix, ignore_list
 ):
-    """Processes the blast output, reorients and saves all contigs into os.path.join(output, f"{prefix}_all_reoriented.fasta")
+    """Processes the blast output,reorients and saves all contigs into os.path.join(output, f"{prefix}_all_reoriented.fasta")
 
     :param input: input file
     :param blast_file: blast output file
     :param output: output directory
     :param prefix: prefix
     :param ignore_list: list containing contigs (short_contig) to ignore
+    :param autocomplete (str): autocomplete method
     :return:
     """
 
@@ -190,91 +191,65 @@ def all_process_blast_output_and_reorient(
             # so in these cases, go down the list and check there is a hit with a legitimate start codon
             # I anticipate this will be rare usually, the first will be it :)
             else:
-                gene_found = False
-                for i in range(0, len(filtered_df.qseq)):
-                    if filtered_df["qseq"][i][0] in ["M", "V", "L"] and (
-                        filtered_df["sstart"][i] == 1
-                    ):
-                        # update the record description to contain 'rotated=True' akin to how unicycler does it
-                        record.description = record.description + " rotated=True"
+                # update the record description to contain 'rotated=True' akin to how unicycler does it
+                record.description = record.description + " rotated=True"
 
-                        # get gene
-                        # set as dnaA by default
-                        gene = "dnaA"
+                # get gene
+                # set as dnaA by default
+                gene = "dnaA"
 
-                        # for plasmids
-                        if "UniRef90" in filtered_df["sseqid"][i]:
-                            gene = "repA"
-                        # for phages
-                        if "phrog" in filtered_df["sseqid"][i]:
-                            gene = "terL"
+                # for plasmids
+                if "UniRef90" in filtered_df["sseqid"][0]:
+                    gene = "repA"
+                # for phages
+                if "phrog" in filtered_df["sseqid"][0]:
+                    gene = "terL"
 
-                        # if already reoriented
-                        if filtered_df["qstart"][i] == 1:
-                            # writes to file
-                            with open(reoriented_output_file, "a") as out_fa:
-                                SeqIO.write(record, out_fa, "fasta")
+                if filtered_df["qseq"][0][0] in ["M", "V", "L"] and (
+                    filtered_df["sstart"][0] == 1
+                ):
+                        
+                    (
+                        start,
+                        strand,
+                        top_hit,
+                        top_hit_length,
+                        covered_len,
+                        coverage,
+                        ident,
+                        identity,
+                    ) = reorient_single_record_bulk(
+                        filtered_df, reoriented_output_file, record, overlapping_orf=False
+                    )
+                        
+                else: # top hit doesn't have a valid start codon - get most overlapping CDS
 
-                            # no hit save for the output DF
-                            message = "Contig_already_reoriented"
+                    (
+                        start,
+                        strand,
+                        top_hit,
+                        top_hit_length,
+                        covered_len,
+                        coverage,
+                        ident,
+                        identity,
+                    ) = reorient_single_record_bulk(
+                        filtered_df, reoriented_output_file, record, overlapping_orf=True
+                    )
+                    
 
-                            genes.append(message)
-                            starts.append(message)
-                            strands.append(message)
-                            top_hits.append(message)
-                            top_hit_lengths.append(message)
-                            covered_lens.append(message)
-                            coverages.append(message)
-                            idents.append(message)
-                            identitys.append(message)
+                # save all the stats
+                genes.append(gene)
+                starts.append(start)
+                strands.append(strand)
+                top_hits.append(top_hit)
+                top_hit_lengths.append(top_hit_length)
+                covered_lens.append(covered_len)
+                coverages.append(coverage)
+                idents.append(ident)
+                identitys.append(identity)
 
-                        else:
-                            (
-                                start,
-                                strand,
-                                top_hit,
-                                top_hit_length,
-                                covered_len,
-                                coverage,
-                                ident,
-                                identity,
-                            ) = reorient_single_record_bulk(
-                                filtered_df, reoriented_output_file, record, i
-                            )
 
-                            # save all the stats
-                            genes.append(gene)
-                            starts.append(start)
-                            strands.append(strand)
-                            top_hits.append(top_hit)
-                            top_hit_lengths.append(top_hit_length)
-                            covered_lens.append(covered_len)
-                            coverages.append(coverage)
-                            idents.append(ident)
-                            identitys.append(identity)
-
-                        gene_found = True
-
-                        break
-
-                if (
-                    gene_found is False
-                ):  # where there is no reorientiation no blast hits at a;;
-                    with open(reoriented_output_file, "a") as out_fa:
-                        SeqIO.write(record, out_fa, "fasta")
-
-                    # no hit save for the output DF
-                    message = "No_BLAST_hits"
-
-                    genes.append(message)
-                    starts.append(message)
-                    strands.append(message)
-                    top_hits.append(message)
-                    top_hit_lengths.append(message)
-                    covered_lens.append(message)
-                    coverages.append(message)
-                    idents.append(message)
-                    identitys.append(message)
 
     # write the example info to file
     #

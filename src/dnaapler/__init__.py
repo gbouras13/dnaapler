@@ -643,6 +643,14 @@ all subcommand
     show_default=True,
 )
 @click.option(
+    "-a",
+    "--autocomplete",
+    type=click.STRING,
+    callback=validate_choice_autocomplete,
+    default="none",
+    help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nMust be one of: none, mystery or nearest [default: none]",
+)
+@click.option(
     "--ignore",
     default="",
     help="Text file listing contigs (one per row) that are to be ignored",
@@ -656,6 +664,7 @@ def all(
     threads,
     prefix,
     evalue,
+    autocomplete,
     force,
     ignore,
     **kwargs,

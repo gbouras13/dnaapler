@@ -49,6 +49,12 @@ def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
 
 def test_phage(tmp_dir):
     """test phage"""
+    input_fasta: Path = f"{overall_test_data}/NC_007458.fasta"
+    cmd = f"dnaapler phage -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+def test_phage_start_codon_not_found(tmp_dir):
+    """test phage where the tophit has no start codon in alignment"""
     input_fasta: Path = f"{overall_test_data}/SAOMS1.fasta"
     cmd = f"dnaapler phage -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
@@ -60,6 +66,11 @@ def test_chrom(tmp_dir):
     cmd = f"dnaapler chromosome -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
+def test_chrom_start_codon_not_found(tmp_dir):
+    """test chrom"""
+    input_fasta: Path = f"{overall_test_data}/chromosome_top_hit_no_start_codon.fasta"
+    cmd = f"dnaapler chromosome -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
 
 def test_chrom_diff_eval(tmp_dir):
     """test chrom with different e value"""
@@ -88,6 +99,11 @@ def test_plas(tmp_dir):
     cmd = f"dnaapler plasmid -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
+def test_plas_top_hit_no_start_codon(tmp_dir):
+    """test plas tophit no start codon"""
+    input_fasta: Path = f"{overall_test_data}/plasmid_top_hit_no_start_codon.fasta"
+    cmd = f"dnaapler plasmid -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
 
 def test_plas_nearest_autocomplete(tmp_dir):
     """test plas - with phage (so no hit)"""

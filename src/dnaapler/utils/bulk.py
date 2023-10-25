@@ -214,72 +214,55 @@ def bulk_process_blast_output_and_reorient(input, blast_file, output, prefix):
             # so in these cases, go down the list and check there is a hit with a legitimate start codon
             # I anticipate this will be rare usually, the first will be it :)
             else:
-                gene_found = False
-                for i in range(0, len(filtered_df.qseq)):
-                    if filtered_df["qseq"][i][0] in ["M", "V", "L"] and (
-                        filtered_df["sstart"][i] == 1
-                    ):
-                        # if already reoriented
-                        if filtered_df["qstart"][i] == 1:
-                            # writes to file
-                            with open(reoriented_output_file, "a") as out_fa:
-                                SeqIO.write(record, out_fa, "fasta")
+                if filtered_df["qseq"][0][0] in ["M", "V", "L"] and (
+                    filtered_df["sstart"][0] == 1
+                ):
+                        # starts with valid start codon but needs orientation
+                    (
+                        start,
+                        strand,
+                        top_hit,
+                        top_hit_length,
+                        covered_len,
+                        coverage,
+                        ident,
+                        identity,
+                    ) = reorient_single_record_bulk(
+                        filtered_df, reoriented_output_file, record,  overlapping_orf=False
+                    )
 
-                            # no hit save for the output DF
-                            message = "Contig_already_reoriented"
+                else: # top hit does not start with a valid start codon
 
-                            starts.append(message)
-                            strands.append(message)
-                            top_hits.append(message)
-                            top_hit_lengths.append(message)
-                            covered_lens.append(message)
-                            coverages.append(message)
-                            idents.append(message)
-                            identitys.append(message)
+                    (
+                        start,
+                        strand,
+                        top_hit,
+                        top_hit_length,
+                        covered_len,
+                        coverage,
+                        ident,
+                        identity,
+                    ) = reorient_single_record_bulk(
+                        filtered_df, reoriented_output_file, record,  overlapping_orf=True
+                    )
 
-                        else:
-                            (
-                                start,
-                                strand,
-                                top_hit,
-                                top_hit_length,
-                                covered_len,
-                                coverage,
-                                ident,
-                                identity,
-                            ) = reorient_single_record_bulk(
-                                filtered_df, reoriented_output_file, record, i
-                            )
+                    # because pyrodigal 
+                    if strand == -1:
+                        strand = "reverse"
+                    else:
+                        strand = "forward"
 
-                            # save all the stats
-                            starts.append(start)
-                            strands.append(strand)
-                            top_hits.append(top_hit)
-                            top_hit_lengths.append(top_hit_length)
-                            covered_lens.append(covered_len)
-                            coverages.append(coverage)
-                            idents.append(ident)
-                            identitys.append(identity)
+                # save all the stats
+                starts.append(start)
+                strands.append(strand)
+                top_hits.append(top_hit)
+                top_hit_lengths.append(top_hit_length)
+                covered_lens.append(covered_len)
+                coverages.append(coverage)
+                idents.append(ident)
+                identitys.append(identity)
 
-                        gene_found = True
 
-                        break
-
-                if gene_found is False:  # where there is no reorientiation
-                    with open(fail_reoriented_output_file, "a") as out_fa:
-                        SeqIO.write(record, out_fa, "fasta")
-
-                    # no hit save for the output DF
-                    message = "No_BLAST_hits"
-
-                    starts.append(message)
-                    strands.append(message)
-                    top_hits.append(message)
-                    top_hit_lengths.append(message)
-                    covered_lens.append(message)
-                    coverages.append(message)
-                    idents.append(message)
-                    identitys.append(message)
 
     # write the example info to file
     #
