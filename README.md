@@ -21,8 +21,12 @@ conda create -n dnaapler_env dnaapler
 # activates conda environment
 conda activate dnaapler_env
 
+# runs dnaapler all 
+dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
+
 # runs dnaapler chromosome
-dnaapler chromosome -i input.fasta -o output_directory_path -p my_bacteria_name -t 8
+dnaapler chromosome -i input_chromosome.fasta -o output_directory_path -p my_bacteria_name -t 8
+
 ```
 
 ## Table of Contents
@@ -55,7 +59,7 @@ For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome br
 
 Additionally, you can also reorient multiple bacterial chromosomes/plasmids/phages at once using the `dnaapler bulk` subcommand.
 
-If your input FASTA is mixed (e.g. has chromosome and plasmids), you can also use `dnaapler all`, with the option to ignore some contigs with the `--ignore` parameter. 
+If your input FASTA is mixed (e.g. has chromosome and plasmids), you can also use `dnaapler all`, with the option to ignore some contigs with the `--ignore` parameter.
 
 ## Documentation
 
