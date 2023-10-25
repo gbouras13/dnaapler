@@ -1,5 +1,12 @@
 # History
 
+# 0.4.0 (2023-10-25)
+
+* Implemented a modification to the logic for all cases where the top blastx hit alignment does not begin with a start codon. In this case, dnaapler will find the CDS according the pyrodigal that has the most overlap with the top hit alignment. Thanks @simone-pignotti for this suggestion [here](https://github.com/gbouras13/dnaapler/issues/44).
+* Changes `dnaapler all` output FASTA to `_reoriented.fasta` instead of `_all_reoriented.fasta` for consistency with all other commands (except `dnaapler bulk`).
+* Adds `-a` or `--autocomplete` option with `dnaapler all`.
+* Adds `dnaapler largest` and `-a largest` as an option to orient your sequence beginning with the largest 
+
 # 0.3.2 (2023-09-20)
 
 * Changes `Orffinder` to `Genefinder`  to support `pyrodigal` v3.

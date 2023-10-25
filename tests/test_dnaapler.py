@@ -39,6 +39,7 @@ from src.dnaapler.utils.validation import (
 
 # test data
 test_data = Path("tests/test_data")
+overall_inputs_test_data = Path("tests/test_data/overall_inputs")
 logger.add(lambda _: sys.exit(1), level="ERROR")
 
 
@@ -74,40 +75,8 @@ class TestValidateFasta(unittest.TestCase):
 class TestReorientSequence(unittest.TestCase):
     """Tests for reorient_sequence"""
 
-    def test_reorient_sequence_outside_range(self):
-        # Test scenario where the row is outside of range
-        with self.assertRaises(KeyError):
-            blast_file = os.path.join(test_data, "SAOMS1_blast_output_correct.txt")
-            col_list = [
-                "qseqid",
-                "qlen",
-                "sseqid",
-                "slen",
-                "length",
-                "qstart",
-                "qend",
-                "sstart",
-                "send",
-                "pident",
-                "nident",
-                "gaps",
-                "mismatch",
-                "evalue",
-                "bitscore",
-                "qseq",
-                "sseq",
-            ]
-            blast_df = pd.read_csv(
-                blast_file, delimiter="\t", index_col=False, names=col_list
-            )
-            input = os.path.join(test_data, "SAOMS1.fasta")
-            out_file = os.path.join(test_data, "fake_reoriented.fasta")
-            gene = "terL"
-            i = int(3)
-            reorient_sequence(blast_df, input, out_file, gene, i)
-
-    def test_reorient_sequence_correct(self):
-        # test where it works as expected
+    def test_reorient_sequence_top_hit_no_start_codon(self):
+        # Test scenario where the top blast hit doesn't have a start codon
         blast_file = os.path.join(test_data, "SAOMS1_blast_output_correct.txt")
         col_list = [
             "qseqid",
@@ -134,8 +103,41 @@ class TestReorientSequence(unittest.TestCase):
         input = os.path.join(test_data, "SAOMS1.fasta")
         out_file = os.path.join(test_data, "fake_reoriented.fasta")
         gene = "terL"
-        i = int(1)
-        reorient_sequence(blast_df, input, out_file, gene, i)
+        overlapping_orf = True
+        reorient_sequence(blast_df, input, out_file, gene, overlapping_orf)
+
+    def test_reorient_sequence_top_hit_with_start_codon(self):
+        # Test scenario where the top blast hit does have a start codon
+        blast_file = os.path.join(test_data, "NC_007458_dnaapler_blast_output.txt")
+        col_list = [
+            "qseqid",
+            "qlen",
+            "sseqid",
+            "slen",
+            "length",
+            "qstart",
+            "qend",
+            "sstart",
+            "send",
+            "pident",
+            "nident",
+            "gaps",
+            "mismatch",
+            "evalue",
+            "bitscore",
+            "qseq",
+            "sseq",
+        ]
+        blast_df = pd.read_csv(
+            blast_file, delimiter="\t", index_col=False, names=col_list
+        )
+        input = os.path.join(overall_inputs_test_data, "NC_007458.fasta")
+        out_file = os.path.join(
+            overall_inputs_test_data, "fake_reoriented_NC_007458.fasta"
+        )
+        gene = "terL"
+        overlapping_orf = False
+        reorient_sequence(blast_df, input, out_file, gene, overlapping_orf)
 
 
 class TestReorientSequenceRandom(unittest.TestCase):
@@ -185,18 +187,7 @@ class TestBlastOutput(unittest.TestCase):
         blast_success = process_blast_output_and_reorient(
             input, blast_file, output, gene
         )
-        assert blast_success == False
-
-    def test_process_blast_output_and_reorient_no_one(self):
-        # Test scenario where the no BLAST hit begins with 1 (start of gene)
-        blast_file = os.path.join(test_data, "SAOMS1_blast_output_no_one.txt")
-        input = os.path.join(test_data, "SAOMS1.fasta")
-        output = os.path.join(test_data, "fake_reoriented.fasta")
-        gene = "terL"
-        blast_success = process_blast_output_and_reorient(
-            input, blast_file, output, gene
-        )
-        assert blast_success == False
+        assert blast_success == True
 
     def test_process_blast_output_and_reorient_correct(self):
         # Test scenario where the no BLAST hit begins with 1 (start of gene)

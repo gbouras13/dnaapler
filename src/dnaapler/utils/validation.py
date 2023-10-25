@@ -9,7 +9,7 @@ from Bio import SeqIO
 from loguru import logger
 
 
-def instantiate_dirs(output_dir: str, force: bool):
+def instantiate_dirs(output_dir: str, force: bool) -> None:
     """Checks the output directory
     :param out_dir: output directory path
     :param force: force flag
@@ -39,7 +39,7 @@ def instantiate_dirs(output_dir: str, force: bool):
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 
-def validate_fasta(input_fasta: Path):
+def validate_fasta(input_fasta: Path) -> None:
     """
     Validates  FASTA input - that the input is a FASTA with 1 sequence
     """
@@ -66,7 +66,7 @@ def validate_fasta(input_fasta: Path):
             )
 
 
-def validate_fasta_bulk(input_fasta: Path):
+def validate_fasta_bulk(input_fasta: Path) -> None:
     """
     Validates  FASTA input - that the input is a FASTA with > 1 sequence
     """
@@ -93,7 +93,7 @@ def validate_fasta_bulk(input_fasta: Path):
             logger.info(f"{input_fasta} has more than one entry.")
 
 
-def validate_fasta_all(input_fasta: Path):
+def validate_fasta_all(input_fasta: Path) -> None:
     """
     Validates  FASTA input - that the input is a FASTA with >= 1 sequence
     """
@@ -118,7 +118,7 @@ def validate_fasta_all(input_fasta: Path):
             logger.info(f"{input_fasta} has more than one entry.")
 
 
-def validate_custom_db_fasta(custom_fasta: Path):
+def validate_custom_db_fasta(custom_fasta: Path) -> None:
     """
     Validates custom db FASTA input - ensures it is FASTA file with amino acids (.faa)
     """
@@ -196,9 +196,11 @@ def validate_choice_autocomplete(ctx, param, value):
     """
     checks the click.Choice option for the autocomplete flag
     """
-    choices = ["mystery", "nearest", "none"]
+    choices = ["mystery", "nearest", "largest", "none"]
     if value not in choices:
-        raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
+        raise click.BadParameter(
+            f"Invalid choice. Please choose from {', '.join(choices)}"
+        )
     return value
 
 
