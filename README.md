@@ -16,11 +16,14 @@ Dnaapler is a simple tool that reorients complete circular microbial genomes.
 ## Quick Start
 
 ```
-# creates conda environment with dnaapler
-conda create -n dnaapler_env -c bioconda dnaapler
+# creates empty conda environment
+conda create -n dnaapler_env
 
 # activates conda environment
 conda activate dnaapler_env
+
+# installs dnaapler
+conda install -c bioconda dnaapler
 
 # runs dnaapler all 
 dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
@@ -104,13 +107,7 @@ You can also install `dnaapler` with pip.
 pip install dnaapler
 ```
 
-* Note: If you want to install `dnaapler` with pip, you will need to install BLAST v2.10 or higher separately.
-
-e.g.
-
-```
-conda install -c bioconda blast>2.9
-```
+* If you install `dnaapler` with pip, then you will then need to install BLAST v 2.9 or higher separately. It will need to be available in the `$PATH` or else `dnaapler` will not work. 
 
 
 ## Usage
