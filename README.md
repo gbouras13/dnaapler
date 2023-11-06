@@ -233,7 +233,7 @@ If you would like to help improve  `dnaapler` you are very welcome!
 
 For changes to be accepted, they must pass the CI checks. 
 
-Please see CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
 
 ## Acknowledgements
 
