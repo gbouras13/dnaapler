@@ -53,34 +53,46 @@ Ready to contribute? Here's how to set up `dnaapler` for local development.
 1. Fork the `dnaapler` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:gbouras13/dnaapler.git
+```
+    git clone git@github.com:gbouras13/dnaapler.git
+```
+
 
 3. Install your local copy into a virtual environment. You will also need blast available. Assuming you have mamba installed::
 
-    $ mamba create -n dnaaplerDEV pip blast
-    $ conda activate dnaaplerDEV
-    $ cd dnaapler/
+```
+    mamba create -n dnaaplerDEV pip blast
+    conda activate dnaaplerDEV
+    cd dnaapler/
+```
+
 
 4. Create a branch for local development::
 
-    $ git checkout -b name-of-your-bugfix-or-feature
+```
+    git checkout -b name-of-your-bugfix-or-feature
+```
 
    Now you can make your changes locally.
 
 5. When you're done making changes, check that your changes pass black and isort and the
    tests::
 
-    $ black . 
-    $ isort . 
-    $ poetry run pytest tests/
+```
+    black . 
+    isort . 
+    pytest tests/
+```
 
    To get flake8 and tox, just pip install them into your virtualenv.
 
 6. Commit your changes and push your branch to GitHub::
 
-    $ git add .
-    $ git commit -m "Your detailed description of your changes."
-    $ git push origin name-of-your-bugfix-or-feature
+```
+    git add .
+    git commit -m "Your detailed description of your changes."
+    git push origin name-of-your-bugfix-or-feature
+```
 
 7. Submit a pull request through the GitHub website.
 
