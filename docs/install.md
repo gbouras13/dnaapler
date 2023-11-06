@@ -74,6 +74,8 @@ mamba install -c bioconda dnaapler
 dnaapler -h
 ```
 
+* You should see:
+
 ```
 Usage: dnaapler [OPTIONS] COMMAND [ARGS]...
 
