@@ -6,7 +6,8 @@ The easiest way to install dnaapler is via conda. For inexperienced command line
 
 If you need instructions on how to install conda, please see the end of this page.
 
-### Conda
+Conda
+-----
 
 `dnaapler` is available on bioconda.
 
@@ -14,7 +15,8 @@ If you need instructions on how to install conda, please see the end of this pag
 conda install -c bioconda dnaapler
 ```
 
-### Pip
+Pip
+----
 
 You can also install `dnaapler` with pip.
 
@@ -22,32 +24,22 @@ You can also install `dnaapler` with pip.
 pip install dnaapler
 ```
 
-You will then need to install BLAST v 2.9 or higher separately.
+If you install `dnaapler` with pip, then you will then need to install BLAST v 2.9 or higher separately. It will need to be available in the `$PATH` or else `dnaapler` will not work. 
 
-e.g.
-
-```
-conda install -c bioconda blast>2.8
-```
-
-### Beginner Conda Installation
+Beginner Conda Installation
+----
 
 If you are new to using the command-line, please install conda using the following instructions.
 
-1. Install [Anaconda](https://www.anaconda.com/products/distribution). I would recommend [miniconda](https://docs.conda.io/en/latest/miniconda.html).
-2. Assuming you are using a Linux x86_64 machine (for other architectures, please replace the URL with the appropriate one on the [miniconda](https://docs.conda.io/en/latest/miniconda.html) website).
+1. Install [Anaconda](https://www.anaconda.com/products/distribution). There are lots of options but the two best in our opinion are:
+   * [miniforge](https://github.com/conda-forge/miniforge).
+   * [miniconda](https://docs.conda.io/en/latest/miniconda.html).
+  
+Please follow the instructions at the links to install conda based on your computer architecture. 
 
-`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
+* Note: We would recommend using miniforge as it will automatically install mamba, which is much faster than conda. 
 
-* For Mac (Intel, will also work with M1):
-
-`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh`
-
-3. Install miniconda and follow the prompts.
-
-`sh Miniconda3-latest-Linux-x86_64.sh`
-
-4. After installation is complete, you should add the following channels to your conda configuration:
+2. After installation is complete, you should add the following channels to your conda configuration:
 
 ```
 conda config --add channels defaults
@@ -55,11 +47,7 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 ```
 
-5. After this, conda should be installed (you may need to restart your terminal). It is recommended that mamba is also installed, as it will solve the enviroment quicker than conda:
-
-`conda install mamba`
-
-6. Finally, I would recommend installing dnaapler into a fresh environment. For example to create an environment called dnaaplerENV with dnaapler installed:
+3. We would recommend installing dnaapler into a fresh environment. Assuming you installed miniforge, to create a environment called dnaaplerENV with dnaapler installed:
 
 ```
 mamba create -n dnaaplerENV dnaapler
