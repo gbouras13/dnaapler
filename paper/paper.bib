@@ -138,7 +138,6 @@
     pages = {btad586},
     year = {2023},
     month = {09},
-    abstract = "{Microbial communities have a profound impact on both human health and various environments. Viruses infecting bacteria, known as bacteriophages or phages, play a key role in modulating bacterial communities within environments. High-quality phage genome sequences are essential for advancing our understanding of phage biology, enabling comparative genomics studies and developing phage-based diagnostic tools. Most available viral identification tools consider individual sequences to determine whether they are of viral origin. As a result of challenges in viral assembly, fragmentation of genomes can occur, and existing tools may recover incomplete genome fragments. Therefore, the identification and characterization of novel phage genomes remain a challenge, leading to the need of improved approaches for phage genome recovery.We introduce Phables, a new computational method to resolve phage genomes from fragmented viral metagenome assemblies. Phables identifies phage-like components in the assembly graph, models each component as a flow network, and uses graph algorithms and flow decomposition techniques to identify genomic paths. Experimental results of viral metagenomic samples obtained from different environments show that Phables recovers on average over 49\\% more high-quality phage genomes compared to existing viral identification tools. Furthermore, Phables can resolve variant phage genomes with over 99\\% average nucleotide identity, a distinction that existing tools are unable to make.Phables is available on GitHub at https://github.com/Vini2/phables.}",
     issn = {1367-4811},
     doi = {10.1093/bioinformatics/btad586},
     url = {https://doi.org/10.1093/bioinformatics/btad586},
@@ -146,7 +145,7 @@
 }
 
 
-@article{Bouras:2023,
+@article{Bouras1:2023,
     author = {Bouras, George and Sheppard, Anna E and Mallawaarachchi, Vijini and Vreugde, Sarah},
     title = "{Plassembler: an automated bacterial plasmid assembly tool}",
     journal = {Bioinformatics},
@@ -155,7 +154,6 @@
     pages = {btad409},
     year = {2023},
     month = {06},
-    abstract = "{With recent advances in sequencing technologies, it is now possible to obtain near-perfect complete bacterial chromosome assemblies cheaply and efficiently by combining a long-read-first assembly approach with short-read polishing. However, existing methods for assembling bacterial plasmids from long-read-first assemblies often misassemble or even miss bacterial plasmids entirely and accordingly require manual curation. Plassembler was developed to provide a tool that automatically assembles and outputs bacterial plasmids using a hybrid assembly approach. It achieves increased accuracy and computational efficiency compared to the existing gold standard tool Unicycler by removing chromosomal reads from the input read sets using a mapping approach.Plassembler is implemented in Python and is installable as a bioconda package using ‘conda install -c bioconda plassembler’. The source code is available on GitHub at https://github.com/gbouras13/plassembler. The full benchmarking pipeline can be found at https://github.com/gbouras13/plassembler\_simulation\_benchmarking, while the benchmarking input FASTQ and output files can be found at https://doi.org/10.5281/zenodo.7996690.}",
     issn = {1367-4811},
     doi = {10.1093/bioinformatics/btad409},
     url = {https://doi.org/10.1093/bioinformatics/btad409},
@@ -169,10 +167,47 @@
 	year = {2023},
 	doi = {10.1101/2023.03.28.534496},
 	publisher = {Cold Spring Harbor Laboratory},
-	abstract = {Chronic rhinosinusitis (CRS) is a common chronic sinonasal mucosal inflammation associated with Staphylococcus aureus biofilm and relapsing infections. This study aimed to determine rates of S. aureus persistence and pathoadaptation in CRS patients by investigating the genomic relatedness and antibiotic resistance/tolerance in longitudinally collected S. aureus clinical isolates.A total of 68 S. aureus isolates were sourced from 34 CRS patients at least six months apart. Isolates were grown into 48-hour biofilms and tested for tolerance to antibiotics. A hybrid sequencing strategy was used to obtain high-quality reference-grade assemblies of all isolates. Single nucleotide variants (SNV) divergence in the core genome and sequence type clustering were used to analyse the relatedness of the isolate pairs. Single nucleotide and structural genome variations, plasmid similarity, and plasmid copy numbers between pairs were examined.Our analysis revealed that 41\% (14/34 pairs) of S. aureus isolates were persisters, while 59\% (20/34 pairs) were non-persisters. Persister isolates showed episode-specific mutational changes over time with a bias towards events in genes involved in adhesion to the host and mobile genetic elements such as plasmids, prophages, and insertion sequences. A significant increase in the copy number of conserved plasmids of persister strains (p\&lt;0.05) was seen, indicating a role of the {\textquotedblleft}mobilome{\textquotedblright} in promoting persistence. This was accompanied by a significant increase in biofilm tolerance against all tested antibiotics (p\&lt;0.001), which was linked to a significant increase in biofilm biomass (p\&lt;0.05) over time, indicating a biofilm central pathoadaptive process in persisters. In conclusion, our study provides important insights into the mutational changes underlying S. aureus persistence in CRS patients highlighting pathoadaptive mechanisms in S. aureus persisters culminating in increased biofilm biomass linked to an increase in plasmid copy number over time.Competing Interest StatementThe authors have declared no competing interest.AERDaspirin-exacerbated respiratory diseaseAMRAntimicrobial ResistanceCARDComprehensive Antibiotic Resistance DatabaseCDScoding sequencesCFUColony Forming UnitCIClinical IsolateCLSIClinical and Laboratory Standards InstituteCRSChronic RhinosinusitisCRSsNPCRS without Nasal PolyposisCRSwNPCRS with Nasal PolyposisCVCrystal VioletMFUMcFarland UnitsMICMinimum Inhibitory ConcentrationMIC50MIC required to inhibit the growth of 50\% of organismsMIC90MIC required to inhibit the growth of 90\% of organismsMLSTMulti-Locus Sequence TypingNCTCNational Collection of Type CultureNGSNext Generation SequencingONTOxford nanopore technologyPCRPolymerase Chain ReactionSNVSingle-Nucleotide VariantSVstructural variantsVFDBVirulence Factor DatabaseVLKCsVariable-length k-mer clustersWGSWhole Genome Sequencing},
-	URL = {https://www.biorxiv.org/content/early/2023/03/28/2023.03.28.534496},
+  URL = {https://www.biorxiv.org/content/early/2023/03/28/2023.03.28.534496},
 	eprint = {https://www.biorxiv.org/content/early/2023/03/28/2023.03.28.534496.full.pdf},
 	journal = {bioRxiv}
 }
+
+
+@article{Bouras2:2023,
+    author = {Bouras, George and Nepal, Roshan and Houtak, Ghais and Psaltis, Alkis James and Wormald, Peter-John and Vreugde, Sarah},
+    title = "{Pharokka: a fast scalable bacteriophage annotation tool}",
+    journal = {Bioinformatics},
+    volume = {39},
+    number = {1},
+    pages = {btac776},
+    year = {2022},
+    month = {12},
+    abstract = "{In recent years, there has been an increasing interest in bacteriophages, which has led to growing numbers of bacteriophage genomic sequences becoming available. Consequently, there is a need for a rapid and consistent genomic annotation tool dedicated for bacteriophages. Existing tools either are not designed specifically for bacteriophages or are web- and email-based and require significant manual curation, which makes their integration into bioinformatic pipelines challenging. Pharokka was created to provide a tool that annotates bacteriophage genomes easily, rapidly and consistently with standards compliant outputs. Moreover, Pharokka requires only two lines of code to install and use and takes under 5 min to run for an average 50-kb bacteriophage genome.Pharokka is implemented in Python and is available as a bioconda package using ‘conda install -c bioconda pharokka’. The source code is available on GitHub (https://github.com/gbouras13/pharokka). Pharokka has been tested on Linux-64 and MacOSX machines and on Windows using a Linux Virtual Machine.}",
+    issn = {1367-4811},
+    doi = {10.1093/bioinformatics/btac776},
+    url = {https://doi.org/10.1093/bioinformatics/btac776},
+    eprint = {https://academic.oup.com/bioinformatics/article-pdf/39/1/btac776/48448991/btac776.pdf},
+}
+
+@article{Schwengers:2021,
+   author = "Schwengers, Oliver and Jelonek, Lukas and Dieckmann, Marius Alfred and Beyvers, Sebastian and Blom, Jochen and Goesmann, Alexander",
+   title = "Bakta: rapid and standardized annotation of bacterial genomes via alignment-free sequence identification", 
+   journal= "Microbial Genomics",
+   year = "2021",
+   volume = "7",
+   number = "11",
+   pages = "",
+   doi = "https://doi.org/10.1099/mgen.0.000685",
+   url = "https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000685",
+   publisher = "Microbiology Society",
+   issn = "2057-5858",
+   type = "Journal Article",
+   keywords = "whole-genome sequencing",
+   keywords = "bacteria",
+   keywords = "metagenome-assembled genomes",
+   keywords = "plasmids ",
+   keywords = "genome annotation",
+  eid = "000685"
+    }
 
 
