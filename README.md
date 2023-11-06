@@ -44,6 +44,7 @@ dnaapler chromosome -i input_chromosome.fasta -o output_directory_path -p my_bac
   - [Example Usage](#example-usage)
   - [Databases](#databases)
   - [Motivation](#motivation)
+  - [Contributing](#contributing)
   - [Acknowledgements](#acknowledgements)
 
 ## Description
@@ -225,6 +226,14 @@ After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler my
 3. After reading Ryan Wick's masterful bacterial genome assembly [tutorial](https://github.com/rrwick/Perfect-bacterial-genome-tutorial/wiki), I realised that it is probably optimal to run 2 polishing steps, once before then once after rotating the chromosome, to ensure the breakpoint is polished. Further, for some "complete" long read bacterial assemblies that didn't circularise properly, I figured that as long as you have a complete assembly (even if not "circular" as marked as in Flye), polishing after a re-orientation would be likely to circularise the chromosome. A bit like Ryan's [rotate_circular_gfa.py](https://github.com/rrwick/Perfect-bacterial-genome-tutorial/blob/main/scripts/rotate_circular_gfa.py) script, without the requirement of strict circularity.
 4. While researching MGEs in _S. aureus_ whole genome sequences, I repeatedly found instances where MGEs were interrupted by the chromosome breakpoint. So I thought I'd add a tool to automate it in my pipeline. 
 5. It's probably good to have all your sequences start at the same location for synteny analyses.
+
+## Contributing
+
+If you would like to help improve  `dnaapler` you are very welcome!
+
+For changes to be accepted, they must pass the CI checks. 
+
+Please see CONTRIBUTING.md](CONTRIBUTING.md) for more details.
 
 ## Acknowledgements
 
