@@ -80,7 +80,6 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 * `dnaapler phage`: Reorients your sequence to begin with the terL large terminase subunit gene
 * `dnaapler custom`: Reorients your sequence to begin with a custom amino acid FASTA format gene that you specify
 * `dnaapler mystery`: Reorients your sequence to begin with a random CDS
-* `dnaapler mystery`: Reorients your sequence to begin with a random CDS
 * `dnaapler nearest`: Reorients your sequence to begin with the first CDS (nearest to the start). Designed for fixing sequences where a CDS spans the breakpoint.
 * `dnaapler bulk`: Reorients multiple contigs to begin with the desired start gene - either dnaA, terL, repA or a custom gene.
 

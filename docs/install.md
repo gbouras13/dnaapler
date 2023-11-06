@@ -2,7 +2,7 @@
 
 `dnaapler` requires only BLAST v2.9 or higher as an external dependency. 
 
-The easiest way to install dnaapler is via conda. For inexperienced command line users, this method is highly recommended, because this will install BLAST automatically.
+The easiest way to install dnaapler is via conda. This method is highly recommended, because this will install BLAST automatically.
 
 If you need instructions on how to install conda, please see the end of this page.
 
@@ -31,15 +31,16 @@ Beginner Conda Installation
 
 If you are new to using the command-line, please install conda using the following instructions.
 
-1. Install [Anaconda](https://www.anaconda.com/products/distribution). There are lots of options but the two best in our opinion are:
+First install [Anaconda](https://www.anaconda.com/products/distribution). There are lots of options but the two best in our opinion are:
+
    * [miniforge](https://github.com/conda-forge/miniforge).
    * [miniconda](https://docs.conda.io/en/latest/miniconda.html).
   
-Please follow the instructions at the links to install conda based on your computer architecture. 
+Please follow the instructions at the links to install based on your computer architecture. 
 
-* Note: We would recommend using miniforge as it will automatically install mamba, which is much faster than conda. 
+* Note: We would recommend install miniforge as it will automatically install mamba, which is much faster than base conda. 
 
-2. After installation is complete, you should add the following channels to your conda configuration:
+After your installation is complete, you should add the following channels to your conda configuration:
 
 ```
 conda config --add channels defaults
@@ -47,7 +48,7 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 ```
 
-3. We would recommend installing dnaapler into a fresh environment. Assuming you installed miniforge, to create a environment called dnaaplerENV with dnaapler installed:
+We would recommend installing dnaapler into a fresh environment. Assuming you installed miniforge, to create a environment called dnaaplerENV with dnaapler installed:
 
 ```
 mamba create -n dnaaplerENV dnaapler
