@@ -66,9 +66,9 @@ If the 'custom' subcommand is selected, the same process will be conducted but w
 
 Examples of Dnaapler's functionality on the C333 _Staphylococcus aureus_ chromosome and the C333 Sa3int prophage (GenBank accession GCA_030288915.1, Sample Number SAMN32360890 from BioProject PRJNA914892 from [@Houtak:2023]) are shown below using the plotting functionalities of Bakta v1.8.2 [@Schwengers:2021] and Pharokka v1.5.1 [@Bouras2:2023].
 
-![Example Dnaapler reorientation of the c333 Sa3int prophage as a circular genomic map from Pharokka beginning at the top of the circle. Each coloured arrow represents a CDS. The large terminase subunit gene is labelled as terL.\label{fig:prophage}](C333_phage_combined.png){width=100%}
+![Example Dnaapler reorientation of the c333 Sa3int prophage as a circular genomic map from Pharokka beginning at the top of the circle. Each coloured arrow represents a CDS. The large terminase subunit gene is labelled as terL. Dnaapler identified the terL gene as beginning with coordinate 19146 on the forward strand. \label{fig:prophage}](C333_phage_combined.png){width=100%}
 
-![Example Dnaapler reorientation of the C333 chromosome as a circular genomic map from Bakta beginning at the top of the circle. Each thin line represents a CDS, with the positive stranded CDSs denoted in the outer ring and the negatived stranded CDSs in the inner ring. The position of the chromosomal replication initiator gene is labelled as dnaA. The red and green ring denotes the GC content while the blue and yellow ring denotes the GC skew. \label{fig:prophage}](C333_chromosome_combined.png){width=100%}
+![Example Dnaapler reorientation of the C333 chromosome as a circular genomic map from Bakta beginning at the top of the circle. Each thin line represents a CDS, with the positive stranded CDSs denoted in the outer ring and the negatived stranded CDSs in the inner ring. The position of the chromosomal replication initiator gene is labelled as dnaA. The red and green ring denotes the GC content while the blue and yellow ring denotes the GC skew. Dnaapler identified the dnaA gene as beginning with coordinate 466140 on the reverse strand. \label{fig:prophage}](C333_chromosome_combined.png){width=100%}
 
 
 # Availability
