@@ -238,6 +238,31 @@ Options:
   -f, --force            Force overwrites the output directory
 ```
 
+### largest
+
+`dnaapler largest` will reorient your genome to begin the largest coding sequence (CDS) as predicted by [Pyrodigal](https://github.com/althonos/pyrodigal).
+
+Example usage:
+
+```
+dnaapler largest -i input.fasta -o output_directory_path -t 8 
+```
+
+```
+Usage: dnaapler nearest [OPTIONS]
+
+  Reorients your genome the begin with the largest CDS as called by pyrodigal
+
+Options:
+  -h, --help             Show this message and exit.
+  -V, --version          Show the version and exit.
+  -i, --input PATH       Path to input file in FASTA format  [required]
+  -o, --output PATH      Output directory   [default: output.dnaapler]
+  -t, --threads INTEGER  Number of threads to use with BLAST  [default: 1]
+  -p, --prefix TEXT      Prefix for output files  [default: dnaapler]
+  -f, --force            Force overwrites the output directory
+```
+
 ### bulk
 
 

@@ -50,8 +50,46 @@ conda config --add channels conda-forge
 
 We would recommend installing dnaapler into a fresh environment. Assuming you installed miniforge, to create a environment called dnaaplerENV with dnaapler installed:
 
+* To create a conda environment called `dnaapler_env`
+
 ```
-mamba create -n dnaaplerENV dnaapler
-conda activate dnaaplerENV
-dnaapler --help
+conda create -n dnaapler_env
+```
+
+* To activate the environment
+
+```
+conda activate dnaapler_env
+```
+
+* To install dnaapler
+
+```
+mamba install -c bioconda dnaapler
+```
+
+* Once that has finished downloading and installing, you can check installation worked using:
+
+```
+dnaapler -h
+```
+
+```
+Usage: dnaapler [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  -h, --help     Show this message and exit.
+  -V, --version  Show the version and exit.
+
+Commands:
+  all         Reorients contigs to begin with any of dnaA, repA or terL
+  bulk        Reorients multiple genomes to begin with the same gene
+  chromosome  Reorients your genome to begin with the dnaA chromosomal...
+  citation    Print the citation(s) for this tool
+  custom      Reorients your genome with a custom database
+  largest     Reorients your genome the begin with the largest CDS as...
+  mystery     Reorients your genome with a random CDS
+  nearest     Reorients your genome the begin with the first CDS as...
+  phage       Reorients your genome to begin with the terL large...
+  plasmid     Reorients your genome to begin with the repA replication...
 ```
