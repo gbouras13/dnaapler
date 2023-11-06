@@ -64,9 +64,10 @@ Ready to contribute? Here's how to set up `dnaapler` for local development.
 
     $ git clone git@github.com:gbouras13/dnaapler.git
 
-3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
+3. Install your local copy into a virtual environment. You will also need blast available. Assuming you have mamba installed::
 
-    $ mkvirtualenv dnaapler
+    $ mamba create -n dnaaplerDEV pip blast
+    $ conda activate dnaaplerDEV
     $ cd dnaapler/
 
 4. Create a branch for local development::
@@ -100,6 +101,6 @@ Before you submit a pull request, check that it meets these guidelines:
 1. The pull request should include tests.
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
-   feature to the list in README.md and HISTORY.md.
+   feature to the list in README.md and update the relevant section in the docs/ directory.
 
 
