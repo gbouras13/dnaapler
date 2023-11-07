@@ -1,7 +1,7 @@
 
 # `dnaapler` examples
 
-You can try running `dnaapler` yourself using test data found in the `tests/test_data/overall_inputs`. These examples assumed you have cloned the dnaapler repository from GitHub and have moved into the directory e.g. and have `dnaapler` [installed](install.md) :
+You can try running `dnaapler` yourself using test data found in the `tests/test_data/overall_inputs` as shown below. These examples assumed you have cloned the dnaapler repository from GitHub and have moved into the directory e.g. and have `dnaapler` [installed](install.md) :
 
 ```
 git clone "https://github.com/gbouras13/dnaapler.git"
@@ -10,7 +10,7 @@ cd dnaapler
 
 ## Chromosome
 
-This chromosome is from _Staphylococcus aureus_ isolate C333 taken from [Houtak et al](https://www.biorxiv.org/content/10.1101/2023.03.28.534496v1), GenBank accession GCA_030288915.1, Sample Number SAMN32360890 from BioProject PRJNA914892 .
+This chromosome is from _Staphylococcus aureus_ isolate C333 taken from [Houtak et al](https://www.biorxiv.org/content/10.1101/2023.03.28.534496v1), GenBank accession GCA_030288915.1, Sample Number SAMN32360890 from BioProject PRJNA914892.
 
 To run `dnaapler chromosome` to reorient the C333 chromosome to begin with the dnaA gene 
 
