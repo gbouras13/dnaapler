@@ -53,7 +53,7 @@ The output should look like:
 
 In the results in the output directory, you will see that the `C333_reorientation_summary.tsv` file shows that `dnaapler` has identified the C333 genome to begin with coordinate
 
-A comparison of genomic maps of the C333 chromosome before and after `dnaapler` made with [Bakta v1.8.2](https://github.com/oschwengers/bakta) can be seen below:
+A comparison of circular genomic maps of the C333 chromosome before and after `dnaapler` made with [Bakta v1.8.2](https://github.com/oschwengers/bakta) can be seen below. The genome begins at the top of the circle. Each thin line represents a CDS, with the positive stranded CDSs denoted in the outer ring and the negatived stranded CDSs in the inner ring. The position of the chromosomal replication initiator gene is labelled as dnaA. The red and green ring denotes the GC content while the blue and yellow ring denotes the GC skew. 
 
 ![Image](C333_chromosome_combined.png)
 
@@ -101,5 +101,7 @@ The output should look like:
 ```
 
 In the results in the output directory, you will see that the `C333_phage_reorientation_summary.tsv` file shows that `dnaapler` has identified the C333 genome to begin with coordinate 19146 on the forward strand.
+
+A comparison of circular genomic maps of the C333 Sa3int prophage before and after `dnaapler` made with [Pharokka v1.5.1](https://github.com/gbouras13/pharokka) can be seen below. The genome begins at the top of the circle. Each coloured arrow represents a CDS.
 
 ![Image](C333_phage_combined.png)
