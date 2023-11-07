@@ -64,7 +64,7 @@ Examples of Dnaapler's functionality on the C333 _Staphylococcus aureus_ chromos
 
 ![Example Dnaapler phage reorientation of the c333 Sa3int prophage as a circular genomic map from Pharokka beginning at the top of the circle. Each coloured arrow represents a CDS. The large terminase subunit gene is labelled as terL. Dnaapler identified the terL gene as beginning with coordinate 19146 on the forward strand. \label{fig:prophage}](C333_phage_combined.png){width=100%}
 
-![Example Dnaapler chromosome reorientation of the C333 chromosome as a circular genomic map from Bakta beginning at the top of the circle. Each thin line represents a CDS, with the positive stranded CDSs denoted in the outer ring and the negatived stranded CDSs in the inner ring. The position of the chromosomal replication initiator gene is labelled as dnaA. The red and green ring denotes the GC content while the blue and yellow ring denotes the GC skew. Dnaapler identified the dnaA gene as beginning with coordinate 466140 on the reverse strand. \label{fig:chromosome}](C333_chromosome_combined.png){width=100%}
+![Example Dnaapler chromosome reorientation of the C333 chromosome as a circular genomic map from Bakta beginning at the top of the circle. Each thin line represents a CDS, with the positive stranded CDSs denoted in the outer ring and the negative stranded CDSs in the inner ring. The position of the chromosomal replication initiator gene is labelled as dnaA. The red and green ring denotes the GC content while the blue and yellow ring denotes the GC skew. Dnaapler identified the dnaA gene as beginning with coordinate 466140 on the reverse strand. \label{fig:chromosome}](C333_chromosome_combined.png){width=100%}
 
 
 # Availability
