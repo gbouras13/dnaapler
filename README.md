@@ -159,6 +159,8 @@ The reoriented output FASTA will be `{prefix}_reoriented.fasta` in the specified
 
 ## Example Usage
 
+* For more detailed example usage, please see the [examples](https://dnaapler.readthedocs.io/en/latest/example/) section of the documentation. 
+
 ```
 dnaapler all -i input.fasta -o output_directory_path -p my_genome_name --ignore list_of_contigs_to_ignore.txt
 ```
@@ -195,7 +197,6 @@ dnaapler largest -i input.fasta -o output_directory_path -p my_genome_name
 # to reorient multiple bacterial chromosomes
 dnaapler bulk -i input_file_with_multiple_chromosomes.fasta -m chromosome -o output_directory_path -p my_genome_name 
 ```
-
 
 ## Databases
 

@@ -16,6 +16,7 @@ nav:
     - RUNNING:
       - Install: install.md
       - Usage: run.md
+      - Examples: example.md
     - OUTPUT:
       - Output: output.md
 
