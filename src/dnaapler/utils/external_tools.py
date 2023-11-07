@@ -52,7 +52,7 @@ class ExternalTool:
 
     @staticmethod
     def _run_core(command: List[str], stdout_fh, stderr_fh) -> None:
-        subprocess.call(command, stdout=stdout_fh, stderr=stderr_fh)
+        subprocess.check_call(command, stdout=stdout_fh, stderr=stderr_fh)
 
     @staticmethod
     def run_tools(
