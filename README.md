@@ -16,11 +16,14 @@ Dnaapler is a simple tool that reorients complete circular microbial genomes.
 ## Quick Start
 
 ```
-# creates conda environment with dnaapler
-conda create -n dnaapler_env dnaapler
+# creates empty conda environment
+conda create -n dnaapler_env
 
 # activates conda environment
 conda activate dnaapler_env
+
+# installs dnaapler
+conda install -c bioconda dnaapler
 
 # runs dnaapler all 
 dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
@@ -44,6 +47,7 @@ dnaapler chromosome -i input_chromosome.fasta -o output_directory_path -p my_bac
   - [Example Usage](#example-usage)
   - [Databases](#databases)
   - [Motivation](#motivation)
+  - [Contributing](#contributing)
   - [Acknowledgements](#acknowledgements)
 
 ## Description
@@ -76,7 +80,7 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 * `dnaapler phage`: Reorients your sequence to begin with the terL large terminase subunit gene
 * `dnaapler custom`: Reorients your sequence to begin with a custom amino acid FASTA format gene that you specify
 * `dnaapler mystery`: Reorients your sequence to begin with a random CDS
-* `dnaapler mystery`: Reorients your sequence to begin with a random CDS
+* `dnaapler largest`: Reorients your sequence to begin with the largest CDS
 * `dnaapler nearest`: Reorients your sequence to begin with the first CDS (nearest to the start). Designed for fixing sequences where a CDS spans the breakpoint.
 * `dnaapler bulk`: Reorients multiple contigs to begin with the desired start gene - either dnaA, terL, repA or a custom gene.
 
@@ -85,7 +89,7 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 
 `dnaapler` requires only BLAST v2.10 or higher as an external dependency. 
 
-Installation from conda is recommended as this will install BLAST automatically.
+Installation from conda is highly recommended as this will install BLAST automatically.
 
 ### Conda
 
@@ -103,13 +107,8 @@ You can also install `dnaapler` with pip.
 pip install dnaapler
 ```
 
-You will need to install BLAST v2.10 or higher separately.
+* If you install `dnaapler` with pip, then you will then need to install BLAST v 2.9 or higher separately. It will need to be available in the `$PATH` or else `dnaapler` will not work. 
 
-e.g.
-
-```
-conda install -c bioconda blast>2.9
-```
 
 ## Usage
 
@@ -160,6 +159,8 @@ The reoriented output FASTA will be `{prefix}_reoriented.fasta` in the specified
 
 ## Example Usage
 
+* For more detailed example usage, please see the [examples](https://dnaapler.readthedocs.io/en/latest/example/) section of the documentation. 
+
 ```
 dnaapler all -i input.fasta -o output_directory_path -p my_genome_name --ignore list_of_contigs_to_ignore.txt
 ```
@@ -197,7 +198,6 @@ dnaapler largest -i input.fasta -o output_directory_path -p my_genome_name
 dnaapler bulk -i input_file_with_multiple_chromosomes.fasta -m chromosome -o output_directory_path -p my_genome_name 
 ```
 
-
 ## Databases
 
 `dnaapler chromosome` uses 584 proteins downloaded from Swissprot with the query "Chromosomal replication initiator protein DnaA" on 24 May 2023 as its database for dnaA. All hits from the query were also filtered to ensure "GN=dnaA" was included in the header of the FASTA entry.
@@ -225,6 +225,14 @@ After this [issue](https://github.com/gbouras13/dnaapler/issues/1), `dnaapler my
 3. After reading Ryan Wick's masterful bacterial genome assembly [tutorial](https://github.com/rrwick/Perfect-bacterial-genome-tutorial/wiki), I realised that it is probably optimal to run 2 polishing steps, once before then once after rotating the chromosome, to ensure the breakpoint is polished. Further, for some "complete" long read bacterial assemblies that didn't circularise properly, I figured that as long as you have a complete assembly (even if not "circular" as marked as in Flye), polishing after a re-orientation would be likely to circularise the chromosome. A bit like Ryan's [rotate_circular_gfa.py](https://github.com/rrwick/Perfect-bacterial-genome-tutorial/blob/main/scripts/rotate_circular_gfa.py) script, without the requirement of strict circularity.
 4. While researching MGEs in _S. aureus_ whole genome sequences, I repeatedly found instances where MGEs were interrupted by the chromosome breakpoint. So I thought I'd add a tool to automate it in my pipeline. 
 5. It's probably good to have all your sequences start at the same location for synteny analyses.
+
+## Contributing
+
+If you would like to help improve  `dnaapler` you are very welcome!
+
+For changes to be accepted, they must pass the CI checks. 
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
 
 ## Acknowledgements
 

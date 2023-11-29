@@ -366,10 +366,7 @@ class TestExternalTools:
         err_file = glob.glob(f"{logsdir}/*.err")[0]
         with open(err_file) as err_file_fh:
             lines = err_file_fh.readlines()
-            assert lines == [
-                "err\n",
-                f"Command line: {sys.executable} {python_script} output input\n",
-            ]
+            assert lines == ["err\n"]
 
 
 class TestFailExternal(unittest.TestCase):

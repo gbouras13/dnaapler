@@ -435,6 +435,13 @@ def reorient_single_record_bulk(
         with open(out_file, "a") as out_fa:
             SeqIO.write(record, out_fa, "fasta")
 
+        # update strand in the all output if fallback
+
+        if strand == 1:
+            strand = "forward"
+        else:
+            strand = "reverse"
+
         return (
             start,
             strand,
