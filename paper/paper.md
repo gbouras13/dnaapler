@@ -73,7 +73,7 @@ Examples of Dnaapler's functionality on the C333 _Staphylococcus aureus_ chromos
 
 Dnaapler is distributed on PyPI. A [Conda](https://conda.io/) package is
 also available in the Bioconda channel [@Bioconda:2018]. The source code is available on [GitHub](https://github.com/gbouras13/dnaapler),
-and features Continuous Integration tests and test coverage, and Continuous Deployment using GitHub actions. Dnaapler has already been integrated into the United States of America StaPH-B (State Public Health Lab Bioinformatics) consortium [Docker image collection](https://github.com/StaPH-B/docker-builds).
+and features continuous integration tests and test coverage, and continuous deployment using GitHub actions. Dnaapler has already been integrated into the United States of America StaPH-B (State Public Health Lab Bioinformatics) consortium [Docker image collection](https://github.com/StaPH-B/docker-builds).
 
 # Acknowledgements
 We would like to thank Michael B. Hall for providing some code snippets particularly the external tool class from his tool [tbpore](https://github.com/mbhall88/tbpore), Ryan Wick for curating a repA database from Unicycler and Sarah Vreugde and Robert A. Edwards for their supervision.
