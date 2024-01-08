@@ -51,11 +51,11 @@ def run_bulk_blast(
         db_name = "terL_db"
     elif gene == "all":
         db_name = "all_db"
-    elif gene == "dnaA_repA":
+    elif gene == "dnaA,repA":
         gene = "dnaA_repA_db"
-    elif gene == "dnaA_terL":
+    elif gene == "dnaA,terL":
         gene = "dnaA_terL_db"
-    elif gene == "repA_terL":
+    elif gene == "repA,terL":
         gene = "repA_terL_db"
 
 

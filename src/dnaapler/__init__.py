@@ -680,7 +680,7 @@ def all(
     autocomplete,
     seed_value,
     ignore,
-    database,
+    db,
     **kwargs,
 ):
     """Reorients contigs to begin with any of dnaA, repA or terL"""
@@ -694,18 +694,18 @@ def all(
 
     # other options
 
-    if database == "dnaa":
+    if db == "dnaa":
         gene = "dnaA"
-    elif database == "repa":
+    elif db == "repa":
         gene = "repA"
-    elif database == "terl":
+    elif db == "terl":
         gene = "terL"
-    elif database == "dnaa,repa":
-        gene = "dnaA_repA"
-    elif database == "dnaa,terl":
-        gene = "dnaA_terL"
-    elif database == "repa,terl":
-        gene = "repA_terL"
+    elif db == "dnaa,repa":
+        gene = "dnaA,repA"
+    elif db == "dnaa,terl":
+        gene = "dnaA,terL"
+    elif db == "repa,terl":
+        gene = "repA,terL"
 
 
     # initial logging etc
