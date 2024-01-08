@@ -58,7 +58,6 @@ def run_bulk_blast(
     elif gene == "repA,terL":
         gene = "repA_terL_db"
 
-
     # for chromosome, plasmid or phage or all
     # runs blast
     if gene != "custom":

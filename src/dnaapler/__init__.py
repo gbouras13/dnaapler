@@ -30,8 +30,8 @@ from dnaapler.utils.validation import (
     check_evalue,
     instantiate_dirs,
     validate_choice_autocomplete,
-    validate_choice_mode,
     validate_choice_db,
+    validate_choice_mode,
     validate_custom_db_fasta,
     validate_fasta,
     validate_fasta_all,
@@ -691,7 +691,6 @@ def all(
     # defines gene
     gene = "all"
 
-
     # other options
 
     if db == "dnaa":
@@ -706,7 +705,6 @@ def all(
         gene = "dnaA,terL"
     elif db == "repa,terl":
         gene = "repA,terL"
-
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
