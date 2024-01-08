@@ -51,6 +51,13 @@ def run_bulk_blast(
         db_name = "terL_db"
     elif gene == "all":
         db_name = "all_db"
+    elif gene == "dnaA_repA":
+        gene = "dnaA_repA_db"
+    elif gene == "dnaA_terL":
+        gene = "dnaA_terL_db"
+    elif gene == "repA_terL":
+        gene = "repA_terL_db"
+
 
     # for chromosome, plasmid or phage or all
     # runs blast

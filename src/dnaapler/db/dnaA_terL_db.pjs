@@ -1,0 +1,22 @@
+{
+  "version": "1.2",
+  "dbname": "dnaA_terL_db",
+  "dbtype": "Protein",
+  "db-version": 5,
+  "description": "dnaA_terL.faa",
+  "number-of-letters": 4108126,
+  "number-of-sequences": 8090,
+  "last-updated": "2024-01-08T23:47:00",
+  "number-of-volumes": 1,
+  "bytes-total": 5459559,
+  "bytes-to-cache": 4181041,
+  "files": [
+    "dnaA_terL_db.pdb",
+    "dnaA_terL_db.phr",
+    "dnaA_terL_db.pin",
+    "dnaA_terL_db.pot",
+    "dnaA_terL_db.psq",
+    "dnaA_terL_db.ptf",
+    "dnaA_terL_db.pto"
+  ]
+}

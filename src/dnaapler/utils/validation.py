@@ -214,6 +214,16 @@ def validate_choice_mode(ctx, param, value):
     return value
 
 
+def validate_choice_db(ctx, param, value):
+    """
+    checks the click.Choice option for the mode flag in bulk subcommand
+    """
+    choices = ["all", "dnaa", "repa", "terl", "dnaa,repa", "dnaa,terl", "repa,terl"]
+    if value not in choices:
+        raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
+    return value
+
+
 def validate_ignore_file(ignore_file_path):
     try:
         # Open the file in read mode

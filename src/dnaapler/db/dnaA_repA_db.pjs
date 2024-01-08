@@ -1,0 +1,22 @@
+{
+  "version": "1.2",
+  "dbname": "dnaA_repA_db",
+  "dbtype": "Protein",
+  "db-version": 5,
+  "description": "dnaA_repA.faa",
+  "number-of-letters": 469812,
+  "number-of-sequences": 1233,
+  "last-updated": "2024-01-08T23:44:00",
+  "number-of-volumes": 1,
+  "bytes-total": 762245,
+  "bytes-to-cache": 481014,
+  "files": [
+    "dnaA_repA_db.pdb",
+    "dnaA_repA_db.phr",
+    "dnaA_repA_db.pin",
+    "dnaA_repA_db.pot",
+    "dnaA_repA_db.psq",
+    "dnaA_repA_db.ptf",
+    "dnaA_repA_db.pto"
+  ]
+}

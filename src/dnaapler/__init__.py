@@ -31,6 +31,7 @@ from dnaapler.utils.validation import (
     instantiate_dirs,
     validate_choice_autocomplete,
     validate_choice_mode,
+    validate_choice_db,
     validate_custom_db_fasta,
     validate_fasta,
     validate_fasta_all,
@@ -658,6 +659,15 @@ all subcommand
     type=click.Path(),
     show_default=False,
 )
+@click.option(
+    "--db",
+    "--database",
+    default="all",
+    type=click.STRING,
+    callback=validate_choice_db,
+    help="Lets you choose a subset of databases rather than all 3. Must be one of: 'all', 'dnaa', 'repa', terl', 'dnaa,repa', 'dnaa,terl' or 'repa,terl' ",
+    show_default=True,
+)
 @autocomplete_options
 def all(
     ctx,
@@ -670,6 +680,7 @@ def all(
     autocomplete,
     seed_value,
     ignore,
+    database,
     **kwargs,
 ):
     """Reorients contigs to begin with any of dnaA, repA or terL"""
@@ -679,6 +690,23 @@ def all(
 
     # defines gene
     gene = "all"
+
+
+    # other options
+
+    if database == "dnaa":
+        gene = "dnaA"
+    elif database == "repa":
+        gene = "repA"
+    elif database == "terl":
+        gene = "terL"
+    elif database == "dnaa,repa":
+        gene = "dnaA_repA"
+    elif database == "dnaa,terl":
+        gene = "dnaA_terL"
+    elif database == "repa,terl":
+        gene = "repA_terL"
+
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
