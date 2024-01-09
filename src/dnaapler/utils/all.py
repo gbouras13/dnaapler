@@ -221,9 +221,6 @@ def all_process_blast_output_and_reorient(
             # so in these cases, go down the list and check there is a hit with a legitimate start codon
             # I anticipate this will be rare usually, the first will be it :)
             else:
-                # update the record description to contain 'rotated=True' akin to how unicycler does it
-                record.description = record.description + " rotated=True"
-
                 # get gene
                 # set as dnaA by default
                 gene = "dnaA"
@@ -234,6 +231,11 @@ def all_process_blast_output_and_reorient(
                 # for phages
                 if "phrog" in filtered_df["sseqid"][0]:
                     gene = "terL"
+
+                # update the record description to contain 'rotated=True' akin to how unicycler does it
+                record.description = (
+                    f"{record.description} rotated=True rotated_gene={gene}"
+                )
 
                 if filtered_df["qseq"][0][0] in ["M", "V", "L"] and (
                     filtered_df["sstart"][0] == 1

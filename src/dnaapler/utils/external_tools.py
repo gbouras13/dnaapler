@@ -17,7 +17,11 @@ to make the BLAST dbs
  makeblastdb -in terL.faa -dbtype prot -out terL_db
  makeblastdb -in repA.faa -dbtype prot -out repA_db
  makeblastdb -in all.faa -dbtype prot -out all_db
- 
+
+ makeblastdb -in dnaA_repA.faa -dbtype prot -out dnaA_repA_db
+ makeblastdb -in dnaA_terL.faa -dbtype prot -out dnaA_terL_db
+ makeblastdb -in repA_terL.faa -dbtype prot -out repA_terL_db
+
 
 """
 

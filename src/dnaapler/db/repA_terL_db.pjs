@@ -1,0 +1,22 @@
+{
+  "version": "1.2",
+  "dbname": "repA_terL_db",
+  "dbtype": "Protein",
+  "db-version": 5,
+  "description": "repA_terL.faa",
+  "number-of-letters": 4030318,
+  "number-of-sequences": 8155,
+  "last-updated": "2024-01-08T23:47:00",
+  "number-of-volumes": 1,
+  "bytes-total": 5355969,
+  "bytes-to-cache": 4103818,
+  "files": [
+    "repA_terL_db.pdb",
+    "repA_terL_db.phr",
+    "repA_terL_db.pin",
+    "repA_terL_db.pot",
+    "repA_terL_db.psq",
+    "repA_terL_db.ptf",
+    "repA_terL_db.pto"
+  ]
+}

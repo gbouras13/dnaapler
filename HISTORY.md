@@ -1,5 +1,14 @@
 # History
 
+# 0.5.1 (2024-01-09)
+
+* With `dnaapler all`, adds the reoriented gene to the header (thanks @ammaraziz https://github.com/gbouras13/dnaapler/issues/67)
+* Adds `--db` parameter to `dnaapler all`  allowing specifying a subset of genes to make up the database. In particular, if you have bacteria and plasmids, `--db dnaa,repa` should speed up Dnaapler's runtime quite a bit (thanks @oschwengers https://github.com/gbouras13/dnaapler/issues/63)
+
+# 0.5.0 (2023-12-03)
+
+* JOSS release with minor typos and bug fixes from v0.4
+
 # 0.4.0 (2023-10-25)
 
 * Implemented a modification to the logic for all cases where the top blastx hit alignment does not begin with a start codon. In this case, dnaapler will find the CDS according the pyrodigal that has the most overlap with the top hit alignment. Thanks @simone-pignotti for this suggestion [here](https://github.com/gbouras13/dnaapler/issues/44).
