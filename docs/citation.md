@@ -1,10 +1,10 @@
 # Citation
 
-If you use `dnaapler`, please cite:
+If you use `dnaapler`, please cite the [publication](https://doi.org/10.21105/joss.05968) in the Journal of Open Source Software:
 
-Bouras, G., Grigson., S.R., Papudeshi., B., Mallawaarachchi V., Roach, M. J. (2023) Dnaapler: A tool to reorient circular microbial genomes https://github.com/gbouras13/dnaapler.
+George Bouras, Susanna R. Grigson, Bhavya Papudeshi, Vijini Mallawaarachchi, Michael J. Roach (2024). Dnaapler: A tool to reorient circular microbial genomes. Journal of Open Source Software, 9(93), 5968, https://doi.org/10.21105/joss.05968
 
-Additionally, please consider citing the dependencies:
+Additionally, please consider citing the dependencies where relevant:
 
 Altschul S.F., Gish W., Miller W., Myers E.W., Lipman D.J. Basic local alignment search tool. J Mol Biol. 1990 Oct 5;215(3):403-10. doi: 10.1016/S0022-2836(05)80360-2. PMID: 2231712.
 
