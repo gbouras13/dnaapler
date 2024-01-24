@@ -1,6 +1,6 @@
-Please cite dnaapler in your paper using:
+Dnaapler has been published in JOSS. If you use Dnaapler in your work, please cite it as follows:
 
-Bouras, G., Grigson., S.R., Papudeshi., B., Mallawaarachchi V., Roach, M. J. (2023) Dnaapler: A tool to reorient circular microbial genomes https://github.com/gbouras13/dnaapler.
+George Bouras, Susanna R. Grigson, Bhavya Papudeshi, Vijini Mallawaarachchi, Michael J. Roach (2024). Dnaapler: A tool to reorient circular microbial genomes. Journal of Open Source Software, 9(93), 5968, https://doi.org/10.21105/joss.05968
 
 Additionally, please consider citing the dependencies:
 

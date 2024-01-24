@@ -1,3 +1,5 @@
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.05968/status.svg)](https://doi.org/10.21105/joss.05968)
+
 [![CI](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yaml/badge.svg)](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/gbouras13/dnaapler/branch/main/graph/badge.svg?token=4B1T2PGM9V)](https://codecov.io/gh/gbouras13/dnaapler)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -7,6 +9,8 @@
 [![Bioconda Downloads](https://img.shields.io/conda/dn/bioconda/dnaapler)](https://img.shields.io/conda/dn/bioconda/dnaapler)
 [![PyPI version](https://badge.fury.io/py/dnaapler.svg)](https://badge.fury.io/py/dnaapler)
 [![Downloads](https://static.pepy.tech/badge/dnaapler)](https://pepy.tech/project/dnaapler)
+
+
 
 
 # dnaapler
@@ -33,9 +37,30 @@ dnaapler chromosome -i input_chromosome.fasta -o output_directory_path -p my_bac
 
 ```
 
+## Paper
+
+Dnaapler has been published in JOSS [here](https://joss.theoj.org/papers/10.21105/joss.05968). If you use Dnaapler in your work, please cite it as follows:
+
+```
+
+George Bouras, Susanna R. Grigson, Bhavya Papudeshi, Vijini Mallawaarachchi, Michael J. Roach (2024). Dnaapler: A tool to reorient circular microbial genomes. Journal of Open Source Software, 9(93), 5968, https://doi.org/10.21105/joss.05968
+
+```
+
+Additionally, please consider citing the dependencies where relevant:
+
+```
+Altschul S.F., Gish W., Miller W., Myers E.W., Lipman D.J. Basic local alignment search tool. J Mol Biol. 1990 Oct 5;215(3):403-10. doi: 10.1016/S0022-2836(05)80360-2. PMID: 2231712.
+
+Larralde, M., (2022). Pyrodigal: Python bindings and interface to Prodigal, an efficient method for gene prediction in prokaryotes. Journal of Open Source Software, 7(72), 4296, https://doi.org/10.21105/joss.04296.
+
+Hyatt, D., Chen, GL., LoCascio, P.F. et al. Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC Bioinformatics 11, 119 (2010). https://doi.org/10.1186/1471-2105-11-119.
+```
+
 ## Table of Contents
 - [dnaapler](#dnaapler)
   - [Quick Start](#quick-start)
+  - [Paper](#paper)
   - [Table of Contents](#table-of-contents)
   - [Description](#description)
   - [Documentation](#documentation)

@@ -1,5 +1,9 @@
 # History
 
+# 0.5.2 (2024-01-24)
+
+* Bumps version to include updated citation
+
 # 0.5.1 (2024-01-09)
 
 * With `dnaapler all`, adds the reoriented gene to the header (thanks @ammaraziz https://github.com/gbouras13/dnaapler/issues/67)
