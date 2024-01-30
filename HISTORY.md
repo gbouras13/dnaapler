@@ -1,5 +1,9 @@
 # History
 
+# 0.6.0 (2024-01-31)
+
+* Fixes bug where if the starting gene (dnaA/terL/repA) was on the reverse strand and the top BLAST hit did not find the start codon, it would reorient the replicon to begin at the end of the starting gene, not the start. Thanks @susiegriggo
+
 # 0.5.2 (2024-01-24)
 
 * Bumps version to include updated citation
