@@ -224,8 +224,16 @@ def reorient_sequence(
             # Find the gene with the max overlap
             closest_gene_index = max(overlap_dict, key=lambda key: overlap_dict[key])
 
-            start = genes[closest_gene_index].begin
+            # get strand
             strand = genes[closest_gene_index].strand
+
+            # susie error 30-01-24 - misorienting on the negative strand
+            # 'begin' just gives the lowest value, not the start, so was putting the terL at the end i.e. reorienting from the end of terL
+            # therefore need to take end
+            if strand == 1:
+                start = genes[closest_gene_index].begin
+            elif strand == -1:
+                start = genes[closest_gene_index].end
 
             if strand == 1:
                 strand_eng = "forward"
