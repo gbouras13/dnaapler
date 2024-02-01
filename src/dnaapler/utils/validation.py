@@ -68,10 +68,10 @@ def validate_fasta(input_fasta: Path) -> None:
 
 def validate_fasta_bulk(input_fasta: Path) -> None:
     """
-    Validates  FASTA input - that the input is a FASTA with > 1 sequence
+    Validates  FASTA input - that the input is a FASTA with at least 1 sequence
     """
     logger.info(
-        f"Checking that the input file {input_fasta} is in FASTA format and has more than 1 entry."
+        f"Checking that the input file {input_fasta} is in FASTA format and has at least 1 entry."
     )
     # to get extension
     with open(input_fasta, "r") as handle:
@@ -83,14 +83,14 @@ def validate_fasta_bulk(input_fasta: Path) -> None:
                 f"Error: {input_fasta} file is not in the FASTA format. Please check your input file"
             )
 
-    with open(input_fasta, "r") as handle:
-        # Check the number of records
-        if len(list(SeqIO.parse(handle, "fasta"))) == 1:
-            logger.error(
-                f"{input_fasta} has only one entry, but more than one was expected. Please check your input FASTA file!"
-            )
-        else:
-            logger.info(f"{input_fasta} has more than one entry.")
+    # with open(input_fasta, "r") as handle:
+    #     # Check the number of records
+    #     if len(list(SeqIO.parse(handle, "fasta"))) == 1:
+    #         logger.error(
+    #             f"{input_fasta} has only one entry, but more than one was expected. Please check your input FASTA file!"
+    #         )
+    #     else:
+    #         logger.info(f"{input_fasta} has more than one entry.")
 
 
 def validate_fasta_all(input_fasta: Path) -> None:
