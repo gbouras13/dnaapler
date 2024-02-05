@@ -344,6 +344,13 @@ custom command
     type=click.Path(),
     required=True,
 )
+@click.option(
+    "--ignore",
+    default="",
+    help="Text file listing contigs (one per row) that are to be ignored",
+    type=click.Path(),
+    show_default=False,
+)
 @autocomplete_options
 def custom(
     ctx,
@@ -356,6 +363,7 @@ def custom(
     custom_db,
     autocomplete,
     seed_value,
+    ignore,
     **kwargs,
 ):
     """Reorients your genome with a custom database"""
@@ -668,6 +676,13 @@ all subcommand
     help="Lets you choose a subset of databases rather than all 3. Must be one of: 'all', 'dnaa', 'repa', terl', 'dnaa,repa', 'dnaa,terl' or 'repa,terl' ",
     show_default=True,
 )
+@click.option(
+    "-c",
+    "--custom_db",
+    default="",
+    help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want.",
+    type=click.Path(),
+)
 @autocomplete_options
 def all(
     ctx,
@@ -681,6 +696,7 @@ def all(
     seed_value,
     ignore,
     db,
+    custom_db,
     **kwargs,
 ):
     """Reorients contigs to begin with any of dnaA, repA or terL"""
@@ -706,6 +722,10 @@ def all(
     elif db == "repa,terl":
         gene = "repA,terL"
 
+    # custom
+    if custom_db != "":
+        gene = "custom"
+
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
 
@@ -726,8 +746,37 @@ def all(
         logger.info(f"You have specified contigs to ignore in {ignore}.")
         exists_contains_txt = validate_ignore_file(ignore)
 
+    if gene == "custom":
+        # validates custom fasta input for database
+        validate_custom_db_fasta(Path(custom_db))
+
+        # make db
+        db_dir = os.path.join(output, "custom_db")
+        Path(db_dir).mkdir(parents=True, exist_ok=True)
+        custom_db_fasta = os.path.join(db_dir, "custom_db.faa")
+        shutil.copy2(custom_db, custom_db_fasta)
+
+        logdir = Path(f"{output}/logs")
+
+        # custom db
+        # make custom db
+        custom_database = os.path.join(db_dir, "custom_db")
+        makeblastdb = ExternalTool(
+            tool="makeblastdb",
+            input=f"-in {custom_db_fasta}",
+            output=f"-out {custom_database}",
+            params="-dbtype prot ",
+            logdir=logdir,
+        )
+
+        ExternalTool.run_tool(makeblastdb, ctx)
+    else:
+        custom_db = None
+
     # runs bulk BLAST
-    run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db=None)
+    run_bulk_blast(
+        ctx, input, output, prefix, gene, evalue, threads, custom_db=custom_db
+    )
 
     # rerorients blast
     blast_file = os.path.join(output, f"{prefix}_blast_output.txt")
@@ -746,7 +795,14 @@ def all(
             ignore_list = list(ignore_dict)
 
     all_process_blast_output_and_reorient(
-        input, blast_file, output, prefix, ignore_list, autocomplete, seed_value
+        input,
+        blast_file,
+        output,
+        prefix,
+        ignore_list,
+        autocomplete,
+        seed_value,
+        custom_db=custom_db,
     )
 
     # end dnaapler

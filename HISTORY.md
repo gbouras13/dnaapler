@@ -1,5 +1,9 @@
 # History
 
+# 0.7.0 (2024-02-05)
+
+* Adds `-c/--custom_db` with `dnaapler all` to allow specifying custom databases with `dnaapler all`.
+
 # 0.6.0 (2024-01-31)
 
 * Fixes bug where if the starting gene (dnaA/terL/repA) was on the reverse strand and the top BLAST hit did not find the start codon, it would reorient the replicon to begin at the end of the starting gene, not the start. Thanks @susiegriggo
