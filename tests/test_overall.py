@@ -196,10 +196,18 @@ def test_bulk_custom(tmp_dir):
     exec_command(cmd)
 
 
-def test_all(tmp_dir):
+def test_all_custom(tmp_dir):
     """test all"""
     input_fasta: Path = f"{overall_test_data}/all_test.fasta"
     cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_custom(tmp_dir):
+    """test custom"""
+    input_fasta: Path = f"{overall_test_data}/all_test.fasta"
+    custom: Path = f"{test_data}/fake_custom.faa"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f -c {custom}"
     exec_command(cmd)
 
 

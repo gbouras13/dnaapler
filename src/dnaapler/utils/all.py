@@ -23,6 +23,7 @@ def all_process_blast_output_and_reorient(
     ignore_list: Path,
     autocomplete: str,
     seed_value: int,
+    custom_db: str,
 ) -> None:
     """Processes the blast output,reorients and saves all contigs into os.path.join(output, f"{prefix}_reoriented.fasta")
 
@@ -231,6 +232,9 @@ def all_process_blast_output_and_reorient(
                 # for phages
                 if "phrog" in filtered_df["sseqid"][0]:
                     gene = "terL"
+                # custom
+                if custom_db is not None:
+                    gene = "custom"
 
                 # update the record description to contain 'rotated=True' akin to how unicycler does it
                 record.description = (
