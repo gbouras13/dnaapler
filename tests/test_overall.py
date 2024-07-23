@@ -210,6 +210,11 @@ def test_custom(tmp_dir):
     cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f -c {custom}"
     exec_command(cmd)
 
+def test_no_overlap(tmp_dir):
+    """test no overlap"""
+    input_fasta: Path = f"{overall_test_data}/PP04977_pilon_subset.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
 
 def test_all_dnaa_repa(tmp_dir):
     """test all dnaa repa"""

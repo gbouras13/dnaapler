@@ -206,7 +206,12 @@ class TestBlastOutput(unittest.TestCase):
         threads = str(8)
         gene = "terL"
         outdir = os.path.join(test_data, "bad_dir")
-        begin_dnaapler(input, outdir, threads, gene)
+        params = {
+        "--input": input,
+        "--output": outdir,
+        "--threads": threads,
+    }
+        begin_dnaapler(input, outdir, threads, gene, params)
 
     def test_end_dnaapler(self):
         time = 2324.0
