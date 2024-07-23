@@ -104,7 +104,7 @@ def run_bulk_blast(
         # blast
         logdir = Path(f"{output}/logs")
         blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
-        # dnaA da
+        # db
         db = os.path.join(db_dir, "custom_db")
         blast = ExternalTool(
             tool="blastx",

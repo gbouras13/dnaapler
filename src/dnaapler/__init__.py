@@ -575,6 +575,7 @@ def bulk(
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
+
     # defines gene
     gene = "dnaA"
     if mode == "chromosome":
@@ -584,7 +585,7 @@ def bulk(
     elif mode == "phage":
         gene = "terL"
     elif mode == "custom":
-        gene == "custom"
+        gene = "custom"
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene)
