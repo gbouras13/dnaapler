@@ -372,13 +372,14 @@ class TestExits(unittest.TestCase):
             cmd = f"dnaapler bulk -m chromosome -i {input_fasta} -o {outdir} -t 1 -f"
             exec_command(cmd)
 
-    def test_all_no_hits(self):
-        """test all with no blast hits"""
-        with self.assertRaises(RuntimeError):
-            input_fasta: Path = f"{test_data}/nucl_test.fna"
-            outdir: Path = f"{overall_test_data}/bulk_out"
-            cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f "
-            exec_command(cmd)
+    # wont fail now - will just warn and exit
+    # def test_all_no_hits(self):
+    #     """test all with no blast hits"""
+    #     with self.assertRaises(RuntimeError):
+    #         input_fasta: Path = f"{test_data}/nucl_test.fna"
+    #         outdir: Path = f"{overall_test_data}/bulk_out"
+    #         cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f "
+    #         exec_command(cmd)
 
     def test_all_autocomplete_mystery_too_small(self):
         """test all where the autocompletion mystery fails as the contig has < 4 CDS"""
