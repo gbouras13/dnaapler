@@ -202,6 +202,13 @@ def test_bulk_plasmid(tmp_dir):
     exec_command(cmd)
 
 
+def test_bulk_archaea(tmp_dir):
+    """test bulk archaea"""
+    input_fasta: Path = f"{overall_test_data}/bulk_archaea.fasta"
+    cmd = f"dnaapler bulk -m archaea -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
 def test_bulk_custom(tmp_dir):
     """test bulk custom"""
     input_fasta: Path = f"{overall_test_data}/bulk_chromosome.fasta"

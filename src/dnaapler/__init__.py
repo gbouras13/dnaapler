@@ -736,6 +736,8 @@ def bulk(
         gene = "repA"
     elif mode == "phage":
         gene = "terL"
+    elif mode == "archaea":
+        gene = "cog1474"
     elif mode == "custom":
         gene = "custom"
 

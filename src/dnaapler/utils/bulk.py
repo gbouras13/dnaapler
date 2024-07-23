@@ -30,7 +30,7 @@ def run_bulk_blast(
         input (Path): Path to the input data for BLAST.
         output (Path): Directory where BLAST results and logs will be saved.
         prefix (str): Prefix for output files.
-        gene (str): Gene name to specify the BLAST database ("dnaA", "repA", "terL", "all", or "custom").
+        gene (str): Gene name to specify the BLAST database ("dnaA", "repA", "terL", "all", "cog1474", or "custom").
         evalue (float): The E-value threshold for BLAST.
         threads (int): The number of threads to use for BLAST.
         custom_db (Path): Path to a custom database file (amino acid Fasta format) if 'gene' is set to 'custom'.
@@ -57,8 +57,8 @@ def run_bulk_blast(
         db_name = "dnaA_terL_db"
     elif gene == "repA,terL":
         db_name = "repA_terL_db"
-    elif db == "cog1474":
-        gene = "cog1474_db"
+    elif gene == "cog1474":
+        db_name = "cog1474_db"
 
     # for chromosome, plasmid or phage or all
     # runs blast
