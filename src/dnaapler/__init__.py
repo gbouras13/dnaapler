@@ -575,7 +575,6 @@ def bulk(
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
-
     # defines gene
     gene = "dnaA"
     if mode == "chromosome":
