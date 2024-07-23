@@ -67,6 +67,17 @@ def test_chrom(tmp_dir):
     cmd = f"dnaapler chromosome -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
+def test_all_archaea(tmp_dir):
+    """test all archaea"""
+    input_fasta: Path = f"{overall_test_data}/CP001742.1_archaea.fasta"
+    cmd = f"dnaapler all -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+def test_archaea(tmp_dir):
+    """test archaea"""
+    input_fasta: Path = f"{overall_test_data}/CP001742.1_archaea.fasta"
+    cmd = f"dnaapler archaea -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
 
 def test_chrom_start_codon_not_found(tmp_dir):
     """test chrom"""

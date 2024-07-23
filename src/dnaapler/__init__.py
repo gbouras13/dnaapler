@@ -208,6 +208,7 @@ def chromosome(
 archaea command
 """
 
+
 @main_cli.command()
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
@@ -277,6 +278,7 @@ def archaea(
 
     # end dnaapler
     end_dnaapler(start_time)
+
 
 """
 Plasmid command
@@ -899,6 +901,8 @@ def all(
         gene = "dnaA,terL"
     elif db == "repa,terl":
         gene = "repA,terL"
+    elif db == "cog1474":
+        gene = "cog1474"
 
     # custom
     if custom_db != "":
