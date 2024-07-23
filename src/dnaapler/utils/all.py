@@ -181,7 +181,9 @@ def all_process_blast_output_and_reorient(
 
             # if there are hits to more than 1 of dnaA, terL, repA, implement logic
             # to prefer dnaA, repA then terL (in that order)
-            if (counts["dnaA"] > 0) + (counts["terL"] > 0) + (counts["repA"] > 0) + (counts["cog1474"] > 0)  >= 2:
+            if (counts["dnaA"] > 0) + (counts["terL"] > 0) + (counts["repA"] > 0) + (
+                counts["cog1474"] > 0
+            ) >= 2:
                 # prefer dnaA if it is greater than zero
                 if counts["dnaA"] > 0:
                     # keep only the hits where dnaA is found
@@ -194,7 +196,7 @@ def all_process_blast_output_and_reorient(
                         filtered_df["sseqid"].str.contains("cog1474")
                     ]
                 # otherwise where there is repA and terL, keep repA
-                else:  
+                else:
                     filtered_df = filtered_df[
                         filtered_df["sseqid"].str.contains("UniRef90")
                     ]
