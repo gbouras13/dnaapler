@@ -56,7 +56,7 @@ begin and end functions
 """
 
 
-def begin_dnaapler(input, output, threads, gene):
+def begin_dnaapler(input, output, threads, gene, params):
     """
     begins dnaapler
     returns start time
@@ -78,6 +78,8 @@ def begin_dnaapler(input, output, threads, gene):
     # check BLAST version
     check_blast_version()
     check_pyrodigal_version()
+    for key, value in params.items():
+        logger.info(f"Parameter: {key} {value}")
     return start_time
 
 

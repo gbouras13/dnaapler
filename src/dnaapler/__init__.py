@@ -160,6 +160,18 @@ def chromosome(
 ):
     """Reorients your genome to begin with the dnaA chromosomal replication initiation gene"""
 
+    params = {
+        "--input": input,
+        "--output": output,
+        "--threads": threads,
+        "--force": force,
+        "--prefix": prefix,
+        "--evalue": evalue,
+        "--autocomplete": autocomplete,
+        "--seed_value": seed_value,
+        "--force": force,
+    }
+
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
@@ -167,7 +179,7 @@ def chromosome(
     gene = "dnaA"
 
     # initial logging etc
-    start_time = begin_dnaapler(input, output, threads, gene)
+    start_time = begin_dnaapler(input, output, threads, gene, params)
     logger.info(
         f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
     )
@@ -227,11 +239,23 @@ def plasmid(
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
+    params = {
+        "--input": input,
+        "--output": output,
+        "--threads": threads,
+        "--force": force,
+        "--prefix": prefix,
+        "--evalue": evalue,
+        "--autocomplete": autocomplete,
+        "--seed_value": seed_value,
+        "--force": force,
+    }
+
     # defines gene
     gene = "repA"
 
     # initial logging etc
-    start_time = begin_dnaapler(input, output, threads, gene)
+    start_time = begin_dnaapler(input, output, threads, gene, params)
     logger.info(
         f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
     )
@@ -291,11 +315,23 @@ def phage(
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
+    params = {
+        "--input": input,
+        "--output": output,
+        "--threads": threads,
+        "--force": force,
+        "--prefix": prefix,
+        "--evalue": evalue,
+        "--autocomplete": autocomplete,
+        "--seed_value": seed_value,
+        "--force": force,
+    }
+
     # defines gene
     gene = "terL"
 
     # initial logging etc
-    start_time = begin_dnaapler(input, output, threads, gene)
+    start_time = begin_dnaapler(input, output, threads, gene, params)
     logger.info(
         f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
     )
@@ -371,11 +407,24 @@ def custom(
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
+    params = {
+        "--input": input,
+        "--output": output,
+        "--threads": threads,
+        "--force": force,
+        "--prefix": prefix,
+        "--evalue": evalue,
+        "--autocomplete": autocomplete,
+        "--seed_value": seed_value,
+        "--force": force,
+        "--custom_db": custom_db,
+    }
+
     # defines gene
     gene = "custom"
 
     # initial logging etc
-    start_time = begin_dnaapler(input, output, threads, gene)
+    start_time = begin_dnaapler(input, output, threads, gene, params)
     logger.info(
         f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
     )
@@ -447,11 +496,21 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
+    params = {
+        "--input": input,
+        "--output": output,
+        "--threads": threads,
+        "--force": force,
+        "--prefix": prefix,
+        "--seed_value": seed_value,
+        "--force": force,
+    }
+
     # defines gene
     gene = "mystery"
 
     # initial logging etc
-    start_time = begin_dnaapler(input, output, threads, gene)
+    start_time = begin_dnaapler(input, output, threads, gene, params)
 
     # validates fasta
     validate_fasta(input)
@@ -479,11 +538,20 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
+    params = {
+        "--input": input,
+        "--output": output,
+        "--threads": threads,
+        "--force": force,
+        "--prefix": prefix,
+        "--force": force,
+    }
+
     # defines gene
     gene = "nearest"
 
     # initial logging etc
-    start_time = begin_dnaapler(input, output, threads, gene)
+    start_time = begin_dnaapler(input, output, threads, gene, params)
 
     # validates fasta
     validate_fasta(input)
@@ -511,11 +579,20 @@ def largest(ctx, input, output, threads, prefix, force, **kwargs):
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
+    params = {
+        "--input": input,
+        "--output": output,
+        "--threads": threads,
+        "--force": force,
+        "--prefix": prefix,
+        "--force": force,
+    }
+
     # defines gene
     gene = "nearest"
 
     # initial logging etc
-    start_time = begin_dnaapler(input, output, threads, gene)
+    start_time = begin_dnaapler(input, output, threads, gene, params)
 
     # validates fasta
     validate_fasta(input)
@@ -586,8 +663,20 @@ def bulk(
     elif mode == "custom":
         gene = "custom"
 
+    params = {
+        "--input": input,
+        "--output": output,
+        "--threads": threads,
+        "--force": force,
+        "--prefix": prefix,
+        "--evalue": evalue,
+        "--mode": mode,
+        "--custom_db": custom_db,
+        "--force": force,
+    }
+
     # initial logging etc
-    start_time = begin_dnaapler(input, output, threads, gene)
+    start_time = begin_dnaapler(input, output, threads, gene, params)
 
     # validates fasta
     validate_fasta_bulk(input)
@@ -704,6 +793,21 @@ def all(
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
+    params = {
+        "--input": input,
+        "--output": output,
+        "--threads": threads,
+        "--force": force,
+        "--prefix": prefix,
+        "--evalue": evalue,
+        "--autocomplete": autocomplete,
+        "--seed_value": seed_value,
+        "--ignore": ignore,
+        "--custom_db": custom_db,
+        "--force": force,
+        "--db": db,
+    }
+
     # defines gene
     gene = "all"
 
@@ -727,7 +831,7 @@ def all(
         gene = "custom"
 
     # initial logging etc
-    start_time = begin_dnaapler(input, output, threads, gene)
+    start_time = begin_dnaapler(input, output, threads, gene, params)
 
     # validates fasta
     validate_fasta_all(input)

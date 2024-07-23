@@ -73,7 +73,6 @@ def all_process_blast_output_and_reorient(
         # make an empty df to ensure autocomplete reorientation happens
         blast_df = pd.DataFrame(columns=col_list)
 
-
     # Initialize the list to store the IDs
     contigs = []
     genes = []  # for the gene it reoriented it by

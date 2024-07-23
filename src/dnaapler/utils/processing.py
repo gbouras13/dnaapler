@@ -413,40 +413,56 @@ def reorient_single_record_bulk(
             gene_index += 1
 
         # Find the gene with the max overlap
-        closest_gene_index = max(overlap_dict, key=lambda key: overlap_dict[key])
+        # issue #77 - where there are no overlaps
+        if len(overlap_dict) == 0:
+            logger.warning(
+                f"{record.id} has no CDS. Therefore, skipping reorientation (you should probably filter this contig out!)"
+            )
+            start = 1
+            strand = "forward"
+            top_hit = "BLAST_hit_but_no_overlapping_CDS"
+            top_hit_length = "BLAST_hit_but_no_overlapping_CDS"
+            covered_len = "BLAST_hit_but_no_overlapping_CDS"
+            coverage = "BLAST_hit_but_no_overlapping_CDS"
+            ident = "BLAST_hit_but_no_overlapping_CDS"
+            identity = "BLAST_hit_but_no_overlapping_CDS"
 
-        strand = genes[closest_gene_index].strand
+        # 99.99% of scenarios
+        else:
+            closest_gene_index = max(overlap_dict, key=lambda key: overlap_dict[key])
 
-        # susie error 30-01-24 - misorienting on the negative strand
-        # 'begin' just gives the lowest value, not the start, so was putting the terL at the end i.e. reorienting from the end of terL
-        # therefore need to take end
-        if strand == 1:
-            start = genes[closest_gene_index].begin
-        elif strand == -1:
-            start = genes[closest_gene_index].end
+            strand = genes[closest_gene_index].strand
 
-        ####################
-        # reorientation
-        ####################
+            # susie error 30-01-24 - misorienting on the negative strand
+            # 'begin' just gives the lowest value, not the start, so was putting the terL at the end i.e. reorienting from the end of terL
+            # therefore need to take end
+            if strand == 1:
+                start = genes[closest_gene_index].begin
+            elif strand == -1:
+                start = genes[closest_gene_index].end
 
-        # length of chromosome
-        length = len(record.seq)
+            ####################
+            # reorientation
+            ####################
 
-        # reorient to start at the terminase
-        if strand == 1:
-            left = record.seq[(int(start) - 1) : length]
-            right = record.seq[0 : int(start) - 1]
-            total_seq = left + right
+            # length of chromosome
+            length = len(record.seq)
 
-        # revese compliment if the strand is negative
-        if strand == -1:
-            record.seq = record.seq.reverse_complement()
-            left = record.seq[(length - int(start)) : length]
-            right = record.seq[0 : (length - int(start))]
-            total_seq = left + right
+            # reorient to start at the terminase
+            if strand == 1:
+                left = record.seq[(int(start) - 1) : length]
+                right = record.seq[0 : int(start) - 1]
+                total_seq = left + right
 
-        # updates the sequence
-        record.seq = total_seq
+            # revese compliment if the strand is negative
+            if strand == -1:
+                record.seq = record.seq.reverse_complement()
+                left = record.seq[(length - int(start)) : length]
+                right = record.seq[0 : (length - int(start))]
+                total_seq = left + right
+
+            # updates the sequence
+            record.seq = total_seq
 
         # writes to file
         with open(out_file, "a") as out_fa:
