@@ -205,6 +205,80 @@ def chromosome(
 
 
 """
+archaea command
+"""
+
+@main_cli.command()
+@click.help_option("--help", "-h")
+@click.version_option(get_version(), "--version", "-V")
+@click.pass_context
+@common_options
+@click.option(
+    "-e",
+    "--evalue",
+    default="1e-10",
+    help="e value for blastx",
+    show_default=True,
+)
+@autocomplete_options
+def archaea(
+    ctx,
+    input,
+    output,
+    threads,
+    prefix,
+    evalue,
+    force,
+    autocomplete,
+    seed_value,
+    **kwargs,
+):
+    """Reorients your genome to begin with the archaeal COG1474 Orc1/cdc6 origin recognition complex gene"""
+
+    params = {
+        "--input": input,
+        "--output": output,
+        "--threads": threads,
+        "--force": force,
+        "--prefix": prefix,
+        "--evalue": evalue,
+        "--autocomplete": autocomplete,
+        "--seed_value": seed_value,
+        "--force": force,
+    }
+
+    # validates the directory  (need to before I start dnaapler or else no log file is written)
+    instantiate_dirs(output, force)
+
+    # defines gene
+    gene = "cog1474"
+
+    # initial logging etc
+    start_time = begin_dnaapler(input, output, threads, gene, params)
+    logger.info(
+        f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
+    )
+
+    # validates fasta
+    validate_fasta(input)
+
+    # validate e value
+    check_evalue(evalue)
+
+    # run BLAST
+    blast_success = run_blast_based_method(
+        ctx, input, output, prefix, gene, evalue, threads
+    )
+
+    # run autocomplete if BLAST reorientation failed
+    run_autocomplete(
+        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+    )
+
+    # end dnaapler
+    end_dnaapler(start_time)
+
+"""
 Plasmid command
 """
 

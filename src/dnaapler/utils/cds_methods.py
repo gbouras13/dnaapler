@@ -205,7 +205,7 @@ def run_blast_based_method(
         input (Path): Path to the input DNA sequence file in FASTA format.
         output (Path): Path to the output directory where the reoriented sequence will be saved.
         prefix (str): Prefix for the output file name.
-        gene (str): Name of the gene used for BLAST search (options: 'dnaA', 'repA', 'terL', 'custom').
+        gene (str): Name of the gene used for BLAST search (options: 'dnaA', 'repA', 'terL', 'custom', 'cog1474').
         evalue (float): E-value threshold for BLAST search.
         threads (int): Number of threads for BLAST search.
 
@@ -223,6 +223,8 @@ def run_blast_based_method(
         db_name = "repA_db"
     elif gene == "terL":
         db_name = "terL_db"
+    elif gene == "cog1474":
+        db_name = "cog1474_db"
 
     # chromosome path
     # blast
