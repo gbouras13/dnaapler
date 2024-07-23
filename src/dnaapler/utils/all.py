@@ -66,9 +66,13 @@ def all_process_blast_output_and_reorient(
         logger.error("There was an issue with parsing the BLAST output file.")
 
     if isinstance(blast_df, pd.DataFrame) and blast_df.empty:
-        logger.error(
+        logger.warning(
             "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
         )
+
+        # make an empty df to ensure autocomplete reorientation happens
+        blast_df = pd.DataFrame(columns=col_list)
+
 
     # Initialize the list to store the IDs
     contigs = []
