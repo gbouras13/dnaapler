@@ -866,7 +866,7 @@ def all(
     custom_db,
     **kwargs,
 ):
-    """Reorients contigs to begin with any of dnaA, repA or terL"""
+    """Reorients contigs to begin with any of dnaA, repA, terL or archaeal COG1474 Orc1/cdc6"""
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)

@@ -97,12 +97,13 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 
 ## Commands
 
-* `dnaapler all`: Reorients 1 or more contigs to begin with any of dnaA, terL, repA. 
+* `dnaapler all`: Reorients 1 or more contigs to begin with any of dnaA, terL, repA or COG1474. 
   - Practically, this should be the most useful command for most users.
 
 * `dnaapler chromosome`: Reorients your sequence to begin with the dnaA chromosomal replication initiator gene
 * `dnaapler plasmid`: Reorients your sequence to begin with the repA plasmid replication initiation gene
 * `dnaapler phage`: Reorients your sequence to begin with the terL large terminase subunit gene
+* `dnaapler archaea`: Reorients your sequence to begin with the [COG1474 archaeal Orc1/cdc6 gene](https://www.ncbi.nlm.nih.gov/research/cog/cog/COG1474/).
 * `dnaapler custom`: Reorients your sequence to begin with a custom amino acid FASTA format gene that you specify
 * `dnaapler mystery`: Reorients your sequence to begin with a random CDS
 * `dnaapler largest`: Reorients your sequence to begin with the largest CDS
@@ -146,6 +147,7 @@ Options:
 
 Commands:
   all         Reorients contigs to begin with any of dnaA, repA...
+  archaea     Reorients your genome to begin with the archaeal COG1474...
   bulk        Reorients multiple genomes to begin with the same gene
   chromosome  Reorients your genome to begin with the dnaA chromosomal...
   citation    Print the citation(s) for this tool
@@ -160,7 +162,7 @@ Commands:
   ```
 Usage: dnaapler all [OPTIONS]
 
-  Reorients contigs to begin with any of dnaA, repA or terL
+  Reorients contigs to begin with any of dnaA, repA, terL or archaeal COG1474 Orc1/cdc6
 
 Options:
   -h, --help               Show this message and exit.
@@ -203,6 +205,10 @@ dnaapler plasmid -i input.fasta -o output_directory_path -p my_plasmid_name -t 8
 ```
 
 ```
+dnaapler archaea -i input.fasta -o output_directory_path -p my_archaea_name -t 8
+```
+
+```
 dnaapler custom -i input.fasta -o output_directory_path -p my_genome_name -t 8 -c my_custom_database_file
 ```
 
@@ -231,7 +237,9 @@ dnaapler bulk -i input_file_with_multiple_chromosomes.fasta -m chromosome -o out
 
 `dnaapler phage` uses a terL database curated using [PHROGs](https://phrogs.lmge.uca.fr). All the AA sequences of the 55 phrogs annotated as 'large terminase subunit' were downloaded, combined and depduplicated using [seqkit](https://github.com/shenwei356/seqkit) `seqkit rmdup -s -o terL.faa phrog_terL.faa`.
 
-`dnaapler all` uses all three databases combined into one. 
+`dnaapler archaea` uses a database of 403 archaeal COG1474 Orc1/cdc6 genes curated from [here](https://ftp.ncbi.nlm.nih.gov/pub/wolf/COGs/arCOG/).
+
+`dnaapler all` uses all four databases combined into one. 
 
 `dnaapler custom` uses a custom amino acid FASTA format file that you specify using `-c`. 
 
