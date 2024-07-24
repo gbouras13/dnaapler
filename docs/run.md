@@ -11,7 +11,7 @@ You can use BLAST with multiple threads using the `-t` or `--threads` parameters
 
 `dnaapler` will not overwrite an output directory if it already exists by default. To force overwrite, please use `-f` or `--force`.
 
-Finally, for the BLAST based subcommands (`chromosome`, `phage`, `plasmid`, `custom` or `all`), if no BLAST hit is found, by default `dnaapler` will error and exit. 
+Finally, for the BLAST based subcommands (`chromosome`, `phage`, `plasmid`, `archaea`, `custom` or `all`), if no BLAST hit is found, by default `dnaapler` will error and exit. 
 
 However, you can decide to autocomplete `dnaapler` using the `-a` or `--autocomplete` parameters along with `mystery` or `nearest`, which will then run those subcommands to reorient your sequence.
 
@@ -20,11 +20,15 @@ Also, a seed value using `--seed_value` can be specified with `dnaapler` to ensu
 
 ### all
 
-`dnaapler all` is designed to simultaneously orient multiple contigs that can be a mix of chromosomes, plasmids and phages. It will also work on just 1 contig.
+`dnaapler all` is designed to simultaneously orient multiple contigs that can be a mix of chromosomes, plasmids, archaea and phages. It will also work on just 1 contig.
 
 If a contig has BLAST hits for both dnaA and terL or repA, dnaA will be chosen for reorientation.
 
-If a contig has BLAST hits for both terL and repA (but not dnaA), repA will be chosen for reorientation.
+If a contig has BLAST hits for both archaeal COG1474 and terL or repA, COG1474 will be chosen for reorientation.
+
+If a contig has BLAST hits for both terL and repA (but not dnaA or COG1474), repA will be chosen for reorientation.
+
+If a contig has BLAST hits for both dnaA and archaeal COG1474, dnaA will be chosen for reorientation though I assume this would be very unlikely!
 
 You can also specify a text file with `--ignore` that lists all contigs (based on their header) to be ignored during reorientation.
 
@@ -44,7 +48,8 @@ dnaapler all -i input.fasta -o output_directory_path -t 8  --ignore ignored_cont
 ```
 Usage: dnaapler all [OPTIONS]
 
-  Reorients contigs to begin with any of dnaA, repA or terL
+  Reorients contigs to begin with any of dnaA, repA, terL or archaeal COG1474
+  Orc1/cdc6
 
 Options:
   -h, --help               Show this message and exit.
@@ -151,6 +156,35 @@ Options:
   --seed_value INTEGER     Random seed to ensure reproducibility.  [default:
                            13]
 ```
+
+### archaea
+
+Example usage with no autocomplete command:
+
+```
+dnaapler archaea -i input.fasta -o output_directory_path -p my_archaea_name -t 8 
+```
+
+```
+Usage: dnaapler archaea [OPTIONS]
+
+  Reorients your genome to begin with the archaeal COG1474 Orc1/cdc6 origin
+  recognition complex gene
+
+Options:
+  -h, --help               Show this message and exit.
+  -V, --version            Show the version and exit.
+  -i, --input PATH         Path to input file in FASTA format  [required]
+  -o, --output PATH        Output directory   [default: output.dnaapler]
+  -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
+  -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
+  -f, --force              Force overwrites the output directory
+  -e, --evalue TEXT        e value for blastx  [default: 1e-10]
+  -a, --autocomplete TEXT  Choose an option to autocomplete reorientation if
+                           BLAST based approach fails. Must be one of: none,
+                           mystery, largest, or nearest [default: none]
+  --seed_value INTEGER     Random
+  ```
 
 ### custom
 

@@ -24,7 +24,7 @@ If you run `dnaapler all`, the output will be slightly different. There will sti
 
 * There will be a `{prefix}_all_reorientation_summary.tsv` summary file containing the reorientation information for each contig. 
 
-This summary file will be the same as for `bulk` as explained below, but with an extra column `Gene_Reoriented` that denotes which gene was detected in each contig (dnaA, repA or terL).
+This summary file will be the same as for `bulk` as explained below, but with an extra column `Gene_Reoriented` that denotes which gene was detected in each contig (dnaA, repA, terL or archael COG1474).
 
 ### bulk
 

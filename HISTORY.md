@@ -1,5 +1,11 @@
 # History
 
+# 0.8.0 (2024-07-24)
+
+* Adds `dnaapler archaea` and adds archaeal reorientation functionality into `dnaapler all` 
+* Specifically, this uses 403 COG1474 genes [COG1474](https://www.ncbi.nlm.nih.gov/research/cog/cog/COG1474/)
+* Relaxes (to warning) where no BLAST hits are found - pipleine will still complete (requested in a number of issues #74 #76 #77)
+
 # 0.7.0 (2024-02-05)
 
 * Adds `-c/--custom_db` with `dnaapler all` to allow specifying custom databases with `dnaapler all`.
