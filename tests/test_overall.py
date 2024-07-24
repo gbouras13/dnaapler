@@ -68,6 +68,20 @@ def test_chrom(tmp_dir):
     exec_command(cmd)
 
 
+def test_all_archaea(tmp_dir):
+    """test all archaea"""
+    input_fasta: Path = f"{overall_test_data}/CP001742.1_archaea.fasta"
+    cmd = f"dnaapler all -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_archaea(tmp_dir):
+    """test archaea"""
+    input_fasta: Path = f"{overall_test_data}/CP001742.1_archaea.fasta"
+    cmd = f"dnaapler archaea -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
 def test_chrom_start_codon_not_found(tmp_dir):
     """test chrom"""
     input_fasta: Path = f"{overall_test_data}/chromosome_top_hit_no_start_codon.fasta"
@@ -188,6 +202,13 @@ def test_bulk_plasmid(tmp_dir):
     exec_command(cmd)
 
 
+def test_bulk_archaea(tmp_dir):
+    """test bulk archaea"""
+    input_fasta: Path = f"{overall_test_data}/bulk_archaea.fasta"
+    cmd = f"dnaapler bulk -m archaea -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
 def test_bulk_custom(tmp_dir):
     """test bulk custom"""
     input_fasta: Path = f"{overall_test_data}/bulk_chromosome.fasta"
@@ -208,6 +229,13 @@ def test_custom(tmp_dir):
     input_fasta: Path = f"{overall_test_data}/all_test.fasta"
     custom: Path = f"{test_data}/fake_custom.faa"
     cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f -c {custom}"
+    exec_command(cmd)
+
+
+def test_no_overlap(tmp_dir):
+    """test no overlap"""
+    input_fasta: Path = f"{overall_test_data}/PP04977_pilon_subset.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
 
@@ -344,13 +372,14 @@ class TestExits(unittest.TestCase):
             cmd = f"dnaapler bulk -m chromosome -i {input_fasta} -o {outdir} -t 1 -f"
             exec_command(cmd)
 
-    def test_all_no_hits(self):
-        """test all with no blast hits"""
-        with self.assertRaises(RuntimeError):
-            input_fasta: Path = f"{test_data}/nucl_test.fna"
-            outdir: Path = f"{overall_test_data}/bulk_out"
-            cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f "
-            exec_command(cmd)
+    # wont fail now - will just warn and exit
+    # def test_all_no_hits(self):
+    #     """test all with no blast hits"""
+    #     with self.assertRaises(RuntimeError):
+    #         input_fasta: Path = f"{test_data}/nucl_test.fna"
+    #         outdir: Path = f"{overall_test_data}/bulk_out"
+    #         cmd = f"dnaapler all -i {input_fasta} -o {outdir} -t 1 -f "
+    #         exec_command(cmd)
 
     def test_all_autocomplete_mystery_too_small(self):
         """test all where the autocompletion mystery fails as the contig has < 4 CDS"""

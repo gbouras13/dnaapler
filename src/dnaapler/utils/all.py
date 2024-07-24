@@ -25,7 +25,7 @@ def all_process_blast_output_and_reorient(
     seed_value: int,
     custom_db: str,
 ) -> None:
-    """Processes the blast output,reorients and saves all contigs into os.path.join(output, f"{prefix}_reoriented.fasta")
+    """Processes the blast output, reorients and saves all contigs into os.path.join(output, f"{prefix}_reoriented.fasta")
 
     :param input: input file
     :param blast_file: blast output file
@@ -66,9 +66,12 @@ def all_process_blast_output_and_reorient(
         logger.error("There was an issue with parsing the BLAST output file.")
 
     if isinstance(blast_df, pd.DataFrame) and blast_df.empty:
-        logger.error(
+        logger.warning(
             "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
         )
+
+        # make an empty df to ensure autocomplete reorientation happens
+        blast_df = pd.DataFrame(columns=col_list)
 
     # Initialize the list to store the IDs
     contigs = []
@@ -171,19 +174,29 @@ def all_process_blast_output_and_reorient(
                 "repA": filtered_df[
                     filtered_df["sseqid"].str.contains("UniRef90", case=False)
                 ].shape[0],
+                "cog1474": filtered_df[
+                    filtered_df["sseqid"].str.contains("cog1474", case=False)
+                ].shape[0],
             }
 
             # if there are hits to more than 1 of dnaA, terL, repA, implement logic
             # to prefer dnaA, repA then terL (in that order)
-            if (counts["dnaA"] > 0) + (counts["terL"] > 0) + (counts["repA"] > 0) >= 2:
+            if (counts["dnaA"] > 0) + (counts["terL"] > 0) + (counts["repA"] > 0) + (
+                counts["cog1474"] > 0
+            ) >= 2:
                 # prefer dnaA if it is greater than zero
                 if counts["dnaA"] > 0:
                     # keep only the hits where dnaA is found
                     filtered_df = filtered_df[
                         filtered_df["sseqid"].str.contains("DNAA")
                     ]
-
-                else:  # where there is repA and terL, keep repA
+                # else prefer cog1474 - archaea if it is greater than zero
+                elif counts["cog1474"] > 0:
+                    filtered_df = filtered_df[
+                        filtered_df["sseqid"].str.contains("cog1474")
+                    ]
+                # otherwise where there is repA and terL, keep repA
+                else:
                     filtered_df = filtered_df[
                         filtered_df["sseqid"].str.contains("UniRef90")
                     ]
@@ -226,6 +239,9 @@ def all_process_blast_output_and_reorient(
                 # set as dnaA by default
                 gene = "dnaA"
 
+                # for archaea
+                if "cog1474" in filtered_df["sseqid"][0]:
+                    gene = "cog1474"
                 # for plasmids
                 if "UniRef90" in filtered_df["sseqid"][0]:
                     gene = "repA"
