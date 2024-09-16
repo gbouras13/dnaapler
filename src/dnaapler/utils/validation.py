@@ -218,7 +218,7 @@ def validate_choice_db(ctx, param, value):
     """
     checks the click.Choice option for the mode flag in bulk subcommand
     """
-    choices = ["all", "dnaa", "repa", "terl", "dnaa,repa", "dnaa,terl", "repa,terl"]
+    choices = ["all", "dnaa", "repa", "terl", "dnaa,repa", "dnaa,terl", "repa,terl", "cog1474", "dnaA,cog1474", "cog1474,terl", "repa,cog1474", "dnaa,repa,cog1474", "dnaa,terl,cog1474", "repa,terl,cog1474"]
     if value not in choices:
         raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")
     return value

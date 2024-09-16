@@ -905,6 +905,18 @@ def all(
         gene = "repA,terL"
     elif db == "cog1474":
         gene = "cog1474"
+    elif db == "dnaA,cog1474":
+        gene = "dnaA,cog1474"
+    elif db == "cog1474,terl":
+        gene = "cog1474,terL"
+    elif db == "repa,cog1474":
+        gene = "repA,cog1474"
+    elif db == "dnaa,repa,cog1474":
+        gene = "dnaa,repa,cog1474"
+    elif db == "dnaa,terl,cog1474":
+        gene = "dnaa,terl,cog1474"
+    elif db == "repa,terl,cog1474":
+        gene = "repa,terl,cog1474"
 
     # custom
     if custom_db != "":
