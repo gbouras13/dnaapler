@@ -245,9 +245,12 @@ def test_all_dnaa_repa(tmp_dir):
     cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f --db dnaa,repa"
     exec_command(cmd)
 
+
 """
 this one is for hybracter
 """
+
+
 def test_all_dnaa_repa_cog1474(tmp_dir):
     """test all dnaa repa cog1474 - for hybracter"""
     input_fasta: Path = f"{overall_test_data}/all_test.fasta"
