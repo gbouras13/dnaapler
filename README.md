@@ -1,3 +1,5 @@
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gbouras13/dnaapler/blob/master/run_dnaapler.ipynb)
+
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.05968/status.svg)](https://doi.org/10.21105/joss.05968)
 
 [![CI](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yaml/badge.svg)](https://github.com/gbouras13/dnaapler/actions/workflows/ci.yaml)
@@ -9,8 +11,6 @@
 [![Bioconda Downloads](https://img.shields.io/conda/dn/bioconda/dnaapler)](https://img.shields.io/conda/dn/bioconda/dnaapler)
 [![PyPI version](https://badge.fury.io/py/dnaapler.svg)](https://badge.fury.io/py/dnaapler)
 [![Downloads](https://static.pepy.tech/badge/dnaapler)](https://pepy.tech/project/dnaapler)
-
-
 
 
 # dnaapler
@@ -57,10 +57,15 @@ Larralde, M., (2022). Pyrodigal: Python bindings and interface to Prodigal, an e
 Hyatt, D., Chen, GL., LoCascio, P.F. et al. Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC Bioinformatics 11, 119 (2010). https://doi.org/10.1186/1471-2105-11-119.
 ```
 
+# Google Colab Notebooks
+
+If you don't want to install `dnaapler` locally, you can run `dnaapler all` without any code using the [Google Colab notebook](https://colab.research.google.com/github/gbouras13/dnaapler/blob/master/run_dnaapler.ipynb).
+
 ## Table of Contents
 - [dnaapler](#dnaapler)
   - [Quick Start](#quick-start)
   - [Paper](#paper)
+- [Google Colab Notebooks](#google-colab-notebooks)
   - [Table of Contents](#table-of-contents)
   - [Description](#description)
   - [Documentation](#documentation)

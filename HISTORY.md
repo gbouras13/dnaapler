@@ -1,5 +1,10 @@
 # History
 
+# 0.8.1 (2024-09-16)
+
+* Minor release - adds `--db dnaa,repa,cog1474` as an option for `dnaapler all` to allow for archaea orientation in hybracter
+
+
 # 0.8.0 (2024-07-24)
 
 * Adds `dnaapler archaea` and adds archaeal reorientation functionality into `dnaapler all` 
