@@ -4,7 +4,7 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - mmseqs2 ==15.6f452
+  - mmseqs2 ==13.45111
   - just
   - poetry
   - python >=3.8,<4.0

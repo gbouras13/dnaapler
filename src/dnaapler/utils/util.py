@@ -114,7 +114,7 @@ def check_mmseqs2_version():
     checks the MMseqs2 version
     """
 
-    # 15.6f452
+    # 13.45111 to match pharokka!
 
     message = "Checking MMseqs2 installation."
     logger.info(message)
@@ -136,15 +136,15 @@ def check_mmseqs2_version():
             f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
         )
 
-        if mmseqs_major_version != 15:
-            logger.error("MMseqs2 is the wrong version. Please install v15.6f452")
-        if mmseqs_minor_version != "6f452":
-            logger.error("MMseqs2 is the wrong version. Please install v15.6f452")
+        if mmseqs_major_version != 13:
+            logger.error("MMseqs2 is the wrong version. Please install v13.45111")
+        if mmseqs_minor_version != "45111":
+            logger.error("MMseqs2 is the wrong version. Please install v13.45111")
 
         logger.info("MMseqs2 version is ok.")
 
     except Exception:
-        message = "MMseqs2 not found. Please install MMseqs2 v 15.6f452"
+        message = "MMseqs2 not found. Please install MMseqs2 v 13.45111"
         logger.error(message)
 
 
