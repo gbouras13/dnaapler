@@ -60,6 +60,9 @@ def run_bulk_MMseqs2(
     elif gene == "cog1474":
         db_name = "cog1474_db"
 
+
+    logdir = Path(f"{output}/logs")
+    
     # for chromosome, plasmid or phage or all
     # runs MMseqs2
     if gene != "custom":

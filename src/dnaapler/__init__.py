@@ -768,6 +768,7 @@ def bulk(
     check_evalue(evalue)
 
     # check custom db
+    logdir = Path(f"{output}/logs")
     if mode == "custom":
         if custom_db == None:
             logger.error(
@@ -782,8 +783,6 @@ def bulk(
             Path(db_dir).mkdir(parents=True, exist_ok=True)
             custom_db_fasta = os.path.join(db_dir, "custom_db.faa")
             shutil.copy2(custom_db, custom_db_fasta)
-
-            logdir = Path(f"{output}/logs")
 
             # custom db
             # make custom db
