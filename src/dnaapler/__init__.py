@@ -533,6 +533,7 @@ def custom(
         tool="mmseqs",
         input=f"createdb {custom_db_fasta}",
         output=f" {custom_database}",
+        params=f"",
         logdir=logdir,
     )
 
@@ -792,6 +793,7 @@ def bulk(
                 tool="mmseqs",
                 input=f"createdb {custom_db_fasta}",
                 output=f" {custom_database}",
+                params=f"",
                 logdir=logdir,
             )
 
@@ -966,6 +968,7 @@ def all(
             tool="mmseqs",
             input=f"createdb {custom_db_fasta}",
             output=f" {custom_database}",
+            params=f"",
             logdir=logdir,
         )
 
