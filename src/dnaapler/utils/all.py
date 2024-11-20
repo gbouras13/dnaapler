@@ -35,10 +35,10 @@ def all_process_MMseqs2_output_and_reorient(
     :return:
     """
 
-    # define colnames - keep the same colnames as BLAST for ease 
+    # define colnames - keep the same colnames as BLAST for ease
     # matches the MMseqs2 ones to make subbing MMseqs2 for BLAST as easy as possible
     # MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
-        
+
     col_list = [
         "qseqid",
         "qlen",

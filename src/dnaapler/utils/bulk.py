@@ -11,6 +11,7 @@ from dnaapler.utils.external_tools import ExternalTool
 from dnaapler.utils.processing import reorient_single_record_bulk
 from dnaapler.utils.validation import validate_custom_db_fasta
 
+
 def run_bulk_MMseqs2(
     ctx,
     input: Path,
@@ -69,7 +70,7 @@ def run_bulk_MMseqs2(
         # matches the MMseqs2 ones to make subbing MMseqs2 for BLAST as easy as possible
         MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
         db = os.path.join(DNAAPLER_DB, db_name)
-           
+
     elif gene == "custom":
         # validates custom fasta input for database
         validate_custom_db_fasta(Path(custom_db))
@@ -90,19 +91,18 @@ def run_bulk_MMseqs2(
 
         db = custom_database
 
-
     MMseqs2 = ExternalTool(
-            tool="mmseqs easy-search",
-            input=f"{input} {db}",
-            output=f"{MMseqs2_output_file}",
-            params=f"{MMseqs2_output_tmpdir} --search-type 2  --threads {threads} -e {evalue} --format-output {MMseqs2_columns}",
-            logdir=logdir,
-        )
+        tool="mmseqs easy-search",
+        input=f"{input} {db}",
+        output=f"{MMseqs2_output_file}",
+        params=f"{MMseqs2_output_tmpdir} --search-type 2  --threads {threads} -e {evalue} --format-output {MMseqs2_columns}",
+        logdir=logdir,
+    )
 
     ExternalTool.run_tool(MMseqs2, ctx)
     from dnaapler.utils.util import remove_directory
-    remove_directory(MMseqs2_output_tmpdir)
 
+    remove_directory(MMseqs2_output_tmpdir)
 
 
 def bulk_process_MMseqs2_output_and_reorient(

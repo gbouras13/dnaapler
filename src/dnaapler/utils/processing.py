@@ -29,7 +29,7 @@ def process_MMseqs2_output_and_reorient(
 
     # define colnames
     col_list = [
-        "qseqid",     
+        "qseqid",
         "qlen",
         "sseqid",
         "slen",
@@ -88,7 +88,9 @@ def process_MMseqs2_output_and_reorient(
     # https://github.com/gbouras13/dnaapler/issues/44
 
     else:
-        if MMseqs2_df["qseq"][0][0] in ["M", "V", "L"] and (MMseqs2_df["sstart"][0] == 1):
+        if MMseqs2_df["qseq"][0][0] in ["M", "V", "L"] and (
+            MMseqs2_df["sstart"][0] == 1
+        ):
             reorient_sequence(MMseqs2_df, input, out_file, gene, overlapping_orf=False)
         else:  # this will reorient the sequence with the orf that overlaps the tophit by the most
             # warn if the top hit doesnt begin with a valid start codon

@@ -384,7 +384,6 @@ class TestExits(unittest.TestCase):
             cmd = f"dnaapler bulk -m chromosome -i {input_fasta} -o {outdir} -t 1 -f"
             exec_command(cmd)
 
-
     def test_all_autocomplete_mystery_too_small(self):
         """test all where the autocompletion mystery fails as the contig has < 4 CDS"""
         with self.assertRaises(RuntimeError):

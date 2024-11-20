@@ -3,11 +3,11 @@ You shouldn't need to tweak these much if at all
 """
 
 import os
+import shutil
 import subprocess as sp
 import sys
 import time
 from pathlib import Path
-import shutil
 
 import click
 import pyrodigal
@@ -119,7 +119,6 @@ def check_mmseqs2_version():
     message = "Checking MMseqs2 installation."
     logger.info(message)
     try:
-
         process = sp.Popen(["mmseqs"], stdout=sp.PIPE, stderr=sp.STDOUT)
         mmseqs_out, _ = process.communicate()
         mmseqs_out = mmseqs_out.decode()
@@ -129,7 +128,7 @@ def check_mmseqs2_version():
                 break
         else:
             raise ValueError("MMseqs2 version not found")
-        
+
         mmseqs_major_version = int(mmseqs_version.split(".")[0])
         mmseqs_minor_version = mmseqs_version.split(".")[1]
 
@@ -139,7 +138,7 @@ def check_mmseqs2_version():
 
         if mmseqs_major_version != 15:
             logger.error("MMseqs2 is the wrong version. Please install v15.6f452")
-        if mmseqs_minor_version != '6f452':
+        if mmseqs_minor_version != "6f452":
             logger.error("MMseqs2 is the wrong version. Please install v15.6f452")
 
         logger.info("MMseqs2 version is ok.")
@@ -225,6 +224,7 @@ def check_duplicate_headers(fasta_file: Path) -> None:
         else:
             header_set.add(header)
     # if it finished it will be fine
+
 
 def remove_directory(dir_path: Path) -> None:
     """

@@ -231,22 +231,20 @@ def run_MMseqs2_based_method(
     # matches the blast ones to make subbing MMseqs2 for BLAST as easy as possible
     MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
 
-
     db = os.path.join(DNAAPLER_DB, db_name)
     if gene == "custom":
         db = os.path.join(output, "custom_db", "custom_db")
 
     # run MMseqs2 easy-search
     MMseqs2 = ExternalTool(
-            tool="mmseqs easy-search",
-            input=f"{input} {db}",
-            output=f"{MMseqs2_output_file}",
-            params=f"{MMseqs2_output_tmpdir} --search-type 2  --threads {threads} -e {evalue} --format-output {MMseqs2_columns}",
-            logdir=logdir,
-        )
+        tool="mmseqs easy-search",
+        input=f"{input} {db}",
+        output=f"{MMseqs2_output_file}",
+        params=f"{MMseqs2_output_tmpdir} --search-type 2  --threads {threads} -e {evalue} --format-output {MMseqs2_columns}",
+        logdir=logdir,
+    )
 
     ExternalTool.run_tool(MMseqs2, ctx)
-    
 
     # reorient the genome based on the MMseqs22 hit
     output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
@@ -289,26 +287,26 @@ def run_MMseqs2_based_method_bulk(
     MMseqs2_output_tmpdir = Path(f"{output}/tmp_MMseqs2_output")
     MMseqs2_output_file = Path(f"{output}/{prefix}_MMseqs2_output.txt")
     # matches the blast ones to make subbing MMseqs2 for BLAST as easy as possible
-    # qaln and taln are the translated alignments 
+    # qaln and taln are the translated alignments
     MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
 
     db = os.path.join(DNAAPLER_DB, db_name)
     if gene == "custom":
         db = os.path.join(output, "custom_db", "custom_db")
 
-
     # MMSeqs2 easy-search
     MMseqs2 = ExternalTool(
-            tool="mmseqs easy-search ",
-            input=f"{input} {db}",
-            output=f"{MMseqs2_output_file}",
-            params=f"{MMseqs2_output_tmpdir} --search-type 2 --threads {threads} -e {evalue} --format-output {MMseqs2_columns}",
-            logdir=logdir,
-        )
+        tool="mmseqs easy-search ",
+        input=f"{input} {db}",
+        output=f"{MMseqs2_output_file}",
+        params=f"{MMseqs2_output_tmpdir} --search-type 2 --threads {threads} -e {evalue} --format-output {MMseqs2_columns}",
+        logdir=logdir,
+    )
 
     ExternalTool.run_tool(MMseqs2, ctx)
 
     from dnaapler.utils.util import remove_directory
+
     remove_directory(MMseqs2_output_tmpdir)
 
     # reorient the genome based on the MMseqs2 hit
@@ -318,4 +316,3 @@ def run_MMseqs2_based_method_bulk(
     )
 
     return MMseqs2_success
-

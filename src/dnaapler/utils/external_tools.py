@@ -42,7 +42,7 @@ class ExternalTool:
 
     @staticmethod
     def _build_command(tool: str, input: str, output: str, params: str) -> List[str]:
-        command = f"{tool} {input} {output} {params}"# this is how mmseqs does it
+        command = f"{tool} {input} {output} {params}"  # this is how mmseqs does it
         print(command)
         escaped_command = shlex.split(command)
         return escaped_command

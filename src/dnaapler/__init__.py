@@ -9,10 +9,13 @@ import click
 from loguru import logger
 
 from dnaapler.utils.all import all_process_MMseqs2_output_and_reorient
-from dnaapler.utils.bulk import bulk_process_MMseqs2_output_and_reorient, run_bulk_MMseqs2
+from dnaapler.utils.bulk import (
+    bulk_process_MMseqs2_output_and_reorient,
+    run_bulk_MMseqs2,
+)
 from dnaapler.utils.cds_methods import (
-    run_MMseqs2_based_method,
     run_largest,
+    run_MMseqs2_based_method,
     run_mystery,
     run_nearest,
 )
@@ -24,7 +27,7 @@ from dnaapler.utils.util import (
     end_dnaapler,
     get_version,
     print_citation,
-    run_autocomplete
+    run_autocomplete,
 )
 from dnaapler.utils.validation import (
     check_evalue,
@@ -527,14 +530,13 @@ def custom(
     custom_database = os.path.join(db_dir, "custom_db")
 
     makeMMseqs2db = ExternalTool(
-            tool="mmseqs",
-            input=f"createdb {custom_db_fasta}",
-            output=f" {custom_database}",
-            logdir=logdir,
-        )
+        tool="mmseqs",
+        input=f"createdb {custom_db_fasta}",
+        output=f" {custom_database}",
+        logdir=logdir,
+    )
 
     ExternalTool.run_tool(makeMMseqs2db, ctx)
-
 
     # runs and processes MMseqs2
     MMseqs2_success = run_MMseqs2_based_method(
@@ -787,11 +789,11 @@ def bulk(
             custom_database = os.path.join(db_dir, "custom_db")
 
             makeMMseqs2db = ExternalTool(
-            tool="mmseqs",
-            input=f"createdb {custom_db_fasta}",
-            output=f" {custom_database}",
-            logdir=logdir,
-        )
+                tool="mmseqs",
+                input=f"createdb {custom_db_fasta}",
+                output=f" {custom_database}",
+                logdir=logdir,
+            )
 
             ExternalTool.run_tool(makeMMseqs2db, ctx)
 

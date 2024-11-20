@@ -167,7 +167,9 @@ class TestBlastOutput(unittest.TestCase):
 
     def test_process_MMseqs2_output_and_reorient_already_oriented(self):
         # Test scenario where the MMseqs2 output suggests the contig is already oriented correctly
-        MMseqs2_file = os.path.join(test_data, "SAOMS1_MMseqs2_output_already_oriented.txt")
+        MMseqs2_file = os.path.join(
+            test_data, "SAOMS1_MMseqs2_output_already_oriented.txt"
+        )
         input = os.path.join(test_data, "SAOMS1.fasta")
         output = os.path.join(test_data, "fake_reoriented.fasta")
         gene = "terL"
@@ -272,5 +274,3 @@ class TestChoiceAutocomplete(unittest.TestCase):
         ctx = "1"
         param = "2"
         val = validate_choice_autocomplete(ctx, param, value)
-
-
