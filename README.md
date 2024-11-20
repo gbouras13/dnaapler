@@ -61,11 +61,11 @@ Hyatt, D., Chen, GL., LoCascio, P.F. et al. Prodigal: prokaryotic gene recogniti
 
 ## v1.0.0
 
-* **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2 v13.45111` rather than `BLAST`. You will need to install `MMSeqs` if you upgrade (if you use conda, it should be handled for you)
+* **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2 v13.45111` rather than `BLAST`. You will need to install [MMSeqs2](https://github.com/soedinglab/MMseqs2) if you upgrade (if you use conda, it should be handled for you)
 * There are 2 reasons for this:
-    1. Users reported problems installing BLAST on MacOS with Apple Silicon (see e.g. [here](https://github.com/gbouras13/pharokka/issues/368)). MMseqs works on all platforms and is dilligently maintained.
-    2. MMSeqs2 is much much faster than BLAST (what took BLAST a few of minutes takes MMSeqs2 seconds). We should have written `dnaapler` with `MMseqs2` to begin with. `MMSeqs2 v13.45111` was chosen to ensure interoperability with [pharokka](https://github.com/gbouras13/pharokka)
-* The alignment resuls may not be identicial to ` dnaapler v0.8.1` (i.e. they might find specifically different top hits), but the actual reorientation is likely to be identical (at least in my tests). Please reach out or make an issue if you notice any discr
+    1. Users reported problems installing BLAST on MacOS with Apple Silicon (see e.g. [here](https://github.com/gbouras13/pharokka/issues/368)). MMseqs2 works on all platforms and is dilligently maintained.
+    2. MMSeqs2 is much much faster than BLAST (what took BLAST a few minutes takes MMSeqs2 seconds). We probably should have written `dnaapler` with `MMseqs2` to begin with. `MMSeqs2 v13.45111` was chosen to ensure interoperability with [pharokka](https://github.com/gbouras13/pharokka)
+* The alignment resuls may not be identicial to ` dnaapler v0.8.1` (i.e. they might find different top hits), but the actual reorientation is likely to be identical (at least in my tests). Please reach out or make an issue if you notice any discrepancies
 
 
 # Google Colab Notebooks
