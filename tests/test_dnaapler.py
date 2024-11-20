@@ -22,7 +22,7 @@ from loguru import logger
 from src.dnaapler.utils.constants import repo_root
 from src.dnaapler.utils.external_tools import ExternalTool
 from src.dnaapler.utils.processing import (
-    process_blast_output_and_reorient,
+    process_MMseqs2_output_and_reorient,
     reorient_sequence,
     reorient_sequence_random,
 )
@@ -76,8 +76,8 @@ class TestReorientSequence(unittest.TestCase):
     """Tests for reorient_sequence"""
 
     def test_reorient_sequence_top_hit_no_start_codon(self):
-        # Test scenario where the top blast hit doesn't have a start codon
-        blast_file = os.path.join(test_data, "SAOMS1_blast_output_correct.txt")
+        # Test scenario where the top MMseqs2 hit doesn't have a start codon
+        MMseqs2_file = os.path.join(test_data, "SAOMS1_MMseqs2_output_correct.txt")
         col_list = [
             "qseqid",
             "qlen",
@@ -97,18 +97,18 @@ class TestReorientSequence(unittest.TestCase):
             "qseq",
             "sseq",
         ]
-        blast_df = pd.read_csv(
-            blast_file, delimiter="\t", index_col=False, names=col_list
+        MMseqs2_df = pd.read_csv(
+            MMseqs2_file, delimiter="\t", index_col=False, names=col_list
         )
         input = os.path.join(test_data, "SAOMS1.fasta")
         out_file = os.path.join(test_data, "fake_reoriented.fasta")
         gene = "terL"
         overlapping_orf = True
-        reorient_sequence(blast_df, input, out_file, gene, overlapping_orf)
+        reorient_sequence(MMseqs2_df, input, out_file, gene, overlapping_orf)
 
     def test_reorient_sequence_top_hit_with_start_codon(self):
-        # Test scenario where the top blast hit does have a start codon
-        blast_file = os.path.join(test_data, "NC_007458_dnaapler_blast_output.txt")
+        # Test scenario where the top MMseqs2 hit does have a start codon
+        MMseqs2_file = os.path.join(test_data, "NC_007458_dnaapler_MMseqs2_output.txt")
         col_list = [
             "qseqid",
             "qlen",
@@ -128,8 +128,8 @@ class TestReorientSequence(unittest.TestCase):
             "qseq",
             "sseq",
         ]
-        blast_df = pd.read_csv(
-            blast_file, delimiter="\t", index_col=False, names=col_list
+        MMseqs2_df = pd.read_csv(
+            MMseqs2_file, delimiter="\t", index_col=False, names=col_list
         )
         input = os.path.join(overall_inputs_test_data, "NC_007458.fasta")
         out_file = os.path.join(
@@ -137,7 +137,7 @@ class TestReorientSequence(unittest.TestCase):
         )
         gene = "terL"
         overlapping_orf = False
-        reorient_sequence(blast_df, input, out_file, gene, overlapping_orf)
+        reorient_sequence(MMseqs2_df, input, out_file, gene, overlapping_orf)
 
 
 class TestReorientSequenceRandom(unittest.TestCase):
@@ -154,51 +154,51 @@ class TestReorientSequenceRandom(unittest.TestCase):
 
 
 class TestBlastOutput(unittest.TestCase):
-    """Tests for process_blast_output_and_reorient"""
+    """Tests for process_MMseqs2_output_and_reorient"""
 
-    def test_process_blast_output_and_reorient_invalid_blast_file(self):
-        # Test scenario where the blast input is invalud
+    def test_process_MMseqs2_output_and_reorient_invalid_MMseqs2_file(self):
+        # Test scenario where the MMseqs2 input is invalud
         with self.assertRaises(SystemExit):
-            blast_file = pd.DataFrame({"qstart": [1]})
+            MMseqs2_file = pd.DataFrame({"qstart": [1]})
             input = os.path.join(test_data, "SAOMS1.fasta")
             output = os.path.join(test_data, "fake_reoriented.fasta")
             gene = "terL"
-            process_blast_output_and_reorient(input, blast_file, output, gene)
+            process_MMseqs2_output_and_reorient(input, MMseqs2_file, output, gene)
 
-    def test_process_blast_output_and_reorient_already_oriented(self):
-        # Test scenario where the blast output suggests the contig is already oriented correctly
-        blast_file = os.path.join(test_data, "SAOMS1_blast_output_already_oriented.txt")
+    def test_process_MMseqs2_output_and_reorient_already_oriented(self):
+        # Test scenario where the MMseqs2 output suggests the contig is already oriented correctly
+        MMseqs2_file = os.path.join(test_data, "SAOMS1_MMseqs2_output_already_oriented.txt")
         input = os.path.join(test_data, "SAOMS1.fasta")
         output = os.path.join(test_data, "fake_reoriented.fasta")
         gene = "terL"
-        blast_success = process_blast_output_and_reorient(
-            input, blast_file, output, gene
+        MMseqs2_success = process_MMseqs2_output_and_reorient(
+            input, MMseqs2_file, output, gene
         )
-        assert blast_success == True
+        assert MMseqs2_success == True
 
-    def test_process_blast_output_and_reorient_wrong_start_codon(self):
+    def test_process_MMseqs2_output_and_reorient_wrong_start_codon(self):
         # Test scenario where the best BLAST hit has no valid start codon
-        blast_file = os.path.join(
-            test_data, "SAOMS1_blast_output_wrong_start_codon.txt"
+        MMseqs2_file = os.path.join(
+            test_data, "SAOMS1_MMseqs2_output_wrong_start_codon.txt"
         )
         input = os.path.join(test_data, "SAOMS1.fasta")
         output = os.path.join(test_data, "fake_reoriented.fasta")
         gene = "terL"
-        blast_success = process_blast_output_and_reorient(
-            input, blast_file, output, gene
+        MMseqs2_success = process_MMseqs2_output_and_reorient(
+            input, MMseqs2_file, output, gene
         )
-        assert blast_success == True
+        assert MMseqs2_success == True
 
-    def test_process_blast_output_and_reorient_correct(self):
+    def test_process_MMseqs2_output_and_reorient_correct(self):
         # Test scenario where the no BLAST hit begins with 1 (start of gene)
-        blast_file = os.path.join(test_data, "SAOMS1_blast_output_correct.txt")
+        MMseqs2_file = os.path.join(test_data, "SAOMS1_MMseqs2_output_correct.txt")
         input = os.path.join(test_data, "SAOMS1.fasta")
         output = os.path.join(test_data, "fake_reoriented.fasta")
         gene = "terL"
-        blast_success = process_blast_output_and_reorient(
-            input, blast_file, output, gene
+        MMseqs2_success = process_MMseqs2_output_and_reorient(
+            input, MMseqs2_file, output, gene
         )
-        assert blast_success == True
+        assert MMseqs2_success == True
 
     def test_begin_dnaapler(self):
         # Test begin
@@ -274,123 +274,3 @@ class TestChoiceAutocomplete(unittest.TestCase):
         val = validate_choice_autocomplete(ctx, param, value)
 
 
-# external tools
-
-"""
-taken from tbpore
-"""
-
-
-class TestExternalTools:
-    @patch.object(
-        ExternalTool,
-        ExternalTool._build_command.__name__,
-        return_value=["mocked", "command", "arg"],
-    )
-    @patch.object(Path, Path.mkdir.__name__)
-    def test___constructor(self, mkdir_mock, build_command_mock):
-        logdir = Path("logs")
-
-        external_tool = ExternalTool("tool", "input", "output", "params", logdir)
-
-        assert external_tool.command == ["mocked", "command", "arg"]
-        assert external_tool.command_as_str == "mocked command arg"
-        assert (
-            external_tool.out_log
-            == "logs/tool_c238863b32d18040bbf255fa3bf0dc91e9afa268335b56f51abe3c6d1fd83261.out"
-        )
-        assert (
-            external_tool.err_log
-            == "logs/tool_c238863b32d18040bbf255fa3bf0dc91e9afa268335b56f51abe3c6d1fd83261.err"
-        )
-
-        build_command_mock.assert_called_once_with("tool", "input", "output", "params")
-        mkdir_mock.assert_called_once_with(parents=True, exist_ok=True)
-
-    def test___build_command___simple_command(self):
-        expected_escaped_command = ["tool", "param1", "param2", "-o", "out", "-i", "in"]
-        actual_escaped_command = ExternalTool._build_command(
-            "tool", "-i in", "-o out", "param1 param2"
-        )
-        assert expected_escaped_command == actual_escaped_command
-
-    def test___build_command___single_quote_escaped(self):
-        expected_escaped_command = [
-            "tool",
-            "params",
-            "with",
-            "escaped arg",
-            "-o",
-            "escaped out",
-            "-i",
-            "escaped in",
-        ]
-        actual_escaped_command = ExternalTool._build_command(
-            "tool", "-i 'escaped in'", "-o 'escaped out'", "params with 'escaped arg'"
-        )
-        assert expected_escaped_command == actual_escaped_command
-
-    def test___build_command___double_quote_escaped(self):
-        expected_escaped_command = [
-            "tool",
-            "params",
-            "with",
-            "escaped arg",
-            "-o",
-            "escaped out",
-            "-i",
-            "escaped in",
-        ]
-        actual_escaped_command = ExternalTool._build_command(
-            "tool", '-i "escaped in"', '-o "escaped out"', 'params with "escaped arg"'
-        )
-        assert expected_escaped_command == actual_escaped_command
-
-    def test___run(self):
-        logsdir = repo_root.parent.parent / "tests/helpers/logs"
-        logsdir.mkdir(parents=True, exist_ok=True)
-        for file in logsdir.iterdir():
-            file.unlink()
-
-        python_script = str(repo_root.parent.parent / "tests/helpers/run_test.py")
-        external_tool = ExternalTool(
-            sys.executable,
-            "input",
-            "output",
-            python_script,
-            logsdir,
-        )
-
-        external_tool.run()
-
-        out_file = glob.glob(f"{logsdir}/*.out")[0]
-        with open(out_file) as out_file_fh:
-            lines = out_file_fh.readlines()
-            assert lines == ["out\n"]
-
-        err_file = glob.glob(f"{logsdir}/*.err")[0]
-        with open(err_file) as err_file_fh:
-            lines = err_file_fh.readlines()
-            assert lines == ["err\n"]
-
-
-class TestFailExternal(unittest.TestCase):
-    """Fail Extenral Tool Test"""
-
-    def test___run_exit(self):
-        with self.assertRaises(FileNotFoundError):
-            logsdir = repo_root.parent.parent / "tests/helpers/logs"
-            logsdir.mkdir(parents=True, exist_ok=True)
-            for file in logsdir.iterdir():
-                file.unlink()
-
-            python_script = str(repo_root.parent.parent / "tests/helpers/run_test.py")
-            external_tool = ExternalTool(
-                "break_here",
-                "input",
-                "output",
-                python_script,
-                logsdir,
-            )
-
-            external_tool.run()

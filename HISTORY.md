@@ -1,5 +1,14 @@
 # History
 
+# 1.0.0 (2024-11-21)
+
+* **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2` rather than `BLAST`. You will need to install `MMSeqs` if you upgrade (if you use conda, it should be handled for you)
+* There are 2 reasons for this:
+    1. Users reported problems installing BLAST on MacOS with Apple Silicon (see e.g. [here](https://github.com/gbouras13/pharokka/issues/368)). MMseqs works on all platforms and is dilligently maintained.
+    2. MMSeqs2 is much much faster than BLAST (what took BLAST a few of minutes takes MMSeqs2 seconds). We should have written `dnaapler` with `MMseqs2` to begin with.
+* The alignment resuls may not be identicial (i.e. they might find specifically different top hits), but the actual reorientation is likely to be identical (at least in my tests). Please reach out or make an issue if you notice any discrepancies. 
+
+
 # 0.8.1 (2024-09-16)
 
 * Minor release - adds `--db dnaa,repa,cog1474` as an option for `dnaapler all` to allow for archaea orientation in hybracter

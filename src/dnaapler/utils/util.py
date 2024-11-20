@@ -7,6 +7,7 @@ import subprocess as sp
 import sys
 import time
 from pathlib import Path
+import shutil
 
 import click
 import pyrodigal
@@ -73,10 +74,10 @@ def begin_dnaapler(input, output, threads, gene, params):
     logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
     logger.info(f"Your input FASTA is {input}")
     logger.info(f"Your output directory  is {output}")
-    logger.info(f"You have specified {threads} threads to use with blastx")
+    logger.info(f"You have specified {threads} threads to use with MMseqs2")
     logger.info(f"You have specified {gene} gene(s) to reorient your sequence")
-    # check BLAST version
-    check_blast_version()
+    # check MMseqs2 version
+    check_mmseqs2_version()
     check_pyrodigal_version()
     for key, value in params.items():
         logger.info(f"Parameter: {key} {value}")
@@ -87,7 +88,7 @@ def check_pyrodigal_version():
     """
     checks the pyrodigal version
     """
-    # blast
+    # MMseqs
     message = "Checking pyrodigal installation."
     logger.info(message)
 
@@ -108,43 +109,44 @@ def check_pyrodigal_version():
         logger.error(message)
 
 
-def check_blast_version():
+def check_mmseqs2_version():
     """
-    checks the BLAST version
+    checks the MMseqs2 version
     """
-    # blast
-    message = "Checking BLAST installation."
+
+    # 15.6f452
+
+    message = "Checking MMseqs2 installation."
     logger.info(message)
     try:
-        process = sp.Popen(["blastx", "-version"], stdout=sp.PIPE, stderr=sp.STDOUT)
-        blast_out, _ = process.communicate()
-        blast_out = blast_out.decode().strip()
-        blast_out = blast_out.split("\n")[0]
-        blast_version = blast_out.split(" ")[1]
-        blast_version = blast_version.strip("+")
-        blast_major_version = int(blast_version.split(".")[0])
-        blast_minor_version = int(blast_version.split(".")[1])
-        blast_minorest_version = int(blast_version.split(".")[2])
-        message = (
-            "BLAST version found is v"
-            + str(blast_major_version)
-            + "."
-            + str(blast_minor_version)
-            + "."
-            + str(blast_minorest_version)
-            + "."
-        )
-        logger.info(message)
-    except Exception:
-        message = "BLAST not found. Please install BLAST, see instructions at https://github.com/gbouras13/dnaapler."
-        logger.error(message)
 
-    if blast_minor_version < 10 or blast_major_version < 2:
-        message = "BLAST is too old - please reinstall BLAST v2.10 or newer, see instructions at https://github.com/gbouras13/dnaapler."
+        process = sp.Popen(["mmseqs"], stdout=sp.PIPE, stderr=sp.STDOUT)
+        mmseqs_out, _ = process.communicate()
+        mmseqs_out = mmseqs_out.decode()
+        for line in mmseqs_out.split("\n"):
+            if "Version" in line:
+                mmseqs_version = line.split(" ")[2]
+                break
+        else:
+            raise ValueError("MMseqs2 version not found")
+        
+        mmseqs_major_version = int(mmseqs_version.split(".")[0])
+        mmseqs_minor_version = mmseqs_version.split(".")[1]
+
+        logger.info(
+            f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
+        )
+
+        if mmseqs_major_version != 15:
+            logger.error("MMseqs2 is the wrong version. Please install v15.6f452")
+        if mmseqs_minor_version != '6f452':
+            logger.error("MMseqs2 is the wrong version. Please install v15.6f452")
+
+        logger.info("MMseqs2 version is ok.")
+
+    except Exception:
+        message = "MMseqs2 not found. Please install MMseqs2 v 15.6f452"
         logger.error(message)
-    else:
-        message = "BLAST version is ok."
-        logger.info(message)
 
 
 def end_dnaapler(start_time):
@@ -162,16 +164,16 @@ def end_dnaapler(start_time):
 
 
 def run_autocomplete(
-    blast_success, autocomplete, ctx, input, seed_value, output, prefix
+    MMseqs_success, autocomplete, ctx, input, seed_value, output, prefix
 ):
     """Processes
-    :param: blast_success: bool - whether a BLAST hit with a valid start codon was identified
+    :param: MMseqs_success: bool - whether a BLAST hit with a valid start codon was identified
     :param: autocomplete: str - either "none" "mystery" or "nearest"
     :return:
     """
 
     # if there was
-    if blast_success == False:
+    if MMseqs_success == False:
         if autocomplete == "none":
             logger.error(
                 "BLAST based reorientation failed.\n"
@@ -223,3 +225,16 @@ def check_duplicate_headers(fasta_file: Path) -> None:
         else:
             header_set.add(header)
     # if it finished it will be fine
+
+def remove_directory(dir_path: Path) -> None:
+    """
+    Remove a directory and all its contents if it exists.
+
+    Parameters:
+        dir_path (Path): Path to the directory to remove.
+
+    Returns:
+        None
+    """
+    if dir_path.exists():
+        shutil.rmtree(dir_path)

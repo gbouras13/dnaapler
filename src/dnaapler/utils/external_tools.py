@@ -42,9 +42,8 @@ class ExternalTool:
 
     @staticmethod
     def _build_command(tool: str, input: str, output: str, params: str) -> List[str]:
-        # note: shlex.join does not allow us to shlex.split() later
-        # this is explicitly a " ".join()
-        command = " ".join([tool, params, output, input])
+        command = f"{tool} {input} {output} {params}"# this is how mmseqs does it
+        print(command)
         escaped_command = shlex.split(command)
         return escaped_command
 

@@ -11,8 +11,7 @@ from dnaapler.utils.external_tools import ExternalTool
 from dnaapler.utils.processing import reorient_single_record_bulk
 from dnaapler.utils.validation import validate_custom_db_fasta
 
-
-def run_bulk_blast(
+def run_bulk_MMseqs2(
     ctx,
     input: Path,
     output: Path,
@@ -23,20 +22,20 @@ def run_bulk_blast(
     custom_db: Path,
 ) -> bool:
     """
-    Run the BLAST part for dnaapler bulk (not processing).
+    Run the MMseqs2 part for dnaapler bulk (not processing).
 
     Args:
         ctx (): The context manager for managing the execution context.
-        input (Path): Path to the input data for BLAST.
-        output (Path): Directory where BLAST results and logs will be saved.
+        input (Path): Path to the input data for MMseqs2.
+        output (Path): Directory where MMseqs2 results and logs will be saved.
         prefix (str): Prefix for output files.
-        gene (str): Gene name to specify the BLAST database ("dnaA", "repA", "terL", "all", "cog1474", or "custom").
-        evalue (float): The E-value threshold for BLAST.
-        threads (int): The number of threads to use for BLAST.
+        gene (str): Gene name to specify the MMseqs2 database ("dnaA", "repA", "terL", "all", "cog1474", or "custom").
+        evalue (float): The E-value threshold for MMseqs2.
+        threads (int): The number of threads to use for MMseqs2.
         custom_db (Path): Path to a custom database file (amino acid Fasta format) if 'gene' is set to 'custom'.
 
     Yields:
-        bool: True if the BLAST process succeeded, False otherwise.
+        bool: True if the MMseqs2 process succeeded, False otherwise.
     """
 
     # sets DB directory based of the gene name
@@ -61,25 +60,16 @@ def run_bulk_blast(
         db_name = "cog1474_db"
 
     # for chromosome, plasmid or phage or all
-    # runs blast
+    # runs MMseqs2
     if gene != "custom":
-        # blast
+        # MMseqs2
         logdir = Path(f"{output}/logs")
-        blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
-
+        MMseqs2_output_tmpdir = Path(f"{output}/tmp_MMseqs2_output")
+        MMseqs2_output_file = Path(f"{output}/{prefix}_MMseqs2_output.txt")
+        # matches the MMseqs2 ones to make subbing MMseqs2 for BLAST as easy as possible
+        MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
         db = os.path.join(DNAAPLER_DB, db_name)
-        blast = ExternalTool(
-            tool="blastx",
-            input=f"-query {input}",
-            output=f"-out {blast_output}",
-            params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
-            logdir=logdir,
-        )
-
-        ExternalTool.run_tool(blast, ctx)
-
-    # if gene == custom
-    # maikes db then runs blast
+           
     elif gene == "custom":
         # validates custom fasta input for database
         validate_custom_db_fasta(Path(custom_db))
@@ -87,44 +77,39 @@ def run_bulk_blast(
         # make db
         db_dir = os.path.join(output, "custom_db")
         Path(db_dir).mkdir(parents=True, exist_ok=True)
-        custom_db_fasta = os.path.join(db_dir, "custom_db.faa")
-        shutil.copy2(custom_db, custom_db_fasta)
-
-        logdir = Path(f"{output}/logs")
-        # custom db
-        # make custom db
         custom_database = os.path.join(db_dir, "custom_db")
-        makeblastdb = ExternalTool(
-            tool="makeblastdb",
-            input=f"-in {custom_db_fasta}",
-            output=f"-out {custom_database}",
-            params="-dbtype prot ",
+
+        makeMMseqs2db = ExternalTool(
+            tool="mmseqs createdb",
+            input=f" {custom_db}",
+            output=f" {custom_database}",
             logdir=logdir,
         )
 
-        # chromosome path
-        # blast
-        logdir = Path(f"{output}/logs")
-        blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
-        # db
-        db = os.path.join(db_dir, "custom_db")
-        blast = ExternalTool(
-            tool="blastx",
-            input=f"-query {input}",
-            output=f"-out {blast_output}",
-            params=f'-db {db} -evalue  {evalue} -num_threads {threads} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
+        ExternalTool.run_tool(makeMMseqs2db, ctx)
+
+        db = custom_database
+
+
+    MMseqs2 = ExternalTool(
+            tool="mmseqs easy-search",
+            input=f"{input} {db}",
+            output=f"{MMseqs2_output_file}",
+            params=f"{MMseqs2_output_tmpdir} --search-type 2  --threads {threads} -e {evalue} --format-output {MMseqs2_columns}",
             logdir=logdir,
         )
 
-        tools_to_run = (makeblastdb, blast)
-        ExternalTool.run_tools(tools_to_run, ctx)
+    ExternalTool.run_tool(MMseqs2, ctx)
+    from dnaapler.utils.util import remove_directory
+    remove_directory(MMseqs2_output_tmpdir)
 
 
-def bulk_process_blast_output_and_reorient(
-    input: Path, blast_file: Path, output: Path, prefix: str
+
+def bulk_process_MMseqs2_output_and_reorient(
+    input: Path, MMseqs2_file: Path, output: Path, prefix: str
 ) -> None:
     """
-    Processes the BLAST output and saves reoriented and failed-to-reorient contigs.
+    Processes the MMseqs2 output and saves reoriented and failed-to-reorient contigs.
 
     For dnaapler bulk
 
@@ -133,7 +118,7 @@ def bulk_process_blast_output_and_reorient(
 
     Args:
         input (Path): Input file containing nucleotide sequences.
-        blast_file (Path): BLAST output file.
+        MMseqs2_file (Path): MMseqs2 output file.
         output (Path): Output directory for saving files.
         prefix (str): Prefix for output files.
 
@@ -162,18 +147,18 @@ def bulk_process_blast_output_and_reorient(
         "sseq",
     ]
 
-    # read in the dataframe from BLAST
+    # read in the dataframe from MMseqs2
     try:
-        blast_df = pd.read_csv(
-            blast_file, delimiter="\t", index_col=False, names=col_list
+        MMseqs2_df = pd.read_csv(
+            MMseqs2_file, delimiter="\t", index_col=False, names=col_list
         )
 
     except Exception:
-        logger.error("There was an issue with parsing the BLAST output file.")
+        logger.error("There was an issue with parsing the MMseqs2 output file.")
 
-    if isinstance(blast_df, pd.DataFrame) and blast_df.empty:
+    if isinstance(MMseqs2_df, pd.DataFrame) and MMseqs2_df.empty:
         logger.error(
-            "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
+            "There were 0 MMseqs2 hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
         )
 
     # Initialize the list to store the IDs
@@ -195,13 +180,13 @@ def bulk_process_blast_output_and_reorient(
     # Read the FASTA file and extract the IDs
     for record in SeqIO.parse(input, "fasta"):
         contig = record.description
-        # need this to match for BLAST
+        # need this to match for MMseqs2
         short_contig = record.id
 
         contigs.append(contig)
 
         # Filter the DataFrame where 'qseqid' matches 'contig'
-        filtered_df = blast_df[blast_df["qseqid"] == short_contig]
+        filtered_df = MMseqs2_df[MMseqs2_df["qseqid"] == short_contig]
 
         length_of_df = len(filtered_df)
 
@@ -211,7 +196,7 @@ def bulk_process_blast_output_and_reorient(
                 SeqIO.write(record, out_fa, "fasta")
 
             # no hit save for the output DF
-            message = "No_BLAST_hits"
+            message = "No_MMseqs2_hits"
             starts.append(message)
             strands.append(message)
             top_hits.append(message)
@@ -226,7 +211,7 @@ def bulk_process_blast_output_and_reorient(
             filtered_df.reset_index(drop=True, inplace=True)
 
             # top hit has a start of 1 ########
-            # take the top hit - blast sorts by bitscore
+            # take the top hit - MMseqs2 sorts by bitscore
             # if the start is 1 of the top hit
             if filtered_df["qstart"][0] == 1:
                 # writes to file

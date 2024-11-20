@@ -8,10 +8,10 @@ from pathlib import Path
 import click
 from loguru import logger
 
-from dnaapler.utils.all import all_process_blast_output_and_reorient
-from dnaapler.utils.bulk import bulk_process_blast_output_and_reorient, run_bulk_blast
+from dnaapler.utils.all import all_process_MMseqs2_output_and_reorient
+from dnaapler.utils.bulk import bulk_process_MMseqs2_output_and_reorient, run_bulk_MMseqs2
 from dnaapler.utils.cds_methods import (
-    run_blast_based_method,
+    run_MMseqs2_based_method,
     run_largest,
     run_mystery,
     run_nearest,
@@ -24,7 +24,7 @@ from dnaapler.utils.util import (
     end_dnaapler,
     get_version,
     print_citation,
-    run_autocomplete,
+    run_autocomplete
 )
 from dnaapler.utils.validation import (
     check_evalue,
@@ -72,7 +72,7 @@ def common_options(func):
         click.option(
             "-t",
             "--threads",
-            help="Number of threads to use with BLAST",
+            help="Number of threads to use with MMseqs2",
             default=1,
             show_default=True,
         ),
@@ -106,7 +106,7 @@ def autocomplete_options(func):
             type=click.STRING,
             callback=validate_choice_autocomplete,
             default="none",
-            help="Choose an option to autocomplete reorientation if BLAST based approach fails.\nMust be one of: none, mystery, largest, or nearest [default: none]",
+            help="Choose an option to autocomplete reorientation if MMseqs2 based approach fails.\nMust be one of: none, mystery, largest, or nearest [default: none]",
         ),
         click.option(
             "--seed_value",
@@ -142,7 +142,7 @@ Chromosome command
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for blastx",
+    help="e value for MMseqs2",
     show_default=True,
 )
 @autocomplete_options
@@ -181,7 +181,7 @@ def chromosome(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
     logger.info(
-        f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
     # validates fasta
@@ -190,14 +190,14 @@ def chromosome(
     # validate e value
     check_evalue(evalue)
 
-    # run BLAST
-    blast_success = run_blast_based_method(
+    # run MMseqs2
+    MMseqs2_success = run_MMseqs2_based_method(
         ctx, input, output, prefix, gene, evalue, threads
     )
 
-    # run autocomplete if BLAST reorientation failed
+    # run autocomplete if MMseqs2 reorientation failed
     run_autocomplete(
-        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+        MMseqs2_success, autocomplete, ctx, input, seed_value, output, prefix
     )
 
     # end dnaapler
@@ -218,7 +218,7 @@ archaea command
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for blastx",
+    help="e value for MMseqs2",
     show_default=True,
 )
 @autocomplete_options
@@ -257,7 +257,7 @@ def archaea(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
     logger.info(
-        f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
     # validates fasta
@@ -266,14 +266,14 @@ def archaea(
     # validate e value
     check_evalue(evalue)
 
-    # run BLAST
-    blast_success = run_blast_based_method(
+    # run MMseqs2
+    MMseqs2_success = run_MMseqs2_based_method(
         ctx, input, output, prefix, gene, evalue, threads
     )
 
-    # run autocomplete if BLAST reorientation failed
+    # run autocomplete if MMseqs2 reorientation failed
     run_autocomplete(
-        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+        MMseqs2_success, autocomplete, ctx, input, seed_value, output, prefix
     )
 
     # end dnaapler
@@ -294,7 +294,7 @@ Plasmid command
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for blastx",
+    help="e value for MMseqs2",
     show_default=True,
 )
 @autocomplete_options
@@ -333,7 +333,7 @@ def plasmid(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
     logger.info(
-        f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
     # validates fasta
@@ -342,14 +342,14 @@ def plasmid(
     # validate e value
     check_evalue(evalue)
 
-    # run BLAST
-    blast_success = run_blast_based_method(
+    # run MMseqs2
+    MMseqs2_success = run_MMseqs2_based_method(
         ctx, input, output, prefix, gene, evalue, threads
     )
 
-    # run autocomplete if BLAST reorientation failed
+    # run autocomplete if MMseqs2 reorientation failed
     run_autocomplete(
-        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+        MMseqs2_success, autocomplete, ctx, input, seed_value, output, prefix
     )
 
     # end dnaapler
@@ -370,7 +370,7 @@ Phage command
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for blastx",
+    help="e value for MMseqs2",
     show_default=True,
 )
 @autocomplete_options
@@ -409,7 +409,7 @@ def phage(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
     logger.info(
-        f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
     # validates fasta
@@ -418,14 +418,14 @@ def phage(
     # validate e value
     check_evalue(evalue)
 
-    # runs and processes BLAST
-    blast_success = run_blast_based_method(
+    # runs and processes MMseqs2
+    MMseqs2_success = run_MMseqs2_based_method(
         ctx, input, output, prefix, gene, evalue, threads
     )
 
-    # run autocomplete if BLAST reorientation failed
+    # run autocomplete if MMseqs2 reorientation failed
     run_autocomplete(
-        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+        MMseqs2_success, autocomplete, ctx, input, seed_value, output, prefix
     )
 
     # end dnaapler
@@ -446,13 +446,13 @@ custom command
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for blastx",
+    help="e value for MMseqs2",
     show_default=True,
 )
 @click.option(
     "-c",
     "--custom_db",
-    help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want.",
+    help="FASTA file with amino acids that will be used as a custom MMseqs2 database to reorient your sequence however you want.",
     type=click.Path(),
     required=True,
 )
@@ -502,7 +502,7 @@ def custom(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
     logger.info(
-        f"You have chosen {autocomplete} method to reorient your sequence if the BLAST based method fails."
+        f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
     # validates fasta
@@ -525,24 +525,25 @@ def custom(
     # custom db
     # make custom db
     custom_database = os.path.join(db_dir, "custom_db")
-    makeblastdb = ExternalTool(
-        tool="makeblastdb",
-        input=f"-in {custom_db_fasta}",
-        output=f"-out {custom_database}",
-        params="-dbtype prot ",
-        logdir=logdir,
-    )
 
-    ExternalTool.run_tool(makeblastdb, ctx)
+    makeMMseqs2db = ExternalTool(
+            tool="mmseqs",
+            input=f"createdb {custom_db_fasta}",
+            output=f" {custom_database}",
+            logdir=logdir,
+        )
 
-    # runs and processes BLAST
-    blast_success = run_blast_based_method(
+    ExternalTool.run_tool(makeMMseqs2db, ctx)
+
+
+    # runs and processes MMseqs2
+    MMseqs2_success = run_MMseqs2_based_method(
         ctx, input, output, prefix, gene, evalue, threads
     )
 
-    # run autocomplete if BLAST reorientation failed
+    # run autocomplete if MMseqs2 reorientation failed
     run_autocomplete(
-        blast_success, autocomplete, ctx, input, seed_value, output, prefix
+        MMseqs2_success, autocomplete, ctx, input, seed_value, output, prefix
     )
 
     # end dnaapler
@@ -694,7 +695,7 @@ bulk subcommand
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for blastx",
+    help="e value for MMseqs2",
     show_default=True,
 )
 @click.option(
@@ -708,7 +709,7 @@ bulk subcommand
 @click.option(
     "-c",
     "--custom_db",
-    help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want. Must be specified if -m custom is specified.",
+    help="FASTA file with amino acids that will be used as a custom MMseqs2 database to reorient your sequence however you want. Must be specified if -m custom is specified.",
     type=click.Path(),
 )
 def bulk(
@@ -784,27 +785,28 @@ def bulk(
             # custom db
             # make custom db
             custom_database = os.path.join(db_dir, "custom_db")
-            makeblastdb = ExternalTool(
-                tool="makeblastdb",
-                input=f"-in {custom_db_fasta}",
-                output=f"-out {custom_database}",
-                params="-dbtype prot ",
-                logdir=logdir,
-            )
 
-            ExternalTool.run_tool(makeblastdb, ctx)
+            makeMMseqs2db = ExternalTool(
+            tool="mmseqs",
+            input=f"createdb {custom_db_fasta}",
+            output=f" {custom_database}",
+            logdir=logdir,
+        )
+
+            ExternalTool.run_tool(makeMMseqs2db, ctx)
+
     else:
         if custom_db != None:
             logger.info(
                 f"You have specified a custom database using -c but you have specified -m {mode}  not -m custom. Ignoring the custom database and continuing."
             )
 
-    # runs  BLAST
-    run_bulk_blast(ctx, input, output, prefix, gene, evalue, threads, custom_db)
+    # runs  MMseqs2
+    run_bulk_MMseqs2(ctx, input, output, prefix, gene, evalue, threads, custom_db)
 
-    # rerorients blast
-    blast_file = os.path.join(output, f"{prefix}_blast_output.txt")
-    bulk_process_blast_output_and_reorient(input, blast_file, output, prefix)
+    # rerorients MMseqs2
+    MMseqs2_file = os.path.join(output, f"{prefix}_MMseqs2_output.txt")
+    bulk_process_MMseqs2_output_and_reorient(input, MMseqs2_file, output, prefix)
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -824,7 +826,7 @@ all subcommand
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for blastx",
+    help="e value for MMseqs2",
     show_default=True,
 )
 @click.option(
@@ -847,7 +849,7 @@ all subcommand
     "-c",
     "--custom_db",
     default="",
-    help="FASTA file with amino acids that will be used as a custom blast database to reorient your sequence however you want.",
+    help="FASTA file with amino acids that will be used as a custom MMseqs2 database to reorient your sequence however you want.",
     type=click.Path(),
 )
 @autocomplete_options
@@ -957,25 +959,25 @@ def all(
         # custom db
         # make custom db
         custom_database = os.path.join(db_dir, "custom_db")
-        makeblastdb = ExternalTool(
-            tool="makeblastdb",
-            input=f"-in {custom_db_fasta}",
-            output=f"-out {custom_database}",
-            params="-dbtype prot ",
+
+        makeMMseqs2db = ExternalTool(
+            tool="mmseqs",
+            input=f"createdb {custom_db_fasta}",
+            output=f" {custom_database}",
             logdir=logdir,
         )
 
-        ExternalTool.run_tool(makeblastdb, ctx)
+        ExternalTool.run_tool(makeMMseqs2db, ctx)
     else:
         custom_db = None
 
-    # runs bulk BLAST
-    run_bulk_blast(
+    # runs bulk MMseqs2
+    run_bulk_MMseqs2(
         ctx, input, output, prefix, gene, evalue, threads, custom_db=custom_db
     )
 
-    # rerorients blast
-    blast_file = os.path.join(output, f"{prefix}_blast_output.txt")
+    # rerorients MMseqs2
+    MMseqs2_file = os.path.join(output, f"{prefix}_MMseqs2_output.txt")
 
     ### ignore
     # list is empty
@@ -985,14 +987,14 @@ def all(
             logger.warning(f"{ignore} contains no text. No contigs will be ignored")
         else:
             # gets all contigs in the ignore
-            # will split by space so short_contig only (to match BLAST)
+            # will split by space so short_contig only (to match MMseqs2)
             with open(ignore) as f:
                 ignore_dict = {x.rstrip().split()[0] for x in f}
             ignore_list = list(ignore_dict)
 
-    all_process_blast_output_and_reorient(
+    all_process_MMseqs2_output_and_reorient(
         input,
-        blast_file,
+        MMseqs2_file,
         output,
         prefix,
         ignore_list,

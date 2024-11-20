@@ -8,28 +8,28 @@ from Bio.SeqRecord import SeqRecord
 from loguru import logger
 
 
-def process_blast_output_and_reorient(
-    input: Path, blast_file: Path, out_file: Path, gene: str
+def process_MMseqs2_output_and_reorient(
+    input: Path, MMseqs2_file: Path, out_file: Path, gene: str
 ) -> bool:
     """
-    Processes BLAST output and reorients the input sequence if necessary based on the top BLAST hit.
+    Processes MMseqs2 output and reorients the input sequence if necessary based on the top MMseqs2 hit.
 
     Args:
         input (Path): Input file containing a nucleotide sequence.
-        blast_file (Path): BLAST output file.
+        MMseqs2_file (Path): MMseqs2 output file.
         out_file (Path): Output file to save the reoriented sequence.
         gene (str): The type of gene (e.g., "dnaA").
 
     Returns:
-        bool: Whether a BLAST hit with a valid start codon was identified.
+        bool: Whether a MMseqs2 hit with a valid start codon was identified.
     """
 
     #  instantiate the returned bool
-    blast_success = True
+    MMseqs2_success = True
 
     # define colnames
     col_list = [
-        "qseqid",
+        "qseqid",     
         "qlen",
         "sseqid",
         "slen",
@@ -47,26 +47,26 @@ def process_blast_output_and_reorient(
         "qseq",
         "sseq",
     ]
-    # read in the dataframe from BLAST
+    # read in the dataframe from MMseqs2
     try:
-        blast_df = pd.read_csv(
-            blast_file, delimiter="\t", index_col=False, names=col_list
+        MMseqs2_df = pd.read_csv(
+            MMseqs2_file, delimiter="\t", index_col=False, names=col_list
         )
     except Exception:
-        logger.error("There was an issue with parsing the BLAST output file.")
+        logger.error("There was an issue with parsing the MMseqs2 output file.")
 
-    if isinstance(blast_df, pd.DataFrame) and blast_df.empty:
+    if isinstance(MMseqs2_df, pd.DataFrame) and MMseqs2_df.empty:
         logger.info(
-            "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
+            "There were 0 MMseqs2 hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
         )
-        blast_success = False
+        MMseqs2_success = False
 
     # top hit has a start of 1 ########
-    # take the top hit - blast sorts by bitscore
+    # take the top hit - MMseqs2 sorts by bitscore
     # if the start is 1 of the top hit
-    elif blast_df["qstart"][0] == 1:
+    elif MMseqs2_df["qstart"][0] == 1:
         logger.info(
-            f"Based on the BLAST output top hit, your input is already oriented to begin with {gene}.\n"
+            f"Based on the MMseqs2 output top hit, your input is already oriented to begin with {gene}.\n"
             "The input file will be copied to the output so that your pipelines don't break :)"
         )
         # writes to file
@@ -74,7 +74,7 @@ def process_blast_output_and_reorient(
         with open(out_file, "w") as out_fa:
             SeqIO.write(record, out_fa, "fasta")
 
-        blast_success == True
+        MMseqs2_success == True
 
     # top hit
     # prokaryotes can use AUG M, GUG V or UUG L as start codons - e.g. for Pseudomonas aeruginosa PA01  dnaA actually starts with V
@@ -88,58 +88,58 @@ def process_blast_output_and_reorient(
     # https://github.com/gbouras13/dnaapler/issues/44
 
     else:
-        if blast_df["qseq"][0][0] in ["M", "V", "L"] and (blast_df["sstart"][0] == 1):
-            reorient_sequence(blast_df, input, out_file, gene, overlapping_orf=False)
+        if MMseqs2_df["qseq"][0][0] in ["M", "V", "L"] and (MMseqs2_df["sstart"][0] == 1):
+            reorient_sequence(MMseqs2_df, input, out_file, gene, overlapping_orf=False)
         else:  # this will reorient the sequence with the orf that overlaps the tophit by the most
             # warn if the top hit doesnt begin with a valid start codon
             logger.warning(
-                f"The top {gene} blastx hit did not have a BLAST alignment beginning with a valid start codon M, V or L."
+                f"The top {gene} MMseqs2 hit did not have a MMseqs2 alignment beginning with a valid start codon M, V or L."
             )
             logger.warning(
-                "The CDS with the most overlap with this blastx hit according to Pyrodigal will instead be used to reorient the genome."
+                "The CDS with the most overlap with this MMseqs2 hit according to Pyrodigal will instead be used to reorient the genome."
             )
-            reorient_sequence(blast_df, input, out_file, gene, overlapping_orf=True)
+            reorient_sequence(MMseqs2_df, input, out_file, gene, overlapping_orf=True)
 
-        blast_success = True
+        MMseqs2_success = True
 
-    return blast_success
+    return MMseqs2_success
 
 
 def reorient_sequence(
-    blast_df: pd.DataFrame,
+    MMseqs2_df: pd.DataFrame,
     input: Path,
     out_file: Path,
     gene: str,
     overlapping_orf: bool,
 ) -> None:
     """
-    Reorients the input sequence based on BLAST results and a gene of interest.
+    Reorients the input sequence based on MMseqs2 results and a gene of interest.
 
     Args:
-        blast_df (pd.DataFrame): DataFrame containing BLAST results.
+        MMseqs2_df (pd.DataFrame): DataFrame containing MMseqs2 results.
         input (Path): Input file containing a nucleotide sequence.
         out_file (Path): Output file to save the reoriented sequence.
         gene (str): The type of gene (e.g., "dnaA").
-        overlapping_orf (bool): Indicates whether the top BLAST hit overlaps with an existing open reading frame.
+        overlapping_orf (bool): Indicates whether the top MMseqs2 hit overlaps with an existing open reading frame.
 
     Returns:
         None
     """
     # get the start
 
-    ident = blast_df["nident"][0]
-    top_hit = blast_df["sseqid"][0]
-    top_hit_length = blast_df["slen"][0]
-    covered_len = blast_df["length"][0]
+    ident = MMseqs2_df["nident"][0]
+    top_hit = MMseqs2_df["sseqid"][0]
+    top_hit_length = MMseqs2_df["slen"][0]
+    covered_len = MMseqs2_df["length"][0]
     identity = round(ident / covered_len * 100, 2)
     coverage = round(covered_len / top_hit_length * 100, 2)
 
-    # top blast hit starts at 1
+    # top MMseqs2 hit starts at 1
     if overlapping_orf is False:
         # basic stats
-        dnaa_start_on_chromosome = blast_df["qstart"][0]
+        dnaa_start_on_chromosome = MMseqs2_df["qstart"][0]
         strand = "forward"
-        if blast_df["qstart"][0] > blast_df["qend"][0]:
+        if MMseqs2_df["qstart"][0] > MMseqs2_df["qend"][0]:
             strand = "reverse"
 
         logger.info(
@@ -183,11 +183,11 @@ def reorient_sequence(
         with open(out_file, "w") as out_fa:
             SeqIO.write(record, out_fa, "fasta")
 
-    # top blastx hit does not start at 1
+    # top MMseqs2 hit does not start at 1
     else:
         # get start and end of tophit
-        start_tophit = blast_df["qstart"][0]
-        end_tophit = blast_df["qend"][0]
+        start_tophit = MMseqs2_df["qstart"][0]
+        end_tophit = MMseqs2_df["qend"][0]
 
         tophit_min = min(start_tophit, end_tophit)
         tophit_max = max(start_tophit, end_tophit)
@@ -195,7 +195,7 @@ def reorient_sequence(
         # there will only be 1 record
         for i, record in enumerate(SeqIO.parse(input, "fasta")):
             logger.info(
-                f"The top blastx hit for {gene} is {top_hit}, which has length of {top_hit_length} AAs.  The alignment did not begin with a valid start codon."
+                f"The top MMseqs2 hit for {gene} is {top_hit}, which has length of {top_hit_length} AAs.  The alignment did not begin with a valid start codon."
             )
             logger.info(
                 f"{covered_len} AAs were covered in the best hit, with an overall coverage of {coverage}%."
@@ -300,45 +300,45 @@ def reorient_sequence_random(
 
 
 def reorient_single_record_bulk(
-    blast_df: pd.DataFrame,
+    MMseqs2_df: pd.DataFrame,
     out_file: Path,
     record: SeqIO.SeqRecord,
     overlapping_orf: bool,
 ) -> tuple:
     """
-    Reorients a single DNA sequence record in dnaapler bulk or dnaapler all based on BLAST results.
+    Reorients a single DNA sequence record in dnaapler bulk or dnaapler all based on MMseqs2 results.
 
     Args:
-        blast_df (pd.DataFrame): DataFrame containing BLAST results for the record.
+        MMseqs2_df (pd.DataFrame): DataFrame containing MMseqs2 results for the record.
         out_file (Path): Output file to save the reoriented sequence.
         record (SeqIO.SeqRecord): Sequence record to be reoriented.
-        overlapping_orf (bool): Indicates whether the top BLAST hit starts with a valid start codon (False) or not (True).
+        overlapping_orf (bool): Indicates whether the top MMseqs2 hit starts with a valid start codon (False) or not (True).
 
     Returns:
         Tuple of reorientation details:
         - start (int): Start coordinate after reorientation.
         - strand (str): Reoriented strand ('forward' or 'reverse').
-        - top_hit (str): Identifier of the top BLAST hit.
-        - top_hit_length (int): Length of the top BLAST hit.
-        - covered_len (int): Length of the sequence covered by the top BLAST hit.
+        - top_hit (str): Identifier of the top MMseqs2 hit.
+        - top_hit_length (int): Length of the top MMseqs2 hit.
+        - covered_len (int): Length of the sequence covered by the top MMseqs2 hit.
         - coverage (float): Percentage coverage of the sequence.
         - ident (int): Number of identical amino acids.
         - identity (float): Percentage identity.
     """
 
-    top_hit = blast_df["sseqid"][0]
-    top_hit_length = blast_df["slen"][0]
-    covered_len = blast_df["length"][0]
+    top_hit = MMseqs2_df["sseqid"][0]
+    top_hit_length = MMseqs2_df["slen"][0]
+    covered_len = MMseqs2_df["length"][0]
     coverage = round(covered_len / top_hit_length * 100, 2)
-    ident = blast_df["nident"][0]
+    ident = MMseqs2_df["nident"][0]
     identity = round(ident / covered_len * 100, 2)
 
     # default - when tophit starts with a valid start codon
     if overlapping_orf is False:
         # get the start
-        dnaa_start_on_chromosome = blast_df["qstart"][0]
+        dnaa_start_on_chromosome = MMseqs2_df["qstart"][0]
         strand = "forward"
-        if blast_df["qstart"][0] > blast_df["qend"][0]:
+        if MMseqs2_df["qstart"][0] > MMseqs2_df["qend"][0]:
             strand = "reverse"
 
         ####################
@@ -381,18 +381,18 @@ def reorient_single_record_bulk(
     # tophit does not start with 1
     else:
         # get start and end of tophit
-        start_tophit = blast_df["qstart"][0]
-        end_tophit = blast_df["qend"][0]
+        start_tophit = MMseqs2_df["qstart"][0]
+        end_tophit = MMseqs2_df["qend"][0]
 
         tophit_min = min(start_tophit, end_tophit)
         tophit_max = max(start_tophit, end_tophit)
 
         # find the genes
         logger.warning(
-            f"The top blastx hit for the contig {record.id} did not begin with a valid start codon."
+            f"The top MMseqs2 hit for the contig {record.id} did not begin with a valid start codon."
         )
         logger.warning(
-            "Searching with pyrodigal for the CDS overlapping the most with the top blastx hit to reorient with."
+            "Searching with pyrodigal for the CDS overlapping the most with the top MMseqs2 hit to reorient with."
         )
 
         orf_finder = pyrodigal.GeneFinder(meta=True)
@@ -420,12 +420,12 @@ def reorient_single_record_bulk(
             )
             start = 1
             strand = "forward"
-            top_hit = "BLAST_hit_but_no_overlapping_CDS"
-            top_hit_length = "BLAST_hit_but_no_overlapping_CDS"
-            covered_len = "BLAST_hit_but_no_overlapping_CDS"
-            coverage = "BLAST_hit_but_no_overlapping_CDS"
-            ident = "BLAST_hit_but_no_overlapping_CDS"
-            identity = "BLAST_hit_but_no_overlapping_CDS"
+            top_hit = "MMseqs2_hit_but_no_overlapping_CDS"
+            top_hit_length = "MMseqs2_hit_but_no_overlapping_CDS"
+            covered_len = "MMseqs2_hit_but_no_overlapping_CDS"
+            coverage = "MMseqs2_hit_but_no_overlapping_CDS"
+            ident = "MMseqs2_hit_but_no_overlapping_CDS"
+            identity = "MMseqs2_hit_but_no_overlapping_CDS"
 
         # 99.99% of scenarios
         else:

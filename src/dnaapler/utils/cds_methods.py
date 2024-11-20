@@ -9,7 +9,7 @@ from loguru import logger
 from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
 from dnaapler.utils.processing import (
-    process_blast_output_and_reorient,
+    process_MMseqs2_output_and_reorient,
     reorient_sequence_random,
 )
 
@@ -194,28 +194,26 @@ def run_largest(ctx, input: Path, output: Path, prefix: str) -> None:
         reorient_sequence_random(input, output_processed_file, start, strand)
 
 
-def run_blast_based_method(
+def run_MMseqs2_based_method(
     ctx, input: Path, output: Path, prefix: str, gene: str, evalue: float, threads: int
 ) -> bool:
     """
-    Run a BLAST-based approach to reorient a DNA sequence based on a specific gene.
+    Run an MMseqs2-based approach to reorient a DNA sequence based on a specific gene.
 
     Args:
         ctx (object): A context or environment object, possibly from a command-line tool.
         input (Path): Path to the input DNA sequence file in FASTA format.
         output (Path): Path to the output directory where the reoriented sequence will be saved.
         prefix (str): Prefix for the output file name.
-        gene (str): Name of the gene used for BLAST search (options: 'dnaA', 'repA', 'terL', 'custom', 'cog1474').
-        evalue (float): E-value threshold for BLAST search.
-        threads (int): Number of threads for BLAST search.
+        gene (str): Name of the gene used for MMseqs2 search (options: 'dnaA', 'repA', 'terL', 'custom', 'cog1474').
+        evalue (float): E-value threshold for MMseqs2 search.
+        threads (int): Number of threads for MMseqs2 search.
 
     Returns:
-        bool: True if the BLAST-based approach succeeded, False otherwise.
+        bool: True if the MMseqs2-based approach succeeded, False otherwise.
     """
 
-    # sets DB directory based of the gene name
-
-    # defines db name
+    # sets DB directory based on the gene name
     db_name = "dnaA_db"
     if gene == "dnaA":
         db_name = "dnaA_db"
@@ -226,55 +224,59 @@ def run_blast_based_method(
     elif gene == "cog1474":
         db_name = "cog1474_db"
 
-    # chromosome path
-    # blast
+    # define paths and log directory
     logdir = Path(f"{output}/logs")
-    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+    MMseqs2_output_tmpdir = Path(f"{output}/tmp_MMseqs2_output")
+    MMseqs2_output_file = Path(f"{output}/{prefix}_MMseqs2_output.txt")
+    # matches the blast ones to make subbing MMseqs2 for BLAST as easy as possible
+    MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
+
 
     db = os.path.join(DNAAPLER_DB, db_name)
     if gene == "custom":
         db = os.path.join(output, "custom_db", "custom_db")
-    blast = ExternalTool(
-        tool="blastx",
-        input=f"-query {input}",
-        output=f"-out {blast_output}",
-        params=f'-db {db} -evalue  {evalue} -num_threads {str(threads)} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
-        logdir=logdir,
-    )
 
-    ExternalTool.run_tool(blast, ctx)
+    # run MMseqs2 easy-search
+    MMseqs2 = ExternalTool(
+            tool="mmseqs easy-search",
+            input=f"{input} {db}",
+            output=f"{MMseqs2_output_file}",
+            params=f"{MMseqs2_output_tmpdir} --search-type 2  --threads {threads} -e {evalue} --format-output {MMseqs2_columns}",
+            logdir=logdir,
+        )
 
-    # reorient the genome based on the BLAST hit
+    ExternalTool.run_tool(MMseqs2, ctx)
+    
+
+    # reorient the genome based on the MMseqs22 hit
     output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-    blast_success = process_blast_output_and_reorient(
-        input, blast_output, output_processed_file, gene
+    MMseqs2_success = process_MMseqs2_output_and_reorient(
+        input, MMseqs2_output_file, output_processed_file, gene
     )
 
-    return blast_success
+    return MMseqs2_success
 
 
-def run_blast_based_method_bulk(
+def run_MMseqs2_based_method_bulk(
     ctx, input: Path, output: Path, prefix: str, gene: str, evalue: float, threads: int
 ) -> bool:
     """
-    Run a bulk BLAST-based approach to reorient multiple DNA sequences based on a specific gene.
+    Run a bulk MMseqs2-based approach to reorient multiple DNA sequences based on a specific gene.
 
     Args:
         ctx (object): A context or environment object, possibly from a command-line tool.
         input (Path): Path to the directory containing input DNA sequence files in FASTA format.
         output (Path): Path to the output directory where the reoriented sequences will be saved.
         prefix (str): Prefix for the output file names.
-        gene (str): Name of the gene used for BLAST search (options: 'dnaA', 'repA', 'terL', 'custom').
-        evalue (float): E-value threshold for BLAST search.
-        threads (int): Number of threads for BLAST search.
+        gene (str): Name of the gene used for MMseqs2 search (options: 'dnaA', 'repA', 'terL', 'custom').
+        evalue (float): E-value threshold for MMseqs2 search.
+        threads (int): Number of threads for MMseqs2 search.
 
     Returns:
-        bool: True if the bulk BLAST-based approach succeeded for all sequences, False otherwise.
+        bool: True if the bulk MMseqs2-based approach succeeded for all sequences, False otherwise.
     """
 
-    # sets DB directory based of the gene name
-
-    # defines db name
+    # sets DB directory based on the gene name
     db_name = "dnaA_db"
     if gene == "dnaA":
         db_name = "dnaA_db"
@@ -283,28 +285,37 @@ def run_blast_based_method_bulk(
     elif gene == "terL":
         db_name = "terL_db"
 
-    # chromosome path
-    # blast
     logdir = Path(f"{output}/logs")
-    blast_output = os.path.join(output, f"{prefix}_blast_output.txt")
+    MMseqs2_output_tmpdir = Path(f"{output}/tmp_MMseqs2_output")
+    MMseqs2_output_file = Path(f"{output}/{prefix}_MMseqs2_output.txt")
+    # matches the blast ones to make subbing MMseqs2 for BLAST as easy as possible
+    # qaln and taln are the translated alignments 
+    MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
 
     db = os.path.join(DNAAPLER_DB, db_name)
     if gene == "custom":
         db = os.path.join(output, "custom_db", "custom_db")
-    blast = ExternalTool(
-        tool="blastx",
-        input=f"-query {input}",
-        output=f"-out {blast_output}",
-        params=f'-db {db} -evalue  {evalue} -num_threads {str(threads)} -outfmt " 6 qseqid qlen sseqid slen length qstart qend sstart send pident nident gaps mismatch evalue bitscore qseq sseq "',
-        logdir=logdir,
-    )
 
-    ExternalTool.run_tool(blast, ctx)
 
-    # reorient the genome based on the BLAST hit
+    # MMSeqs2 easy-search
+    MMseqs2 = ExternalTool(
+            tool="mmseqs easy-search ",
+            input=f"{input} {db}",
+            output=f"{MMseqs2_output_file}",
+            params=f"{MMseqs2_output_tmpdir} --search-type 2 --threads {threads} -e {evalue} --format-output {MMseqs2_columns}",
+            logdir=logdir,
+        )
+
+    ExternalTool.run_tool(MMseqs2, ctx)
+
+    from dnaapler.utils.util import remove_directory
+    remove_directory(MMseqs2_output_tmpdir)
+
+    # reorient the genome based on the MMseqs2 hit
     output_processed_file = os.path.join(output, f"{prefix}_reoriented.fasta")
-    blast_success = process_blast_output_and_reorient(
-        input, blast_output, output_processed_file, gene
+    MMseqs2_success = process_MMseqs2_output_and_reorient(
+        input, MMseqs2_output_file, output_processed_file, gene
     )
 
-    return blast_success
+    return MMseqs2_success
+
