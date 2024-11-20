@@ -520,8 +520,6 @@ def custom(
     # make db
     db_dir = os.path.join(output, "custom_db")
     Path(db_dir).mkdir(parents=True, exist_ok=True)
-    custom_db_fasta = os.path.join(db_dir, "custom_db.faa")
-    shutil.copy2(custom_db, custom_db_fasta)
 
     logdir = Path(f"{output}/logs")
 
@@ -531,7 +529,7 @@ def custom(
 
     makeMMseqs2db = ExternalTool(
         tool="mmseqs",
-        input=f"createdb {custom_db_fasta}",
+        input=f"createdb {custom_db}",
         output=f" {custom_database}",
         params=f"",
         logdir=logdir,
@@ -781,8 +779,6 @@ def bulk(
             # make db
             db_dir = os.path.join(output, "custom_db")
             Path(db_dir).mkdir(parents=True, exist_ok=True)
-            custom_db_fasta = os.path.join(db_dir, "custom_db.faa")
-            shutil.copy2(custom_db, custom_db_fasta)
 
             # custom db
             # make custom db
@@ -790,7 +786,7 @@ def bulk(
 
             makeMMseqs2db = ExternalTool(
                 tool="mmseqs",
-                input=f"createdb {custom_db_fasta}",
+                input=f"createdb {custom_db}",
                 output=f" {custom_database}",
                 params=f"",
                 logdir=logdir,
@@ -954,9 +950,6 @@ def all(
         # make db
         db_dir = os.path.join(output, "custom_db")
         Path(db_dir).mkdir(parents=True, exist_ok=True)
-        custom_db_fasta = os.path.join(db_dir, "custom_db.faa")
-        shutil.copy2(custom_db, custom_db_fasta)
-
         logdir = Path(f"{output}/logs")
 
         # custom db
@@ -965,7 +958,7 @@ def all(
 
         makeMMseqs2db = ExternalTool(
             tool="mmseqs",
-            input=f"createdb {custom_db_fasta}",
+            input=f"createdb {custom_db}",
             output=f" {custom_database}",
             params=f"",
             logdir=logdir,

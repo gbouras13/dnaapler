@@ -62,16 +62,16 @@ def run_bulk_MMseqs2(
 
 
     logdir = Path(f"{output}/logs")
-    
+
     # for chromosome, plasmid or phage or all
     # runs MMseqs2
+    logdir = Path(f"{output}/logs")
+    MMseqs2_output_tmpdir = Path(f"{output}/tmp_MMseqs2_output")
+    MMseqs2_output_file = Path(f"{output}/{prefix}_MMseqs2_output.txt")
+    # matches the MMseqs2 ones to make subbing MMseqs2 for BLAST as easy as possible
+    MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
+
     if gene != "custom":
-        # MMseqs2
-        logdir = Path(f"{output}/logs")
-        MMseqs2_output_tmpdir = Path(f"{output}/tmp_MMseqs2_output")
-        MMseqs2_output_file = Path(f"{output}/{prefix}_MMseqs2_output.txt")
-        # matches the MMseqs2 ones to make subbing MMseqs2 for BLAST as easy as possible
-        MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
         db = os.path.join(DNAAPLER_DB, db_name)
 
     elif gene == "custom":
@@ -87,6 +87,7 @@ def run_bulk_MMseqs2(
             tool="mmseqs createdb",
             input=f" {custom_db}",
             output=f" {custom_database}",
+            params=f"",
             logdir=logdir,
         )
 
