@@ -18,7 +18,7 @@ jobs:
           activate-environment: dnaapler
           environment-file: build/environment.yaml
           auto-activate-base: false
-          miniforge-variant: Mambaforge
+          miniforge-variant: Miniforge
           channels: conda-forge,bioconda,defaults
           channel-priority: strict
           auto-update-conda: true

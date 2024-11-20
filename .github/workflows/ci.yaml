@@ -28,7 +28,7 @@ jobs:
           environment-file: build/environment.yaml
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
-          miniforge-variant: Mambaforge
+          miniforge-variant: Miniforge
           channels: conda-forge,bioconda,defaults
           channel-priority: strict
           auto-update-conda: true
