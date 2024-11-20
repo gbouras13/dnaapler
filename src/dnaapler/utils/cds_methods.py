@@ -229,7 +229,7 @@ def run_MMseqs2_based_method(
     MMseqs2_output_tmpdir = Path(f"{output}/tmp_MMseqs2_output")
     MMseqs2_output_file = Path(f"{output}/{prefix}_MMseqs2_output.txt")
     # matches the blast ones to make subbing MMseqs2 for BLAST as easy as possible
-    MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
+    MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
 
 
     db = os.path.join(DNAAPLER_DB, db_name)

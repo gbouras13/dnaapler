@@ -189,7 +189,7 @@ Options:
   -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
   -f, --force              Force overwrites the output directory
-  -e, --evalue TEXT        e value for MMseqs  [default: 1e-10]
+  -e, --evalue TEXT        e value for MMseqs2  [default: 1e-10]
   --ignore PATH            Text file listing contigs (one per row) that are to
                            be ignored
   -a, --autocomplete TEXT  Choose an option to autocomplete reorientation if
