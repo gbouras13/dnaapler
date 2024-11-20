@@ -52,10 +52,21 @@ Additionally, please consider citing the dependencies where relevant:
 ```
 Altschul S.F., Gish W., Miller W., Myers E.W., Lipman D.J. Basic local alignment search tool. J Mol Biol. 1990 Oct 5;215(3):403-10. doi: 10.1016/S0022-2836(05)80360-2. PMID: 2231712.
 
+Steinegger M, Söding J. MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets. Nat Biotechnol. 2017 Nov;35(11):1026-1028. doi: 10.1038/nbt.3988.
+
 Larralde, M., (2022). Pyrodigal: Python bindings and interface to Prodigal, an efficient method for gene prediction in prokaryotes. Journal of Open Source Software, 7(72), 4296, https://doi.org/10.21105/joss.04296.
 
 Hyatt, D., Chen, GL., LoCascio, P.F. et al. Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC Bioinformatics 11, 119 (2010). https://doi.org/10.1186/1471-2105-11-119.
 ```
+
+## v1.0.0
+
+* **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2 v13.45111` rather than `BLAST`. You will need to install `MMSeqs` if you upgrade (if you use conda, it should be handled for you)
+* There are 2 reasons for this:
+    1. Users reported problems installing BLAST on MacOS with Apple Silicon (see e.g. [here](https://github.com/gbouras13/pharokka/issues/368)). MMseqs works on all platforms and is dilligently maintained.
+    2. MMSeqs2 is much much faster than BLAST (what took BLAST a few of minutes takes MMSeqs2 seconds). We should have written `dnaapler` with `MMseqs2` to begin with. `MMSeqs2 v13.45111` was chosen to ensure interoperability with [pharokka](https://github.com/gbouras13/pharokka)
+* The alignment resuls may not be identicial to ` dnaapler v0.8.1` (i.e. they might find specifically different top hits), but the actual reorientation is likely to be identical (at least in my tests). Please reach out or make an issue if you notice any discr
+
 
 # Google Colab Notebooks
 
@@ -65,6 +76,7 @@ If you don't want to install `dnaapler` locally, you can run `dnaapler all` with
 - [dnaapler](#dnaapler)
   - [Quick Start](#quick-start)
   - [Paper](#paper)
+  - [v1.0.0](#v100)
 - [Google Colab Notebooks](#google-colab-notebooks)
   - [Table of Contents](#table-of-contents)
   - [Description](#description)
@@ -86,7 +98,7 @@ If you don't want to install `dnaapler` locally, you can run `dnaapler all` with
   <img src="paper/Dnaapler_figure.png" alt="Dnaapler Figure">
 </p>
 
-`dnaapler` is a simple python program that takes a single nucleotide input sequence (in FASTA format), finds the desired start gene using `blastx` against an amino acid sequence database, checks that the start codon of this gene is found, and if so, then reorients the chromosome to begin with this gene on the forward strand. 
+`dnaapler` is a simple python program that takes a single nucleotide input sequence (in FASTA format), finds the desired start gene using `MMseqs2` against an amino acid sequence database, checks that the start codon of this gene is found, and if so, then reorients the chromosome to begin with this gene on the forward strand. 
 
 It was originally designed to replicate the reorientation functionality of [Unicycler](https://github.com/rrwick/Unicycler/blob/main/unicycler/gene_data/repA.fasta) with dnaA, but for for long-read first assembled chromosomes. We have extended it to work with plasmids (`dnaapler plasmid`) and phages (`dnaapler phage`), or for any input FASTA desired with `dnaapler custom`, `dnaapler mystery` or `dnaapler nearest`.
 
@@ -177,7 +189,7 @@ Options:
   -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
   -f, --force              Force overwrites the output directory
-  -e, --evalue TEXT        e value for blastx  [default: 1e-10]
+  -e, --evalue TEXT        e value for MMseqs2  [default: 1e-10]
   --ignore PATH            Text file listing contigs (one per row) that are to
                            be ignored
   -a, --autocomplete TEXT  Choose an option to autocomplete reorientation if

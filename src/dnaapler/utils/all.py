@@ -15,9 +15,9 @@ from dnaapler.utils.processing import (
 )
 
 
-def all_process_blast_output_and_reorient(
+def all_process_MMseqs2_output_and_reorient(
     input: Path,
-    blast_file: Path,
+    MMseqs2_file: Path,
     output: Path,
     prefix: str,
     ignore_list: Path,
@@ -25,17 +25,20 @@ def all_process_blast_output_and_reorient(
     seed_value: int,
     custom_db: str,
 ) -> None:
-    """Processes the blast output, reorients and saves all contigs into os.path.join(output, f"{prefix}_reoriented.fasta")
+    """Processes the MMseqs2 output, reorients and saves all contigs into os.path.join(output, f"{prefix}_reoriented.fasta")
 
     :param input: input file
-    :param blast_file: blast output file
+    :param MMseqs2_file: MMseqs2 output file
     :param output: output directory
     :param prefix: prefix
     :param ignore_list: list containing contigs (short_contig) to ignore
     :return:
     """
 
-    # define colnames
+    # define colnames - keep the same colnames as BLAST for ease
+    # matches the MMseqs2 ones to make subbing MMseqs2 for BLAST as easy as possible
+    # MMseqs2_columns = "query,qlen,target,tlen,alnlen,qstart,qend,tstart,tend,fident,nident,gapopen,mismatch,evalue,bits,qaln,taln"
+
     col_list = [
         "qseqid",
         "qlen",
@@ -56,22 +59,22 @@ def all_process_blast_output_and_reorient(
         "sseq",
     ]
 
-    # read in the dataframe from BLAST
+    # read in the dataframe from MMseqs2
     try:
-        blast_df = pd.read_csv(
-            blast_file, delimiter="\t", index_col=False, names=col_list
+        MMseqs2_df = pd.read_csv(
+            MMseqs2_file, delimiter="\t", index_col=False, names=col_list
         )
 
     except Exception:
-        logger.error("There was an issue with parsing the BLAST output file.")
+        logger.error("There was an issue with parsing the MMseqs2 output file.")
 
-    if isinstance(blast_df, pd.DataFrame) and blast_df.empty:
+    if isinstance(MMseqs2_df, pd.DataFrame) and MMseqs2_df.empty:
         logger.warning(
-            "There were 0 BLAST hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
+            "There were 0 MMseqs2 hits. Please check your input file or try dnaapler custom. If you have assembled an understudied species, this may also be the cause."
         )
 
         # make an empty df to ensure autocomplete reorientation happens
-        blast_df = pd.DataFrame(columns=col_list)
+        MMseqs2_df = pd.DataFrame(columns=col_list)
 
     # Initialize the list to store the IDs
     contigs = []
@@ -90,12 +93,12 @@ def all_process_blast_output_and_reorient(
     # Read the FASTA file and extract the IDs
     for record in SeqIO.parse(input, "fasta"):
         contig = record.description
-        # need this to match for BLAST
+        # need this to match for MMseqs2
         short_contig = record.id
         contigs.append(contig)
 
         # Filter the DataFrame where 'qseqid' matches 'contig'
-        filtered_df = blast_df[blast_df["qseqid"] == short_contig]
+        filtered_df = MMseqs2_df[MMseqs2_df["qseqid"] == short_contig]
 
         length_of_df = len(filtered_df)
 
@@ -124,7 +127,7 @@ def all_process_blast_output_and_reorient(
                     SeqIO.write(record, out_fa, "fasta")
 
                 # no hit save for the output DF
-                message = "No_BLAST_hits"
+                message = "No_MMseqs2_hits"
                 genes.append(message)
                 starts.append(message)
                 strands.append(message)
@@ -156,7 +159,7 @@ def all_process_blast_output_and_reorient(
                 idents.append(message)
                 identitys.append(message)
 
-        else:  # there is at least one BLAST hit
+        else:  # there is at least one MMseqs2 hit
             # determine the numbers of repA, dnaA and terL
 
             # UniRef90 is in string for repA
@@ -205,7 +208,7 @@ def all_process_blast_output_and_reorient(
             filtered_df.reset_index(drop=True, inplace=True)
 
             # top hit has a start of 1 ########
-            # take the top hit - blast sorts by bitscore
+            # take the top hit - MMseqs2 sorts by bitscore
             # if the start is 1 of the top hit
             if filtered_df["qstart"][0] == 1:
                 # update the record description to contain 'rotated=True' akin to how unicycler does it
@@ -344,7 +347,7 @@ def run_autocomplete_record(
     Returns:
         Tuple[int, int]: A tuple containing the start coordinate and strand information of the chosen gene.
     """
-    logger.warning(f"There was no blastx hit for contig {record.id}.")
+    logger.warning(f"There was no MMseqs2 hit for contig {record.id}.")
     logger.warning(f"Running {autocomplete} on contig {record.id}.")
 
     # get number of records of input
