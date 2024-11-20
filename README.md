@@ -61,7 +61,7 @@ Hyatt, D., Chen, GL., LoCascio, P.F. et al. Prodigal: prokaryotic gene recogniti
 
 ## v1.0.0
 
-* **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2 v13.45111` rather than `BLAST`. You will need to install [MMSeqs2](https://github.com/soedinglab/MMseqs2) if you upgrade (if you use conda, it should be handled for you)
+* **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2 v13.45111` rather than `BLAST`. You will need to install [MMSeqs2](https://github.com/soedinglab/MMseqs2) if you upgrade (if you use conda, it should be handled for you). The CLI is identical.
 * There are 2 reasons for this:
     1. Users reported problems installing BLAST on MacOS with Apple Silicon (see e.g. [here](https://github.com/gbouras13/pharokka/issues/368)). MMseqs2 works on all platforms and is dilligently maintained.
     2. MMSeqs2 is much much faster than BLAST (what took BLAST a few minutes takes MMSeqs2 seconds). We probably should have written `dnaapler` with `MMseqs2` to begin with. `MMSeqs2 v13.45111` was chosen to ensure interoperability with [pharokka](https://github.com/gbouras13/pharokka)
@@ -130,9 +130,9 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 
 ## Installation
 
-`dnaapler` requires only BLAST v2.10 or higher as an external dependency. 
+`dnaapler` requires only `MMseqs2 v13.45111` as an external dependency. 
 
-Installation from conda is highly recommended as this will install BLAST automatically.
+Installation from conda is highly recommended as this will install `MMseqs2` automatically.
 
 ### Conda
 
@@ -150,7 +150,7 @@ You can also install `dnaapler` with pip.
 pip install dnaapler
 ```
 
-* If you install `dnaapler` with pip, then you will then need to install BLAST v 2.9 or higher separately. It will need to be available in the `$PATH` or else `dnaapler` will not work. 
+* If you install `dnaapler` with pip, then you will then need to install `MMseqs2 v13.45111` separately. It will need to be available in the `$PATH` or else `dnaapler` will not work. 
 
 
 ## Usage
@@ -186,14 +186,14 @@ Options:
   -V, --version            Show the version and exit.
   -i, --input PATH         Path to input file in FASTA format  [required]
   -o, --output PATH        Output directory   [default: output.dnaapler]
-  -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
+  -t, --threads INTEGER    Number of threads to use with MMseqs2  [default: 1]
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
   -f, --force              Force overwrites the output directory
   -e, --evalue TEXT        e value for MMseqs2  [default: 1e-10]
   --ignore PATH            Text file listing contigs (one per row) that are to
                            be ignored
   -a, --autocomplete TEXT  Choose an option to autocomplete reorientation if
-                           BLAST based approach fails. Must be one of: none,
+                           MMseqs2 based approach fails. Must be one of: none,
                            mystery, largest, or nearest [default: none]
   --seed_value INTEGER     Random seed to ensure reproducibility.  [default:
                            13]
@@ -260,7 +260,7 @@ dnaapler bulk -i input_file_with_multiple_chromosomes.fasta -m chromosome -o out
 
 `dnaapler custom` uses a custom amino acid FASTA format file that you specify using `-c`. 
 
-The matching is strict - it requires a strong BLASTx match (default e-value 1E-10), and the first amino acid of a BLASTx hit gene to be identified as Methionine, Valine or Leucine, the 3 most used start codons in bacteria/phages. 
+The matching is strict - it requires a strong MMseqs2 match (default e-value 1E-10), and the first amino acid of a MMseqs2 hit gene to be identified as Methionine, Valine or Leucine, the 3 most used start codons in bacteria/phages. 
 
 For the most commonly studied microbes (ESKAPE pathogens, etc), the dnaA database should suffice.
 
