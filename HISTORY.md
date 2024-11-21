@@ -8,6 +8,7 @@
     2. MMSeqs2 is much much faster than BLAST (what took BLAST a few minutes takes MMSeqs2 seconds). We should have written `dnaapler` with `MMseqs2` to begin with.
 * The alignment resuls may not be identicial (i.e. they might find specifically different top hits), but the actual reorientation is likely to be identical (at least in my tests). Please reach out or make an issue if you notice any discrepancies. 
 
+For example - on my machine (Ubuntu 20.04, Intel i9 13th gen 13900 CPU with 32 threads), for a _Staphylococcus aureus_ genome with 1 small plasmid, `dnaapler -i staph.fasta -o staph_dnaapler -t 8`  took ~129 seconds wallclock with `v0.8.1` using `BLAST`, while it took ~3 seconds wallclock with `v1.0.0` using `MMseqs2`.
 
 # 0.8.1 (2024-09-16)
 
