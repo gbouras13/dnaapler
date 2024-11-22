@@ -129,17 +129,23 @@ def check_mmseqs2_version():
         else:
             raise ValueError("MMseqs2 version not found")
 
-        mmseqs_major_version = int(mmseqs_version.split(".")[0])
-        mmseqs_minor_version = mmseqs_version.split(".")[1]
+        # The pre-built binary on GitHub reports its version using the commit hash instead of
+        # a version number.
+        if mmseqs_version.startswith("45111b6"):
+            logger.info(f"MMseqs2 version found is {mmseqs_version}")
 
-        logger.info(
-            f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
-        )
+        else:
+            mmseqs_major_version = int(mmseqs_version.split(".")[0])
+            mmseqs_minor_version = mmseqs_version.split(".")[1]
 
-        if mmseqs_major_version != 13:
-            logger.error("MMseqs2 is the wrong version. Please install v13.45111")
-        if mmseqs_minor_version != "45111":
-            logger.error("MMseqs2 is the wrong version. Please install v13.45111")
+            logger.info(
+                f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
+            )
+
+            if mmseqs_major_version != 13:
+                logger.error("MMseqs2 is the wrong version. Please install v13.45111")
+            if mmseqs_minor_version != "45111":
+                logger.error("MMseqs2 is the wrong version. Please install v13.45111")
 
         logger.info("MMseqs2 version is ok.")
 
