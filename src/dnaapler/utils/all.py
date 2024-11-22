@@ -62,7 +62,8 @@ def all_process_MMseqs2_output_and_reorient(
     # read in the dataframe from MMseqs2
     try:
         MMseqs2_df = pd.read_csv(
-            MMseqs2_file, delimiter="\t", index_col=False, names=col_list
+            MMseqs2_file, delimiter="\t", index_col=False, names=col_list,
+            dtype={"qseqid": "object"}
         )
 
     except Exception:
