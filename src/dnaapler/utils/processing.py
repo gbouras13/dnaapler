@@ -50,8 +50,11 @@ def process_MMseqs2_output_and_reorient(
     # read in the dataframe from MMseqs2
     try:
         MMseqs2_df = pd.read_csv(
-            MMseqs2_file, delimiter="\t", index_col=False, names=col_list,
-            dtype={"qseqid": "object"}
+            MMseqs2_file,
+            delimiter="\t",
+            index_col=False,
+            names=col_list,
+            dtype={"qseqid": "object"},
         )
     except Exception:
         logger.error("There was an issue with parsing the MMseqs2 output file.")

@@ -131,7 +131,7 @@ def check_mmseqs2_version():
 
         # The pre-built binary on GitHub reports its version using the commit hash instead of
         # a version number.
-        if mmseqs_version.startswith('45111b6'):
+        if mmseqs_version.startswith("45111b6"):
             logger.info(f"MMseqs2 version found is {mmseqs_version}")
 
         else:
