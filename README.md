@@ -59,7 +59,7 @@ Larralde, M., (2022). Pyrodigal: Python bindings and interface to Prodigal, an e
 Hyatt, D., Chen, GL., LoCascio, P.F. et al. Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC Bioinformatics 11, 119 (2010). https://doi.org/10.1186/1471-2105-11-119.
 ```
 
-## v1.0.0
+## v1
 
 * **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2 v13.45111` rather than `BLAST`. You will need to install [MMSeqs2](https://github.com/soedinglab/MMseqs2) if you upgrade (if you use conda, it should be handled for you). The CLI is identical.
 * There are 2 reasons for this:
@@ -78,7 +78,7 @@ If you don't want to install `dnaapler` locally, you can run `dnaapler all` with
 - [dnaapler](#dnaapler)
   - [Quick Start](#quick-start)
   - [Paper](#paper)
-  - [v1.0.0](#v100)
+  - [v1](#v1)
 - [Google Colab Notebooks](#google-colab-notebooks)
   - [Table of Contents](#table-of-contents)
   - [Description](#description)

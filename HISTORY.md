@@ -1,5 +1,10 @@
 # History
 
+# 1.0.1 (2024-11-22)
+
+* Thanks to the inimitable @[rrwick](https://github.com/rrwick), v1.0.1 is a patch fixing a string-parsing bug.
+* If your contig headers were integers, `dnaapler` did not rotate the found `BLAST/MMseqs2` hits. This was pre-existing (not introduced by v1.0.0).
+
 # 1.0.0 (2024-11-21)
 
 * **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2` rather than `BLAST`. You will need to install `MMSeqs` if you upgrade (if you use conda, it should be handled for you)
