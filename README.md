@@ -37,6 +37,16 @@ dnaapler chromosome -i input_chromosome.fasta -o output_directory_path -p my_bac
 
 ```
 
+* If you have a MacOS machine with Apple Silicon (M1/M2/M3/M4), please try
+
+```
+conda create --platform osx-64 -n dnaapler_env dnaapler
+
+conda activate dnaapler_env
+
+dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
+```
+
 ## Paper
 
 Dnaapler has been published in JOSS [here](https://joss.theoj.org/papers/10.21105/joss.05968). If you use Dnaapler in your work, please cite it as follows:
