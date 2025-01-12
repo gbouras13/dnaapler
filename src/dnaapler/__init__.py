@@ -21,6 +21,7 @@ from dnaapler.utils.cds_methods import (
 )
 from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
+from dnaapler.utils.processing import rotate_input
 from dnaapler.utils.util import (
     begin_dnaapler,
     check_duplicate_headers,
@@ -841,7 +842,7 @@ all subcommand
     default="all",
     type=click.STRING,
     callback=validate_choice_db,
-    help="Lets you choose a subset of databases rather than all 3. Must be one of: 'all', 'dnaa', 'repa', terl', 'dnaa,repa', 'dnaa,terl' or 'repa,terl' ",
+    help="Lets you choose a subset of databases rather than all 4. Must be one of: 'all', 'dnaa', 'repa', terl', 'cog1474', 'dnaa,repa', 'dnaa,terl', 'repa,terl',  'dnaA,cog1474', 'cog1474,terl', 'cog1474,repa', 'dnaa,cog1474,repa', 'dnaa,cog1474,terl' or 'cog1474,repa,terl'",
     show_default=True,
 )
 @click.option(
@@ -968,9 +969,14 @@ def all(
     else:
         custom_db = None
 
+    # rotate all replicons by half the length of the contig
+    # the rotated input for MMSeqs2 will have the original contigs + the rotated ones with suffix "rotated_"
+    rotated_input = os.path.join(output, "rotated_input.fasta")
+    rotate_input(input, rotated_input)
+
     # runs bulk MMseqs2
     run_bulk_MMseqs2(
-        ctx, input, output, prefix, gene, evalue, threads, custom_db=custom_db
+        ctx, rotated_input, output, prefix, gene, evalue, threads, custom_db=custom_db
     )
 
     # rerorients MMseqs2
@@ -998,6 +1004,7 @@ def all(
         autocomplete,
         seed_value,
         custom_db=custom_db,
+        gene=gene,
     )
 
     # end dnaapler

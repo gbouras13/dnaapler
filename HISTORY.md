@@ -3,7 +3,7 @@
 # 1.0.1 (2024-11-22)
 
 * Thanks to the inimitable @[rrwick](https://github.com/rrwick), v1.0.1 is a patch fixing a string-parsing bug.
-* If your contig headers were integers, `dnaapler` did not rotate the found `BLAST/MMseqs2` hits. This was pre-existing (not introduced by v1.0.0).
+* If your contig headers were integers, `dnaapler` did not rotate the found `BLAST/MMseqs2` hits. This was a pre-existing issue (not introduced by v1.0.0).
 
 # 1.0.0 (2024-11-21)
 
