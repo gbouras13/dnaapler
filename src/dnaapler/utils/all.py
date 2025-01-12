@@ -262,7 +262,7 @@ def all_process_MMseqs2_output_and_reorient(
                     coverages.append(message)
                     idents.append(message)
                     identitys.append(message)
-                    rotateds.append(rotated)
+                    rotateds.append(message)
 
                 # top hit
                 # prokaryotes can use AUG M, GUG V or UUG L as start codons - e.g. for Pseudomonas aeruginosa PA01  dnaA actually starts with V
