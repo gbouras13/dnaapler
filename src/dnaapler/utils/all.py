@@ -188,7 +188,6 @@ def all_process_MMseqs2_output_and_reorient(
                     coverages.append(message)
                     idents.append(message)
                     identitys.append(message)
-                    identitys.append(message)
                     rotateds.append(message)
 
             else:  # there is at least one MMseqs2 hit
