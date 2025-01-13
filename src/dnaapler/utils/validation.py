@@ -229,10 +229,10 @@ def validate_choice_db(ctx, param, value):
         "cog1474",
         "dnaA,cog1474",
         "cog1474,terl",
-        "repa,cog1474",
-        "dnaa,repa,cog1474",
-        "dnaa,terl,cog1474",
-        "repa,terl,cog1474",
+        "cog1474,repa",
+        "dnaa,cog1474,repa",
+        "dnaa,cog1474,terl",
+        "cog1474,repa,terl",
     ]
     if value not in choices:
         raise click.BadParameter(f"Invalid choice. Choose from {', '.join(choices)}")

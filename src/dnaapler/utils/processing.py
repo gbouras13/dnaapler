@@ -1,11 +1,126 @@
 import os
 from pathlib import Path
+from typing import List
 
 import pandas as pd
 import pyrodigal
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from loguru import logger
+
+
+def choose_highest_mmseqs2_bitscore(MMseqs2_df: pd.DataFrame, gene: str) -> List[str]:
+    """
+    Chooses the contigs from original and rotated with the highest bitscore hits to choose for downstream reorientation.
+
+    Args:
+        MMseqs2_df (pd.DataFrame): DataFrame containing MMSeqs2 results.
+        gene (Union[str, List[str]]): Gene or list of genes to filter for. Default is "all".
+
+    Returns:
+        List[str]: List of chosen contig identifiers.
+    """
+
+    chosen_contig_list = []
+
+    if gene == "all":
+        keywords = ["DNAA", "cog1474", "UniRef90", "phrog"]
+    else:
+        keywords = gene.split(",")
+
+    unique_qseqids = MMseqs2_df["qseqid"].unique()
+
+    for qseqid in unique_qseqids:
+
+        if qseqid.startswith("rotated_"):
+            # Check if there is no matching original seqid
+            original_id = qseqid[len("rotated_") :]
+            if original_id not in unique_qseqids:
+                chosen_contig_list.append(qseqid)
+        else:
+            for keyword in keywords:
+
+                rotated_id = f"rotated_{qseqid}"
+
+                # Get rows for the original and rotated qseqid
+                original_rows = MMseqs2_df[
+                    MMseqs2_df["sseqid"].str.contains(keyword, case=False, na=False)
+                    & (MMseqs2_df["qseqid"] == qseqid)
+                ]
+                rotated_rows = MMseqs2_df[
+                    MMseqs2_df["sseqid"].str.contains(keyword, case=False, na=False)
+                    & (MMseqs2_df["qseqid"] == rotated_id)
+                ]
+
+                if not original_rows.empty:
+                    original_max_bitscore = (
+                        original_rows["bitscore"].max()
+                        if not original_rows.empty
+                        else -float("inf")
+                    )
+                else:
+                    original_max_bitscore = 0
+                if not rotated_rows.empty:
+                    rotated_max_bitscore = (
+                        rotated_rows["bitscore"].max()
+                        if not rotated_rows.empty
+                        else -float("inf")
+                    )
+                else:
+                    rotated_max_bitscore = 0
+
+                if rotated_max_bitscore > 0 or original_max_bitscore > 0:
+
+                    # Compare the max bitscore
+                    # if the rotated is higher
+                    if rotated_max_bitscore > original_max_bitscore:
+                        chosen_contig_list.append(rotated_id)
+                    # usual
+                    else:
+                        chosen_contig_list.append(qseqid)
+                    break  # stop if keyword found
+
+    return chosen_contig_list
+
+
+def rotate_sequence(sequence, rotation):
+    """Rotate a sequence by the given number of characters."""
+    return sequence[rotation:] + sequence[:rotation]
+
+
+def rotate_coordinate_backward(x_prime, seq_length):
+    """Map the rotated coordinate x' back to the original."""
+    return (x_prime - seq_length // 2) % seq_length
+
+
+def rotate_input(input: Path, out_file: Path) -> None:
+    """
+    Rotates the input contigs by half the length of each contig
+
+    Args:
+        input (Path): Input file containing a nucleotide sequence.
+        out_file (Path): Output file to save the rotated sequence.
+
+    Returns:
+        None
+    """
+    with open(out_file, "w") as output_handle:
+        for record in SeqIO.parse(input, "fasta"):
+            # Write the original sequence
+            SeqIO.write(record, output_handle, "fasta")
+
+            # Create a rotated version of the sequence
+            index = len(record.seq) // 2
+            rotated_seq = rotate_sequence(record.seq, index)
+
+            # Create a new record for the rotated sequence
+            rotated_record = record[:]
+            rotated_record.id = f"rotated_{record.id}"
+            rotated_record.seq = rotated_seq
+            rotated_record.description = ""
+
+            # Write the rotated sequence
+            SeqIO.write(rotated_record, output_handle, "fasta")
 
 
 def process_MMseqs2_output_and_reorient(

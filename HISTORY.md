@@ -1,9 +1,15 @@
 # History
 
+# 1.1.0 (2025-01-13)
+
+* Adds support for reorienting contigs where the gene of interest spands the contig ends - [fixes this issue](https://github.com/gbouras13/dnaapler/issues/90). Thanks @marade @oschwengers.
+  * Specifically, this is done by rotating each contig in the input by half the genome length, then running `MMseqs2` for both the original and rotated contigs. The `MMseqs2` hit with the highest bitscore across the original and rotated contigs will be chosen as the top hit to rotate by, therefor enabling detection of partial hits (on the original contig) that span the contig ends. 
+* This has only been implemented for `dnaapler all` (this should be the command used by 99% of users).
+
 # 1.0.1 (2024-11-22)
 
 * Thanks to the inimitable @[rrwick](https://github.com/rrwick), v1.0.1 is a patch fixing a string-parsing bug.
-* If your contig headers were integers, `dnaapler` did not rotate the found `BLAST/MMseqs2` hits. This was pre-existing (not introduced by v1.0.0).
+* If your contig headers were integers, `dnaapler` did not rotate the found `BLAST/MMseqs2` hits. This was a pre-existing issue (not introduced by v1.0.0).
 
 # 1.0.0 (2024-11-21)
 

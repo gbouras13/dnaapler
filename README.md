@@ -32,9 +32,16 @@ conda install -c bioconda dnaapler
 # runs dnaapler all 
 dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
 
-# runs dnaapler chromosome
-dnaapler chromosome -i input_chromosome.fasta -o output_directory_path -p my_bacteria_name -t 8
+```
 
+* If you have a MacOS machine with Apple Silicon (M1/M2/M3/M4), please try
+
+```
+conda create --platform osx-64 -n dnaapler_env dnaapler
+
+conda activate dnaapler_env
+
+dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
 ```
 
 ## Paper
@@ -59,7 +66,15 @@ Larralde, M., (2022). Pyrodigal: Python bindings and interface to Prodigal, an e
 Hyatt, D., Chen, GL., LoCascio, P.F. et al. Prodigal: prokaryotic gene recognition and translation initiation site identification. BMC Bioinformatics 11, 119 (2010). https://doi.org/10.1186/1471-2105-11-119.
 ```
 
-## v1
+## v1 and other recent changes
+
+# 1.1.0
+
+* Adds support for reorienting contigs where the gene of interest spands the contig ends - [fixes this issue](https://github.com/gbouras13/dnaapler/issues/90). Thanks @marade @oschwengers.
+  * Specifically, this is done by rotating each contig in the input by half the genome length, then running `MMseqs2` for both the original and rotated contigs. The `MMseqs2` hit with the highest bitscore across the original and rotated contigs will be chosen as the top hit to rotate by, therefor enabling detection of partial hits (on the original contig) that span the contig ends. 
+* This has only been implemented for `dnaapler all` (this should be the command used by 99% of users).
+
+# v1.0
 
 * **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2 v13.45111` rather than `BLAST`. You will need to install [MMSeqs2](https://github.com/soedinglab/MMseqs2) if you upgrade (if you use conda, it should be handled for you). The CLI is identical.
 * There are 2 reasons for this:
@@ -78,7 +93,9 @@ If you don't want to install `dnaapler` locally, you can run `dnaapler all` with
 - [dnaapler](#dnaapler)
   - [Quick Start](#quick-start)
   - [Paper](#paper)
-  - [v1](#v1)
+  - [v1 and other recent changes](#v1-and-other-recent-changes)
+- [1.1.0](#110)
+- [v1.0](#v10)
 - [Google Colab Notebooks](#google-colab-notebooks)
   - [Table of Contents](#table-of-contents)
   - [Description](#description)
@@ -109,6 +126,8 @@ For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome br
 Additionally, you can also reorient multiple bacterial chromosomes/plasmids/phages at once using the `dnaapler bulk` subcommand.
 
 If your input FASTA is mixed (e.g. has chromosome and plasmids), you can also use `dnaapler all`, with the option to ignore some contigs with the `--ignore` parameter.
+
+**As of v1, in practice, `dnaapler all` is the only command you will likely need, as it contains all the functionality of `bulk`, `chromosome`, `plasmid`, `phage` but with much more flexibility and user-friendliness**
 
 ## Documentation
 

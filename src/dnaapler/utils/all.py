@@ -10,8 +10,11 @@ from Bio.SeqRecord import SeqRecord
 from loguru import logger
 
 from dnaapler.utils.processing import (
+    choose_highest_mmseqs2_bitscore,
     reorient_sequence_and_append,
     reorient_single_record_bulk,
+    rotate_coordinate_backward,
+    rotate_sequence,
 )
 
 
@@ -24,6 +27,7 @@ def all_process_MMseqs2_output_and_reorient(
     autocomplete: str,
     seed_value: int,
     custom_db: str,
+    gene: str,
 ) -> None:
     """Processes the MMseqs2 output, reorients and saves all contigs into os.path.join(output, f"{prefix}_reoriented.fasta")
 
@@ -32,6 +36,7 @@ def all_process_MMseqs2_output_and_reorient(
     :param output: output directory
     :param prefix: prefix
     :param ignore_list: list containing contigs (short_contig) to ignore
+    :param gene: list of genes to consider
     :return:
     """
 
@@ -80,6 +85,8 @@ def all_process_MMseqs2_output_and_reorient(
         # make an empty df to ensure autocomplete reorientation happens
         MMseqs2_df = pd.DataFrame(columns=col_list)
 
+    chosen_contig_list = choose_highest_mmseqs2_bitscore(MMseqs2_df, gene=gene)
+
     # Initialize the list to store the IDs
     contigs = []
     genes = []  # for the gene it reoriented it by
@@ -91,20 +98,17 @@ def all_process_MMseqs2_output_and_reorient(
     coverages = []
     idents = []
     identitys = []
+    rotateds = []
 
     reoriented_output_file = os.path.join(output, f"{prefix}_reoriented.fasta")
 
-    # Read the FASTA file and extract the IDs
+    # Read the original input FASTA file and extract the IDs
     for record in SeqIO.parse(input, "fasta"):
         contig = record.description
+        contigs.append(contig)
+        rotated = False
         # need this to match for MMseqs2
         short_contig = record.id
-        contigs.append(contig)
-
-        # Filter the DataFrame where 'qseqid' matches 'contig'
-        filtered_df = MMseqs2_df[MMseqs2_df["qseqid"] == short_contig]
-
-        length_of_df = len(filtered_df)
 
         if short_contig in ignore_list:
             # write contig anyway
@@ -122,194 +126,224 @@ def all_process_MMseqs2_output_and_reorient(
             coverages.append(message)
             idents.append(message)
             identitys.append(message)
+            rotateds.append(message)
 
-        # no hits at all then autcomplete
-        elif length_of_df == 0:
-            if autocomplete == "none":
-                # write contig anyway
-                with open(reoriented_output_file, "a") as out_fa:
-                    SeqIO.write(record, out_fa, "fasta")
+        else:
+            rotated = False
 
-                # no hit save for the output DF
-                message = "No_MMseqs2_hits"
-                genes.append(message)
-                starts.append(message)
-                strands.append(message)
-                top_hits.append(message)
-                top_hit_lengths.append(message)
-                covered_lens.append(message)
-                coverages.append(message)
-                idents.append(message)
-                identitys.append(message)
+            if short_contig in chosen_contig_list:  # then no overlap
+                # length won't be 0
+                # Filter the DataFrame where 'qseqid' matches 'contig'
+                filtered_df = MMseqs2_df[MMseqs2_df["qseqid"] == short_contig]
+                length_of_df = len(filtered_df)
+            elif (
+                f"rotated_{short_contig}" in chosen_contig_list
+            ):  # then overlap has occured
+                rotated = True
+                filtered_df = MMseqs2_df[
+                    MMseqs2_df["qseqid"] == f"rotated_{short_contig}"
+                ]
+                length_of_df = len(filtered_df)
+                # rotate the record seq
+                # Create a rotated version of the sequence to match the MMSeqs2 input
+                index = len(record.seq) // 2
+                record.seq = rotate_sequence(record.seq, index)
+            else:  # if neither are in the chosen contig list, then no hits found -> autocomplete
+                length_of_df = 0
 
-            else:
-                message = f"autocomplete_method_{autocomplete}"
-                (start, strand) = run_autocomplete_record(
-                    record, autocomplete, reoriented_output_file, seed_value
-                )
+            if length_of_df == 0:
+                if autocomplete == "none":
+                    # write contig anyway
+                    with open(reoriented_output_file, "a") as out_fa:
+                        SeqIO.write(record, out_fa, "fasta")
 
-                if strand == 1:
-                    strand_eng = "forward"
+                    # no hit save for the output DF
+                    message = "No_MMseqs2_hits"
+                    genes.append(message)
+                    starts.append(message)
+                    strands.append(message)
+                    top_hits.append(message)
+                    top_hit_lengths.append(message)
+                    covered_lens.append(message)
+                    coverages.append(message)
+                    idents.append(message)
+                    identitys.append(message)
+                    rotateds.append(message)
+
                 else:
-                    strand_eng = "negative"
-
-                genes.append(message)
-                starts.append(start)
-                strands.append(strand_eng)
-                top_hits.append(message)
-                top_hit_lengths.append(message)
-                covered_lens.append(message)
-                coverages.append(message)
-                idents.append(message)
-                identitys.append(message)
-
-        else:  # there is at least one MMseqs2 hit
-            # determine the numbers of repA, dnaA and terL
-
-            # UniRef90 is in string for repA
-            # phrog is in string for terL
-            # DNAA is in string for dnaA
-
-            # counts
-            counts = {
-                "dnaA": filtered_df[
-                    filtered_df["sseqid"].str.contains("DNAA", case=False)
-                ].shape[0],
-                "terL": filtered_df[
-                    filtered_df["sseqid"].str.contains("phrog", case=False)
-                ].shape[0],
-                "repA": filtered_df[
-                    filtered_df["sseqid"].str.contains("UniRef90", case=False)
-                ].shape[0],
-                "cog1474": filtered_df[
-                    filtered_df["sseqid"].str.contains("cog1474", case=False)
-                ].shape[0],
-            }
-
-            # if there are hits to more than 1 of dnaA, terL, repA, implement logic
-            # to prefer dnaA, repA then terL (in that order)
-            if (counts["dnaA"] > 0) + (counts["terL"] > 0) + (counts["repA"] > 0) + (
-                counts["cog1474"] > 0
-            ) >= 2:
-                # prefer dnaA if it is greater than zero
-                if counts["dnaA"] > 0:
-                    # keep only the hits where dnaA is found
-                    filtered_df = filtered_df[
-                        filtered_df["sseqid"].str.contains("DNAA")
-                    ]
-                # else prefer cog1474 - archaea if it is greater than zero
-                elif counts["cog1474"] > 0:
-                    filtered_df = filtered_df[
-                        filtered_df["sseqid"].str.contains("cog1474")
-                    ]
-                # otherwise where there is repA and terL, keep repA
-                else:
-                    filtered_df = filtered_df[
-                        filtered_df["sseqid"].str.contains("UniRef90")
-                    ]
-
-            # reset the index if you want to re-index the filtered DataFrame
-            filtered_df.reset_index(drop=True, inplace=True)
-
-            # top hit has a start of 1 ########
-            # take the top hit - MMseqs2 sorts by bitscore
-            # if the start is 1 of the top hit
-            if filtered_df["qstart"][0] == 1:
-                # update the record description to contain 'rotated=True' akin to how unicycler does it
-                record.description = record.description + " rotated=True"
-
-                # writes to file
-                with open(reoriented_output_file, "a") as out_fa:
-                    SeqIO.write(record, out_fa, "fasta")
-
-                # no hit save for the output DF
-                message = "Contig_already_reoriented"
-
-                genes.append(message)
-                starts.append(message)
-                strands.append(message)
-                top_hits.append(message)
-                top_hit_lengths.append(message)
-                covered_lens.append(message)
-                coverages.append(message)
-                idents.append(message)
-                identitys.append(message)
-
-            # top hit
-            # prokaryotes can use AUG M, GUG V or UUG L as start codons - e.g. for Pseudomonas aeruginosa PA01  dnaA actually starts with V
-            # Therefore, I will require the start codon to be the 1st in the searched sequence match - unlikely to not be but nonetheless
-            # Sometimes, the top hit might not be the actual gene of interest (e.g. in phages if the terL is disrupted - like SAOMS1)
-            # so in these cases, go down the list and check there is a hit with a legitimate start codon
-            # I anticipate this will be rare usually, the first will be it :)
-            else:
-                # get gene
-                # set as dnaA by default
-                gene = "dnaA"
-
-                # for archaea
-                if "cog1474" in filtered_df["sseqid"][0]:
-                    gene = "cog1474"
-                # for plasmids
-                if "UniRef90" in filtered_df["sseqid"][0]:
-                    gene = "repA"
-                # for phages
-                if "phrog" in filtered_df["sseqid"][0]:
-                    gene = "terL"
-                # custom
-                if custom_db is not None:
-                    gene = "custom"
-
-                # update the record description to contain 'rotated=True' akin to how unicycler does it
-                record.description = (
-                    f"{record.description} rotated=True rotated_gene={gene}"
-                )
-
-                if filtered_df["qseq"][0][0] in ["M", "V", "L"] and (
-                    filtered_df["sstart"][0] == 1
-                ):
-                    (
-                        start,
-                        strand,
-                        top_hit,
-                        top_hit_length,
-                        covered_len,
-                        coverage,
-                        ident,
-                        identity,
-                    ) = reorient_single_record_bulk(
-                        filtered_df,
-                        reoriented_output_file,
-                        record,
-                        overlapping_orf=False,
+                    message = f"autocomplete_method_{autocomplete}"
+                    (start, strand) = run_autocomplete_record(
+                        record, autocomplete, reoriented_output_file, seed_value
                     )
 
-                else:  # top hit doesn't have a valid start codon - get most overlapping CDS
-                    (
-                        start,
-                        strand,
-                        top_hit,
-                        top_hit_length,
-                        covered_len,
-                        coverage,
-                        ident,
-                        identity,
-                    ) = reorient_single_record_bulk(
-                        filtered_df,
-                        reoriented_output_file,
-                        record,
-                        overlapping_orf=True,
+                    if strand == 1:
+                        strand_eng = "forward"
+                    else:
+                        strand_eng = "negative"
+
+                    genes.append(message)
+                    starts.append(start)
+                    strands.append(strand_eng)
+                    top_hits.append(message)
+                    top_hit_lengths.append(message)
+                    covered_lens.append(message)
+                    coverages.append(message)
+                    idents.append(message)
+                    identitys.append(message)
+                    rotateds.append(message)
+
+            else:  # there is at least one MMseqs2 hit
+                # determine the numbers of repA, dnaA and terL
+
+                # UniRef90 is in string for repA
+                # phrog is in string for terL
+                # DNAA is in string for dnaA
+
+                # counts
+                counts = {
+                    "dnaA": filtered_df[
+                        filtered_df["sseqid"].str.contains("DNAA", case=False)
+                    ].shape[0],
+                    "terL": filtered_df[
+                        filtered_df["sseqid"].str.contains("phrog", case=False)
+                    ].shape[0],
+                    "repA": filtered_df[
+                        filtered_df["sseqid"].str.contains("UniRef90", case=False)
+                    ].shape[0],
+                    "cog1474": filtered_df[
+                        filtered_df["sseqid"].str.contains("cog1474", case=False)
+                    ].shape[0],
+                }
+
+                # if there are hits to more than 1 of dnaA, terL, repA, implement logic
+                # to prefer dnaA, repA then terL (in that order)
+                if (counts["dnaA"] > 0) + (counts["terL"] > 0) + (
+                    counts["repA"] > 0
+                ) + (counts["cog1474"] > 0) >= 2:
+                    # prefer dnaA if it is greater than zero
+                    if counts["dnaA"] > 0:
+                        # keep only the hits where dnaA is found
+                        filtered_df = filtered_df[
+                            filtered_df["sseqid"].str.contains("DNAA")
+                        ]
+                    # else prefer cog1474 - archaea if it is greater than zero
+                    elif counts["cog1474"] > 0:
+                        filtered_df = filtered_df[
+                            filtered_df["sseqid"].str.contains("cog1474")
+                        ]
+                    # otherwise where there is repA and terL, keep repA
+                    else:
+                        filtered_df = filtered_df[
+                            filtered_df["sseqid"].str.contains("UniRef90")
+                        ]
+
+                # reset the index if you want to re-index the filtered DataFrame
+                filtered_df.reset_index(drop=True, inplace=True)
+
+                # top hit has a start of 1 ########
+                # take the top hit - MMseqs2 sorts by bitscore
+                # if the start is 1 of the top hit
+                if filtered_df["qstart"][0] == 1:
+                    # update the record description to contain 'rotated=True' akin to how unicycler does it
+                    record.description = record.description + " rotated=True"
+
+                    # writes to file
+                    with open(reoriented_output_file, "a") as out_fa:
+                        SeqIO.write(record, out_fa, "fasta")
+
+                    # no hit save for the output DF
+                    message = "Contig_already_reoriented"
+
+                    genes.append(message)
+                    starts.append(message)
+                    strands.append(message)
+                    top_hits.append(message)
+                    top_hit_lengths.append(message)
+                    covered_lens.append(message)
+                    coverages.append(message)
+                    idents.append(message)
+                    identitys.append(message)
+                    rotateds.append(message)
+
+                # top hit
+                # prokaryotes can use AUG M, GUG V or UUG L as start codons - e.g. for Pseudomonas aeruginosa PA01  dnaA actually starts with V
+                # Therefore, I will require the start codon to be the 1st in the searched sequence match - unlikely to not be but nonetheless
+                # Sometimes, the top hit might not be the actual gene of interest (e.g. in phages if the terL is disrupted - like SAOMS1)
+                # so in these cases, go down the list and check there is a hit with a legitimate start codon
+                # I anticipate this will be rare usually, the first will be it :)
+                else:
+                    # get gene
+                    # set as dnaA by default
+                    gene = "dnaA"
+
+                    # for archaea
+                    if "cog1474" in filtered_df["sseqid"][0]:
+                        gene = "cog1474"
+                    # for plasmids
+                    if "UniRef90" in filtered_df["sseqid"][0]:
+                        gene = "repA"
+                    # for phages
+                    if "phrog" in filtered_df["sseqid"][0]:
+                        gene = "terL"
+                    # custom
+                    if custom_db is not None:
+                        gene = "custom"
+
+                    # update the record description to contain 'rotated=True' akin to how unicycler does it
+                    record.description = (
+                        f"{record.description} rotated=True rotated_gene={gene}"
                     )
 
-                # save all the stats
-                genes.append(gene)
-                starts.append(start)
-                strands.append(strand)
-                top_hits.append(top_hit)
-                top_hit_lengths.append(top_hit_length)
-                covered_lens.append(covered_len)
-                coverages.append(coverage)
-                idents.append(ident)
-                identitys.append(identity)
+                    if filtered_df["qseq"][0][0] in ["M", "V", "L"] and (
+                        filtered_df["sstart"][0] == 1
+                    ):
+                        (
+                            start,
+                            strand,
+                            top_hit,
+                            top_hit_length,
+                            covered_len,
+                            coverage,
+                            ident,
+                            identity,
+                        ) = reorient_single_record_bulk(
+                            filtered_df,
+                            reoriented_output_file,
+                            record,
+                            overlapping_orf=False,
+                        )
+
+                    else:  # top hit doesn't have a valid start codon - get most overlapping CDS
+                        (
+                            start,
+                            strand,
+                            top_hit,
+                            top_hit_length,
+                            covered_len,
+                            coverage,
+                            ident,
+                            identity,
+                        ) = reorient_single_record_bulk(
+                            filtered_df,
+                            reoriented_output_file,
+                            record,
+                            overlapping_orf=True,
+                        )
+
+                    if rotated:
+                        start = rotate_coordinate_backward(start, len(record.seq))
+
+                    # save all the stats
+                    genes.append(gene)
+                    starts.append(start)
+                    strands.append(strand)
+                    top_hits.append(top_hit)
+                    top_hit_lengths.append(top_hit_length)
+                    covered_lens.append(covered_len)
+                    coverages.append(coverage)
+                    idents.append(ident)
+                    identitys.append(identity)
+                    rotateds.append(rotated)
 
     # write the example info to file
     #
@@ -325,6 +359,7 @@ def all_process_MMseqs2_output_and_reorient(
         "Coverage": coverages,
         "Identical_AAs": idents,
         "Identity_Percentage": identitys,
+        "Overlapping_Contig_End": rotateds,
     }
 
     # Convert the dictionary to a DataFrame and save output
