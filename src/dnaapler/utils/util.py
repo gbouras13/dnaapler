@@ -244,3 +244,17 @@ def remove_directory(dir_path: Path) -> None:
     """
     if dir_path.exists():
         shutil.rmtree(dir_path)
+
+
+def remove_file(file_path: Path) -> None:
+    """
+    Remove a file if it exists.
+
+    Parameters:
+        file_path (Path): Path to the file to remove.
+
+    Returns:
+        None
+    """
+    if file_path.exists():
+        file_path.unlink()  # Use unlink to remove the file

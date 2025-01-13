@@ -18,6 +18,7 @@ import pytest
 
 test_data = Path("tests/test_data")
 overall_test_data = Path(f"{test_data}/overall_inputs")
+contig_end_data = Path(f"{test_data}/contig_ends")
 
 
 def remove_directory(dir_path):
@@ -254,7 +255,7 @@ this one is for hybracter
 def test_all_dnaa_repa_cog1474(tmp_dir):
     """test all dnaa repa cog1474 - for hybracter"""
     input_fasta: Path = f"{overall_test_data}/all_test.fasta"
-    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f --db dnaa,repa,cog1474"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f --db dnaa,cog1474,repa"
     exec_command(cmd)
 
 
@@ -305,6 +306,46 @@ def test_all_autocomplete_largest(tmp_dir):
     """test all where autcompletion is required largest"""
     input_fasta: Path = f"{overall_test_data}/all_test_autocomplete.fasta"
     cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f -a largest"
+    exec_command(cmd)
+
+
+"""
+new contig end reorientation
+"""
+
+
+def test_all_chromosome_contig_end(tmp_dir):
+    """test all where dnaA found overlapping contig end - taken from https://github.com/gbouras13/dnaapler/issues/90"""
+    input_fasta: Path = f"{contig_end_data}/GN04821.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_all_phage_contig_end(tmp_dir):
+    """test all where terL found overlapping contig end"""
+    input_fasta: Path = f"{contig_end_data}/C333_sa3int_phage.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_all_archaea_contig_end(tmp_dir):
+    """test all where cog1474 found overlapping contig end"""
+    input_fasta: Path = f"{contig_end_data}/CP001742.1_archaea.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_all_plasmid_contig_end(tmp_dir):
+    """test all where repA found overlapping contig end"""
+    input_fasta: Path = f"{contig_end_data}/plasmid.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+
+def test_all_mixed_contig_end(tmp_dir):
+    """test all where all found overlapping contig ends plus some contigs without end reorientation"""
+    input_fasta: Path = f"{contig_end_data}/mixed.fasta"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
     exec_command(cmd)
 
 

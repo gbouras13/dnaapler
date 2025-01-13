@@ -102,7 +102,7 @@ def all_process_MMseqs2_output_and_reorient(
 
     reoriented_output_file = os.path.join(output, f"{prefix}_reoriented.fasta")
 
-    # Read the FASTA file and extract the IDs
+    # Read the original input FASTA file and extract the IDs
     for record in SeqIO.parse(input, "fasta"):
         contig = record.description
         contigs.append(contig)
@@ -131,12 +131,14 @@ def all_process_MMseqs2_output_and_reorient(
         else:
             rotated = False
 
-            if short_contig in chosen_contig_list:
+            if short_contig in chosen_contig_list:  # then no overlap
                 # length won't be 0
                 # Filter the DataFrame where 'qseqid' matches 'contig'
                 filtered_df = MMseqs2_df[MMseqs2_df["qseqid"] == short_contig]
                 length_of_df = len(filtered_df)
-            elif f"rotated_{short_contig}" in chosen_contig_list:
+            elif (
+                f"rotated_{short_contig}" in chosen_contig_list
+            ):  # then overlap has occured
                 rotated = True
                 filtered_df = MMseqs2_df[
                     MMseqs2_df["qseqid"] == f"rotated_{short_contig}"
@@ -146,7 +148,7 @@ def all_process_MMseqs2_output_and_reorient(
                 # Create a rotated version of the sequence to match the MMSeqs2 input
                 index = len(record.seq) // 2
                 record.seq = rotate_sequence(record.seq, index)
-            else:
+            else:  # if neither are in the chosen contig list, then no hits found -> autocomplete
                 length_of_df = 0
 
             if length_of_df == 0:

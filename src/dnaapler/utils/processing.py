@@ -23,11 +23,6 @@ def choose_highest_mmseqs2_bitscore(MMseqs2_df: pd.DataFrame, gene: str) -> List
 
     chosen_contig_list = []
 
-    def sort_by_order(item_list, order):
-        return sorted(
-            item_list, key=lambda x: order.index(x) if x in order else len(order)
-        )
-
     if gene == "all":
         keywords = ["DNAA", "cog1474", "UniRef90", "phrog"]
     else:
@@ -79,15 +74,11 @@ def choose_highest_mmseqs2_bitscore(MMseqs2_df: pd.DataFrame, gene: str) -> List
                     # Compare the max bitscore
                     # if the rotated is higher
                     if rotated_max_bitscore > original_max_bitscore:
-                        result = f"{qseqid}: rotated (keyword '{keyword}', max bitscore: {rotated_max_bitscore})"
                         chosen_contig_list.append(rotated_id)
                     # usual
                     else:
-                        result = f"{qseqid}: original (keyword '{keyword}', max bitscore: {original_max_bitscore})"
                         chosen_contig_list.append(qseqid)
-                    break
-
-            break  # Stop once a keyword matches
+                    break  # stop if keyword found
 
     return chosen_contig_list
 

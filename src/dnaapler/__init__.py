@@ -28,6 +28,7 @@ from dnaapler.utils.util import (
     end_dnaapler,
     get_version,
     print_citation,
+    remove_file,
     run_autocomplete,
 )
 from dnaapler.utils.validation import (
@@ -1006,6 +1007,9 @@ def all(
         custom_db=custom_db,
         gene=gene,
     )
+
+    # remove the rotated input
+    remove_file(Path(rotated_input))
 
     # end dnaapler
     end_dnaapler(start_time)
