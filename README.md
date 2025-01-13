@@ -32,9 +32,6 @@ conda install -c bioconda dnaapler
 # runs dnaapler all 
 dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
 
-# runs dnaapler chromosome
-dnaapler chromosome -i input_chromosome.fasta -o output_directory_path -p my_bacteria_name -t 8
-
 ```
 
 * If you have a MacOS machine with Apple Silicon (M1/M2/M3/M4), please try
@@ -129,6 +126,8 @@ For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome br
 Additionally, you can also reorient multiple bacterial chromosomes/plasmids/phages at once using the `dnaapler bulk` subcommand.
 
 If your input FASTA is mixed (e.g. has chromosome and plasmids), you can also use `dnaapler all`, with the option to ignore some contigs with the `--ignore` parameter.
+
+**As of v1, in practice, `dnaapler all` is the only command you will likely need, as it contains all the functionality of `bulk`, `chromosome`, `plasmid`, `phage` but with much more flexibility and user-friendliness**
 
 ## Documentation
 
