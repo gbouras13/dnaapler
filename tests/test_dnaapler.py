@@ -31,7 +31,7 @@ from src.dnaapler.utils.validation import (
     check_evalue,
     validate_choice_autocomplete,
     validate_custom_db_fasta,
-    validate_fasta,
+    validate_input,
 )
 
 # import functions
@@ -48,18 +48,26 @@ def tmp_dir(tmpdir_factory):
     return tmpdir_factory.mktemp("tmp")
 
 
-class TestValidateFasta(unittest.TestCase):
-    """Tests of Fasta validation functions"""
+class TestValidateInput(unittest.TestCase):
+    """Tests of input validation functions"""
 
     def test_non_fasta_input(self):
         with self.assertRaises(SystemExit):
             non_fasta_file = os.path.join(test_data, "non_fasta.txt")
-            validate_fasta(non_fasta_file)
+            validate_input(non_fasta_file)
 
     def test_real_fasta_input(self):
-        non_fasta_file = os.path.join(test_data, "nucl_test.fna")
-        validate_fasta(non_fasta_file)
+        fasta_file = os.path.join(test_data, "nucl_test.fna")
+        validate_input(fasta_file)
         # checks the ctx is the same, no error
+
+    def test_circular_gfa_input(self):
+        gfa_file = os.path.join(test_data, "nucl_test_circular.gfa")
+        validate_input(gfa_file)
+
+    def test_linear_gfa_input(self):
+        gfa_file = os.path.join(test_data, "nucl_test_linear.gfa")
+        validate_input(gfa_file)
 
     def test_non_fasta_custom_input(self):
         with self.assertRaises(SystemExit):

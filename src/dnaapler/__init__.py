@@ -38,9 +38,9 @@ from dnaapler.utils.validation import (
     validate_choice_db,
     validate_choice_mode,
     validate_custom_db_fasta,
-    validate_fasta,
-    validate_fasta_all,
-    validate_fasta_bulk,
+    validate_input,
+    validate_input_all,
+    validate_input_bulk,
     validate_ignore_file,
 )
 
@@ -190,7 +190,7 @@ def chromosome(
     )
 
     # validates fasta
-    validate_fasta(input)
+    validate_input(input)
 
     # validate e value
     check_evalue(evalue)
@@ -266,7 +266,7 @@ def archaea(
     )
 
     # validates fasta
-    validate_fasta(input)
+    validate_input(input)
 
     # validate e value
     check_evalue(evalue)
@@ -342,7 +342,7 @@ def plasmid(
     )
 
     # validates fasta
-    validate_fasta(input)
+    validate_input(input)
 
     # validate e value
     check_evalue(evalue)
@@ -418,7 +418,7 @@ def phage(
     )
 
     # validates fasta
-    validate_fasta(input)
+    validate_input(input)
 
     # validate e value
     check_evalue(evalue)
@@ -511,7 +511,7 @@ def custom(
     )
 
     # validates fasta
-    validate_fasta(input)
+    validate_input(input)
 
     # validate e value
     check_evalue(evalue)
@@ -593,7 +593,7 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
     # validates fasta
-    validate_fasta(input)
+    validate_input(input)
 
     # run the mystery workflow
     run_mystery(ctx, input, seed_value, output, prefix)
@@ -634,7 +634,7 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
     # validates fasta
-    validate_fasta(input)
+    validate_input(input)
 
     # run the nearest workflow
     run_nearest(ctx, input, output, prefix)
@@ -675,7 +675,7 @@ def largest(ctx, input, output, threads, prefix, force, **kwargs):
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
     # validates fasta
-    validate_fasta(input)
+    validate_input(input)
 
     # run the nearest workflow
     run_largest(ctx, input, output, prefix)
@@ -761,7 +761,7 @@ def bulk(
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
     # validates fasta
-    validate_fasta_bulk(input)
+    validate_input_bulk(input)
     check_duplicate_headers(input)
 
     # validate e value
@@ -929,7 +929,7 @@ def all(
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
     # validates fasta
-    validate_fasta_all(input)
+    validate_input_all(input)
     check_duplicate_headers(input)
 
     # validate e value

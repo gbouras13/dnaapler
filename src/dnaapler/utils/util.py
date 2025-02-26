@@ -72,7 +72,7 @@ def begin_dnaapler(input, output, threads, gene, params):
     logger.info(f"You are using dnaapler version {get_version()}")
     logger.info("Repository homepage is https://github.com/gbouras13/dnaapler")
     logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
-    logger.info(f"Your input FASTA is {input}")
+    logger.info(f"Your input file is {input}")
     logger.info(f"Your output directory  is {output}")
     logger.info(f"You have specified {threads} threads to use with MMseqs2")
     logger.info(f"You have specified {gene} gene(s) to reorient your sequence")

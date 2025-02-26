@@ -2,10 +2,11 @@ import re
 import shutil
 import subprocess as sp
 import sys
+import warnings
 from pathlib import Path
 
 import click
-from Bio import SeqIO
+from Bio import SeqIO, BiopythonWarning
 from loguru import logger
 
 
@@ -39,83 +40,109 @@ def instantiate_dirs(output_dir: str, force: bool) -> None:
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 
-def validate_fasta(input_fasta: Path) -> None:
+def is_fasta(input_file):
     """
-    Validates  FASTA input - that the input is a FASTA with 1 sequence
+    Check if the file is in FASTA format.
+    """
+    with open(input_file, "r") as handle:
+        first_char = handle.read(1)
+        if first_char != ">":
+            return False
+    with open(input_file, "r") as handle:
+        fasta = SeqIO.parse(handle, "fasta")
+        return any(fasta)
+
+
+def is_gfa(input_file):
+    """
+    Check if the file is in GFA format.
+    """
+    with open(input_file, "r") as handle:
+        first_char = handle.read(1)
+        if first_char not in {"H", "S", "L"}:
+            return False
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", BiopythonWarning)
+            with open(input_file, "r") as handle:
+                gfa = SeqIO.GfaIO.Gfa1Iterator(handle)
+                return any(gfa)
+    except Exception:
+        return False
+
+
+def check_file_format(input_file):
+    """
+    Check if the file is in FASTA or GFA format.
+    """
+    if is_fasta(input_file):
+        logger.info(f"{input_file} is in FASTA format.")
+    elif is_gfa(input_file):
+        logger.info(f"{input_file} is in GFA format.")
+    else:
+        logger.error(
+            f"Error: {input_file} is not in FASTA or GFA format. Please check your input file."
+        )
+
+
+def number_of_sequences(input_file):
+    """
+    Return the number of sequences in a FASTA or GFA file.
+    """
+    if is_fasta(input_file):
+        with open(input_file, "r") as handle:
+            return sum(1 for _ in SeqIO.parse(handle, "fasta"))
+
+    if is_gfa(input_file):
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", BiopythonWarning)
+                with open(input_file, "r") as handle:
+                    return sum(1 for _ in SeqIO.GfaIO.Gfa1Iterator(handle))
+        except Exception:
+            return 0
+
+    return 0
+
+
+def validate_input(input_file: Path) -> None:
+    """
+    Validates input - that the input is a FASTA or GFA with 1 sequence
     """
     logger.info(
-        f"Checking that the input file {input_fasta} is in FASTA format and has only 1 entry."
+        f"Checking that the input file {input_file} is in FASTA or GFA format and has only 1 entry."
     )
-    # to get extension
-    with open(input_fasta, "r") as handle:
-        fasta = SeqIO.parse(handle, "fasta")
-        if any(fasta):
-            logger.info(f"{input_fasta} file checked.")
-        else:
-            logger.error(
-                f"Error: {input_fasta} file is not in the FASTA format. Please check your input file"
-            )
-
-    with open(input_fasta, "r") as handle:
-        # Check the number of records
-        if len(list(SeqIO.parse(handle, "fasta"))) == 1:
-            logger.info(f"{input_fasta} has only one entry.")
-        else:
-            logger.error(
-                f"{input_fasta} has more than one entry. Please check your input FASTA file!"
-            )
+    check_file_format(input_file)
+    if number_of_sequences(input_file) == 1:
+        logger.info(f"{input_file} has only one entry.")
+    else:
+        logger.error(
+            f"{input_file} has more than one entry. Please check your input FASTA file!"
+        )
 
 
-def validate_fasta_bulk(input_fasta: Path) -> None:
+def validate_input_bulk(input_file: Path) -> None:
     """
-    Validates  FASTA input - that the input is a FASTA with at least 1 sequence
+    Validates input - that the input is a FASTA or GFA with at least 1 sequence
     """
     logger.info(
-        f"Checking that the input file {input_fasta} is in FASTA format and has at least 1 entry."
+        f"Checking that the input file {input_file} is in FASTA or GFA format and has at least 1 entry."
     )
-    # to get extension
-    with open(input_fasta, "r") as handle:
-        fasta = SeqIO.parse(handle, "fasta")
-        if any(fasta):
-            logger.info(f"{input_fasta} file checked.")
-        else:
-            logger.error(
-                f"Error: {input_fasta} file is not in the FASTA format. Please check your input file"
-            )
-
-    # with open(input_fasta, "r") as handle:
-    #     # Check the number of records
-    #     if len(list(SeqIO.parse(handle, "fasta"))) == 1:
-    #         logger.error(
-    #             f"{input_fasta} has only one entry, but more than one was expected. Please check your input FASTA file!"
-    #         )
-    #     else:
-    #         logger.info(f"{input_fasta} has more than one entry.")
+    check_file_format(input_file)
 
 
-def validate_fasta_all(input_fasta: Path) -> None:
+def validate_input_all(input_file: Path) -> None:
     """
-    Validates  FASTA input - that the input is a FASTA with >= 1 sequence
+    Validates input - that the input is a FASTA or GFA with >= 1 sequence
     """
     logger.info(
-        f"Checking that the input file {input_fasta} is in FASTA format and has at least 1 entry."
+        f"Checking that the input file {input_file} is in FASTA or GFA format and has at least 1 entry."
     )
-    # to get extension
-    with open(input_fasta, "r") as handle:
-        fasta = SeqIO.parse(handle, "fasta")
-        if any(fasta):
-            logger.info(f"{input_fasta} file checked.")
-        else:
-            logger.error(
-                f"Error: {input_fasta} file is not in the FASTA format. Please check your input file"
-            )
-
-    with open(input_fasta, "r") as handle:
-        # Check the number of records
-        if len(list(SeqIO.parse(handle, "fasta"))) == 1:
-            logger.info(f"{input_fasta} has only one entry.")
-        else:
-            logger.info(f"{input_fasta} has more than one entry.")
+    check_file_format(input_file)
+    if number_of_sequences(input_file) == 1:
+        logger.info(f"{input_file} has only one entry.")
+    else:
+        logger.info(f"{input_file} has more than one entry.")
 
 
 def validate_custom_db_fasta(custom_fasta: Path) -> None:
@@ -125,16 +152,12 @@ def validate_custom_db_fasta(custom_fasta: Path) -> None:
     logger.info(
         f"Checking that the custom database file {custom_fasta} is in FASTA format with amino acid sequences."
     )
+    if not is_fasta(custom_fasta):
+        logger.error(
+            f"Error: {custom_fasta} file is not in the FASTA format. Please check your input file"
+        )
 
-    with open(custom_fasta, "r") as handle:
-        # checks if fasta
-        fasta = SeqIO.parse(handle, "fasta")
-        if any(fasta) is False:
-            logger.error(
-                f"Error: {custom_fasta} file is not in the FASTA format. Please check your input file"
-            )
-
-        # checks amino acids
+    # checks amino acids
     with open(custom_fasta, "r") as handle:
         for record in SeqIO.parse(handle, "fasta"):
             if bool(is_protein_sequence(str(record.seq))) is False:
