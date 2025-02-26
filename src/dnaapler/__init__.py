@@ -644,7 +644,7 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
 
 
 """
-nearest command
+largest command
 """
 
 
@@ -669,7 +669,7 @@ def largest(ctx, input, output, threads, prefix, force, **kwargs):
     }
 
     # defines gene
-    gene = "nearest"
+    gene = "largest"
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
