@@ -1020,9 +1020,12 @@ def all(
     # remove the rotated input
     remove_file(Path(rotated_input))
 
+    # If using GFA format, create the output GFA and remove the output FASTA (because non-circular
+    # sequences will be missing from the FASTA).
     if gfa:
         remove_file(Path(input))
         save_reoriented_gfa(gfa_input, output_fasta)
+        remove_file(Path(output_fasta))
 
     # end dnaapler
     end_dnaapler(start_time)

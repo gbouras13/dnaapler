@@ -100,14 +100,34 @@ def save_reoriented_gfa(original_gfa, reoriented_fasta):
     assert reoriented_fasta.endswith("_reoriented.fasta")
     reoriented_gfa = reoriented_fasta[:-17] + "_reoriented.gfa"
     logger.info(f"saving reoriented sequences to GFA format in {reoriented_gfa}")
-    reoriented_seqs = {record.id: str(record.seq) for record in SeqIO.parse(reoriented_fasta, "fasta")}
+    reoriented_seqs, reoriented_genes = load_reoriented_fasta(reoriented_fasta)
     with open(original_gfa, "rt") as in_gfa, open(reoriented_gfa, "wt") as out_gfa:
         for line in in_gfa:
             parts = line.rstrip("\n").split("\t")
             if parts[0] == "S" and parts[1] in reoriented_seqs:
                 parts[2] = reoriented_seqs[parts[1]]
-                line = '\t'.join(parts) + '\n'
-            elif parts[0] == 'L' and parts[1] == parts[3] and parts[1] in reoriented_seqs:
-                parts[5] = '0M'
-                line = '\t'.join(parts) + '\n'
+                if parts[1] in reoriented_genes:
+                    parts.append(f"RT:z:{reoriented_genes[parts[1]]}")
+                line = "\t".join(parts) + "\n"
+            elif (
+                parts[0] == "L" and parts[1] == parts[3] and parts[1] in reoriented_seqs
+            ):
+                parts[5] = "0M"
+                line = "\t".join(parts) + "\n"
             out_gfa.write(line)
+
+
+def load_reoriented_fasta(reoriented_fasta):
+    """
+    Reads the Dnaapler reoriented FASTA file and returns two dictionaries:
+    1. names -> sequences
+    2. names -> rotated genes (if any)
+    """
+    seq_dict = {}
+    gene_dict = {}
+    for record in SeqIO.parse(reoriented_fasta, "fasta"):
+        seq_dict[record.id] = str(record.seq)
+        match = re.search(r"rotated_gene=([^ \t]+)", record.description)
+        if match:
+            gene_dict[record.id] = match.group(1)
+    return seq_dict, gene_dict
