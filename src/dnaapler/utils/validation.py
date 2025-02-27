@@ -8,7 +8,7 @@ import click
 from Bio import SeqIO
 from loguru import logger
 
-from dnaapler.utils.gfa import gfa_sequence_count
+from dnaapler.utils.gfa import is_gfa, gfa_sequence_count
 
 
 def instantiate_dirs(output_dir: str, force: bool) -> None:
@@ -52,17 +52,6 @@ def is_fasta(input_file):
     with open(input_file, "r") as handle:
         fasta = SeqIO.parse(handle, "fasta")
         return any(fasta)
-
-
-def is_gfa(input_file):
-    """
-    Check if the file is in GFA format.
-    """
-    with open(input_file, "r") as handle:
-        first_char = handle.read(1)
-        if first_char not in {"H", "S", "L"}:
-            return False
-    return gfa_sequence_count(input_file) > 0
 
 
 def check_file_format(input_file):

@@ -15,8 +15,8 @@ from Bio import SeqIO
 from loguru import logger
 
 from dnaapler.utils.cds_methods import run_largest, run_mystery, run_nearest
-from dnaapler.utils.gfa import gfa_sequence_names
-from dnaapler.utils.validation import is_fasta, is_gfa
+from dnaapler.utils.gfa import is_gfa, gfa_sequence_names
+from dnaapler.utils.validation import is_fasta
 
 
 class OrderedCommands(click.Group):

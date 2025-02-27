@@ -3,10 +3,59 @@ Contains functions related to GFA processing.
 Uses some code from https://github.com/rrwick/Circular-Contig-Extractor
 """
 
+import os
 import re
+from pathlib import Path
 
 from Bio import SeqIO
 from loguru import logger
+
+
+def is_gfa(input_file):
+    """
+    Check if the file is in GFA format.
+    """
+    with open(input_file, "r") as handle:
+        first_char = handle.read(1)
+        if first_char not in {"H", "S", "L"}:
+            return False
+    return gfa_sequence_count(input_file) > 0
+
+
+def prep_gfa(input_file, output_dir):
+    """
+    If the input file given to Dnaapler is a GFA file, this function is run early in Dnaapler's
+    pipeline. It will save a temporary FASTA file which contains the circular sequences from the
+    GFA.
+
+    Returns:
+    * bool: whether or not the input was GFA format
+    * str: FASTA input file to reorient (if the input was GFA, this is the temp FASTA file, but if
+    *      the input was FASTA this is just the same FASTA)
+    * str: GFA input file (if the input was FASTA this is None)
+    """
+    if is_gfa(input_file):
+        temp_input_fasta = os.path.join(output_dir, "input.fasta")
+        save_circular_sequences_as_fasta(input_file, temp_input_fasta)
+        return True, temp_input_fasta, input_file
+    else:
+        return False, input_file, None
+
+
+def finalise_gfa(temp_input_fasta, gfa_input_file, output_fasta):
+    """
+    If the input file given to Dnaapler is a GFA file, this function is run at the end of Dnaapler's
+    pipeline. It will create the output GFA and remove the output FASTA (because non-circular
+    sequences will be missing from the FASTA).
+    """
+    remove_file(Path(temp_input_fasta))
+    save_reoriented_gfa(gfa_input_file, output_fasta)
+    remove_file(Path(output_fasta))
+
+
+def remove_file(file_path: Path):
+    if file_path.exists():
+        file_path.unlink()
 
 
 def save_circular_sequences_as_fasta(gfa_file, fasta_file):

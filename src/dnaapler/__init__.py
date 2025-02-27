@@ -34,7 +34,6 @@ from dnaapler.utils.util import (
 from dnaapler.utils.validation import (
     check_evalue,
     instantiate_dirs,
-    is_gfa,
     validate_choice_autocomplete,
     validate_choice_db,
     validate_choice_mode,
@@ -45,8 +44,8 @@ from dnaapler.utils.validation import (
     validate_ignore_file,
 )
 from dnaapler.utils.gfa import (
-    save_circular_sequences_as_fasta,
-    save_reoriented_gfa,
+    prep_gfa,
+    finalise_gfa,
 )
 
 """
@@ -67,7 +66,7 @@ def common_options(func):
         click.option(
             "-i",
             "--input",
-            help="Path to input file in FASTA format",
+            help="Path to input file in FASTA or GFA format",
             type=click.Path(),
             required=True,
         ),
@@ -196,6 +195,7 @@ def chromosome(
 
     # validates fasta or gfa
     validate_input(input)
+    input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
     # validate e value
     check_evalue(evalue)
@@ -209,6 +209,11 @@ def chromosome(
     run_autocomplete(
         MMseqs2_success, autocomplete, ctx, input, seed_value, output, prefix
     )
+
+    if input_is_gfa:
+        finalise_gfa(
+            input, original_gfa, os.path.join(output, f"{prefix}_reoriented.fasta")
+        )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -272,6 +277,7 @@ def archaea(
 
     # validates fasta or gfa
     validate_input(input)
+    input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
     # validate e value
     check_evalue(evalue)
@@ -285,6 +291,11 @@ def archaea(
     run_autocomplete(
         MMseqs2_success, autocomplete, ctx, input, seed_value, output, prefix
     )
+
+    if input_is_gfa:
+        finalise_gfa(
+            input, original_gfa, os.path.join(output, f"{prefix}_reoriented.fasta")
+        )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -348,6 +359,7 @@ def plasmid(
 
     # validates fasta or gfa
     validate_input(input)
+    input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
     # validate e value
     check_evalue(evalue)
@@ -361,6 +373,11 @@ def plasmid(
     run_autocomplete(
         MMseqs2_success, autocomplete, ctx, input, seed_value, output, prefix
     )
+
+    if input_is_gfa:
+        finalise_gfa(
+            input, original_gfa, os.path.join(output, f"{prefix}_reoriented.fasta")
+        )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -424,6 +441,7 @@ def phage(
 
     # validates fasta or gfa
     validate_input(input)
+    input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
     # validate e value
     check_evalue(evalue)
@@ -437,6 +455,11 @@ def phage(
     run_autocomplete(
         MMseqs2_success, autocomplete, ctx, input, seed_value, output, prefix
     )
+
+    if input_is_gfa:
+        finalise_gfa(
+            input, original_gfa, os.path.join(output, f"{prefix}_reoriented.fasta")
+        )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -517,6 +540,7 @@ def custom(
 
     # validates fasta or gfa
     validate_input(input)
+    input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
     # validate e value
     check_evalue(evalue)
@@ -553,6 +577,11 @@ def custom(
     run_autocomplete(
         MMseqs2_success, autocomplete, ctx, input, seed_value, output, prefix
     )
+
+    if input_is_gfa:
+        finalise_gfa(
+            input, original_gfa, os.path.join(output, f"{prefix}_reoriented.fasta")
+        )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -640,9 +669,15 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
 
     # validates fasta or gfa
     validate_input(input)
+    input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
     # run the nearest workflow
     run_nearest(ctx, input, output, prefix)
+
+    if input_is_gfa:
+        finalise_gfa(
+            input, original_gfa, os.path.join(output, f"{prefix}_reoriented.fasta")
+        )
 
     # finish dnaapler
     end_dnaapler(start_time)
@@ -681,9 +716,15 @@ def largest(ctx, input, output, threads, prefix, force, **kwargs):
 
     # validates fasta or gfa
     validate_input(input)
+    input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
     # run the nearest workflow
     run_largest(ctx, input, output, prefix)
+
+    if input_is_gfa:
+        finalise_gfa(
+            input, original_gfa, os.path.join(output, f"{prefix}_reoriented.fasta")
+        )
 
     # finish dnaapler
     end_dnaapler(start_time)
@@ -768,6 +809,7 @@ def bulk(
     # validates fasta or gfa
     validate_input_bulk(input)
     check_duplicate_headers(input)
+    input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
     # validate e value
     check_evalue(evalue)
@@ -813,6 +855,11 @@ def bulk(
     # rerorients MMseqs2
     MMseqs2_file = os.path.join(output, f"{prefix}_MMseqs2_output.txt")
     bulk_process_MMseqs2_output_and_reorient(input, MMseqs2_file, output, prefix)
+
+    if input_is_gfa:
+        finalise_gfa(
+            input, original_gfa, os.path.join(output, f"{prefix}_reoriented.fasta")
+        )
 
     # end dnaapler
     end_dnaapler(start_time)
@@ -936,10 +983,7 @@ def all(
     # validates fasta or gfa
     validate_input_all(input)
     check_duplicate_headers(input)
-    gfa = is_gfa(input)
-    if gfa:
-        gfa_input, input = input, os.path.join(output, "input.fasta")
-        save_circular_sequences_as_fasta(gfa_input, input)
+    input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
     # validate e value
     check_evalue(evalue)
@@ -1005,7 +1049,7 @@ def all(
                 ignore_dict = {x.rstrip().split()[0] for x in f}
             ignore_list = list(ignore_dict)
 
-    output_fasta = all_process_MMseqs2_output_and_reorient(
+    all_process_MMseqs2_output_and_reorient(
         input,
         MMseqs2_file,
         output,
@@ -1020,12 +1064,10 @@ def all(
     # remove the rotated input
     remove_file(Path(rotated_input))
 
-    # If using GFA format, create the output GFA and remove the output FASTA (because non-circular
-    # sequences will be missing from the FASTA).
-    if gfa:
-        remove_file(Path(input))
-        save_reoriented_gfa(gfa_input, output_fasta)
-        remove_file(Path(output_fasta))
+    if input_is_gfa:
+        finalise_gfa(
+            input, original_gfa, os.path.join(output, f"{prefix}_reoriented.fasta")
+        )
 
     # end dnaapler
     end_dnaapler(start_time)
