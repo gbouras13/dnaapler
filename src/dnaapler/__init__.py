@@ -30,8 +30,6 @@ from dnaapler.utils.util import (
     print_citation,
     remove_file,
     run_autocomplete,
-    save_circular_sequences_as_fasta,
-    save_reoriented_gfa,
 )
 from dnaapler.utils.validation import (
     check_evalue,
@@ -45,6 +43,10 @@ from dnaapler.utils.validation import (
     validate_input_all,
     validate_input_bulk,
     validate_ignore_file,
+)
+from dnaapler.utils.gfa import (
+    save_circular_sequences_as_fasta,
+    save_reoriented_gfa,
 )
 
 """

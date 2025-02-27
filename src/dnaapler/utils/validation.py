@@ -2,12 +2,13 @@ import re
 import shutil
 import subprocess as sp
 import sys
-import warnings
 from pathlib import Path
 
 import click
-from Bio import SeqIO, BiopythonWarning
+from Bio import SeqIO
 from loguru import logger
+
+from dnaapler.utils.gfa import gfa_sequence_count
 
 
 def instantiate_dirs(output_dir: str, force: bool) -> None:
@@ -61,14 +62,7 @@ def is_gfa(input_file):
         first_char = handle.read(1)
         if first_char not in {"H", "S", "L"}:
             return False
-    try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", BiopythonWarning)
-            with open(input_file, "r") as handle:
-                gfa = SeqIO.GfaIO.Gfa1Iterator(handle)
-                return any(gfa)
-    except Exception:
-        return False
+    return gfa_sequence_count(input_file) > 0
 
 
 def check_file_format(input_file):
@@ -92,16 +86,8 @@ def number_of_sequences(input_file):
     if is_fasta(input_file):
         with open(input_file, "r") as handle:
             return sum(1 for _ in SeqIO.parse(handle, "fasta"))
-
     if is_gfa(input_file):
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore", BiopythonWarning)
-                with open(input_file, "r") as handle:
-                    return sum(1 for _ in SeqIO.GfaIO.Gfa1Iterator(handle))
-        except Exception:
-            return 0
-
+        return gfa_sequence_count(input_file)
     return 0
 
 
