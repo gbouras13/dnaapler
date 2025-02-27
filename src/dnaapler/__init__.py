@@ -30,10 +30,13 @@ from dnaapler.utils.util import (
     print_citation,
     remove_file,
     run_autocomplete,
+    save_circular_sequences_as_fasta,
+    save_reoriented_gfa,
 )
 from dnaapler.utils.validation import (
     check_evalue,
     instantiate_dirs,
+    is_gfa,
     validate_choice_autocomplete,
     validate_choice_db,
     validate_choice_mode,
@@ -189,7 +192,7 @@ def chromosome(
         f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
-    # validates fasta
+    # validates fasta or gfa
     validate_input(input)
 
     # validate e value
@@ -265,7 +268,7 @@ def archaea(
         f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
-    # validates fasta
+    # validates fasta or gfa
     validate_input(input)
 
     # validate e value
@@ -341,7 +344,7 @@ def plasmid(
         f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
-    # validates fasta
+    # validates fasta or gfa
     validate_input(input)
 
     # validate e value
@@ -417,7 +420,7 @@ def phage(
         f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
-    # validates fasta
+    # validates fasta or gfa
     validate_input(input)
 
     # validate e value
@@ -510,7 +513,7 @@ def custom(
         f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
-    # validates fasta
+    # validates fasta or gfa
     validate_input(input)
 
     # validate e value
@@ -592,7 +595,7 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
-    # validates fasta
+    # validates fasta or gfa
     validate_input(input)
 
     # run the mystery workflow
@@ -633,7 +636,7 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
-    # validates fasta
+    # validates fasta or gfa
     validate_input(input)
 
     # run the nearest workflow
@@ -674,7 +677,7 @@ def largest(ctx, input, output, threads, prefix, force, **kwargs):
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
-    # validates fasta
+    # validates fasta or gfa
     validate_input(input)
 
     # run the nearest workflow
@@ -760,7 +763,7 @@ def bulk(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
-    # validates fasta
+    # validates fasta or gfa
     validate_input_bulk(input)
     check_duplicate_headers(input)
 
@@ -928,9 +931,13 @@ def all(
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
-    # validates fasta
+    # validates fasta or gfa
     validate_input_all(input)
     check_duplicate_headers(input)
+    gfa = is_gfa(input)
+    if gfa:
+        gfa_input, input = input, os.path.join(output, "input.fasta")
+        save_circular_sequences_as_fasta(gfa_input, input)
 
     # validate e value
     check_evalue(evalue)
@@ -996,7 +1003,7 @@ def all(
                 ignore_dict = {x.rstrip().split()[0] for x in f}
             ignore_list = list(ignore_dict)
 
-    all_process_MMseqs2_output_and_reorient(
+    output_fasta = all_process_MMseqs2_output_and_reorient(
         input,
         MMseqs2_file,
         output,
@@ -1010,6 +1017,10 @@ def all(
 
     # remove the rotated input
     remove_file(Path(rotated_input))
+
+    if gfa:
+        remove_file(Path(input))
+        save_reoriented_gfa(gfa_input, output_fasta)
 
     # end dnaapler
     end_dnaapler(start_time)

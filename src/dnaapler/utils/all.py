@@ -28,7 +28,7 @@ def all_process_MMseqs2_output_and_reorient(
     seed_value: int,
     custom_db: str,
     gene: str,
-) -> None:
+) -> str:
     """Processes the MMseqs2 output, reorients and saves all contigs into os.path.join(output, f"{prefix}_reoriented.fasta")
 
     :param input: input file
@@ -37,7 +37,7 @@ def all_process_MMseqs2_output_and_reorient(
     :param prefix: prefix
     :param ignore_list: list containing contigs (short_contig) to ignore
     :param gene: list of genes to consider
-    :return:
+    :return: the path of the reoriented FASTA file
     """
 
     # define colnames - keep the same colnames as BLAST for ease
@@ -369,6 +369,8 @@ def all_process_MMseqs2_output_and_reorient(
         sep="\t",
         index=False,
     )
+
+    return reoriented_output_file
 
 
 def run_autocomplete_record(
