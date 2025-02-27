@@ -26,7 +26,7 @@ from src.dnaapler.utils.processing import (
     reorient_sequence,
     reorient_sequence_random,
 )
-from src.dnaapler.utils.util import begin_dnaapler, end_dnaapler
+from src.dnaapler.utils.util import begin_dnaapler, end_dnaapler, check_duplicate_headers
 from src.dnaapler.utils.validation import (
     check_evalue,
     validate_choice_autocomplete,
@@ -78,6 +78,24 @@ class TestValidateInput(unittest.TestCase):
         with self.assertRaises(SystemExit):
             nucleotide_fasta_file = os.path.join(test_data, "nucl_test.fna")
             validate_custom_db_fasta(nucleotide_fasta_file)
+
+    def test_no_duplicate_fasta(self):
+        fasta_file = os.path.join(test_data, "nucl_test.fna")
+        check_duplicate_headers(fasta_file)
+
+    def test_duplicate_fasta(self):
+        with self.assertRaises(SystemExit):
+            fasta_file = os.path.join(test_data, "duplicate_names.fna")
+            check_duplicate_headers(fasta_file)
+
+    def test_no_duplicate_gfa(self):
+        gfa_file = os.path.join(test_data, "nucl_test_circular.gfa")
+        check_duplicate_headers(gfa_file)
+
+    def test_duplicate_gfa(self):
+        with self.assertRaises(SystemExit):
+            gfa_file = os.path.join(test_data, "duplicate_names.gfa")
+            check_duplicate_headers(gfa_file)
 
 
 class TestReorientSequence(unittest.TestCase):
