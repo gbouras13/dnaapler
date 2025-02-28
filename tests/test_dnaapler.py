@@ -26,7 +26,11 @@ from src.dnaapler.utils.processing import (
     reorient_sequence,
     reorient_sequence_random,
 )
-from src.dnaapler.utils.util import begin_dnaapler, end_dnaapler, check_duplicate_headers
+from src.dnaapler.utils.util import (
+    begin_dnaapler,
+    end_dnaapler,
+    check_duplicate_headers,
+)
 from src.dnaapler.utils.validation import (
     check_evalue,
     validate_choice_autocomplete,
