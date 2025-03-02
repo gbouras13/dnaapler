@@ -8,7 +8,7 @@ import click
 from Bio import SeqIO
 from loguru import logger
 
-from dnaapler.utils.gfa import is_gfa, gfa_sequence_count
+from dnaapler.utils.gfa import gfa_sequence_count, is_gfa
 
 
 def instantiate_dirs(output_dir: str, force: bool) -> None:

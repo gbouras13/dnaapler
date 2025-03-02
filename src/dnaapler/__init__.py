@@ -21,6 +21,7 @@ from dnaapler.utils.cds_methods import (
 )
 from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
+from dnaapler.utils.gfa import finalise_gfa, prep_gfa
 from dnaapler.utils.processing import rotate_input
 from dnaapler.utils.util import (
     begin_dnaapler,
@@ -38,14 +39,10 @@ from dnaapler.utils.validation import (
     validate_choice_db,
     validate_choice_mode,
     validate_custom_db_fasta,
+    validate_ignore_file,
     validate_input,
     validate_input_all,
     validate_input_bulk,
-    validate_ignore_file,
-)
-from dnaapler.utils.gfa import (
-    prep_gfa,
-    finalise_gfa,
 )
 
 """

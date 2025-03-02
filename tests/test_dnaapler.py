@@ -28,8 +28,8 @@ from src.dnaapler.utils.processing import (
 )
 from src.dnaapler.utils.util import (
     begin_dnaapler,
-    end_dnaapler,
     check_duplicate_headers,
+    end_dnaapler,
 )
 from src.dnaapler.utils.validation import (
     check_evalue,
