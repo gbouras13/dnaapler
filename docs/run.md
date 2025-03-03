@@ -54,7 +54,8 @@ Usage: dnaapler all [OPTIONS]
 Options:
   -h, --help               Show this message and exit.
   -V, --version            Show the version and exit.
-  -i, --input PATH         Path to input file in FASTA format  [required]
+  -i, --input PATH         Path to input file in FASTA or GFA format
+                           [required]
   -o, --output PATH        Output directory   [default: output.dnaapler]
   -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
@@ -86,7 +87,8 @@ Usage: dnaapler chromosome [OPTIONS]
 Options:
   -h, --help               Show this message and exit.
   -V, --version            Show the version and exit.
-  -i, --input PATH         Path to input file in FASTA format  [required]
+  -i, --input PATH         Path to input file in FASTA or GFA format
+                           [required]
   -o, --output PATH        Output directory   [default: output.dnaapler]
   -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
@@ -115,7 +117,8 @@ Usage: dnaapler phage [OPTIONS]
 Options:
   -h, --help               Show this message and exit.
   -V, --version            Show the version and exit.
-  -i, --input PATH         Path to input file in FASTA format  [required]
+  -i, --input PATH         Path to input file in FASTA or GFA format
+                           [required]
   -o, --output PATH        Output directory   [default: output.dnaapler]
   -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
@@ -144,7 +147,8 @@ Usage: dnaapler plasmid [OPTIONS]
 Options:
   -h, --help               Show this message and exit.
   -V, --version            Show the version and exit.
-  -i, --input PATH         Path to input file in FASTA format  [required]
+  -i, --input PATH         Path to input file in FASTA or GFA format
+                           [required]
   -o, --output PATH        Output directory   [default: output.dnaapler]
   -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
@@ -174,7 +178,8 @@ Usage: dnaapler archaea [OPTIONS]
 Options:
   -h, --help               Show this message and exit.
   -V, --version            Show the version and exit.
-  -i, --input PATH         Path to input file in FASTA format  [required]
+  -i, --input PATH         Path to input file in FASTA or GFA format
+                           [required]
   -o, --output PATH        Output directory   [default: output.dnaapler]
   -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
@@ -204,7 +209,8 @@ Usage: dnaapler custom [OPTIONS]
 Options:
   -h, --help               Show this message and exit.
   -V, --version            Show the version and exit.
-  -i, --input PATH         Path to input file in FASTA format  [required]
+  -i, --input PATH         Path to input file in FASTA or GFA format
+                           [required]
   -o, --output PATH        Output directory   [default: output.dnaapler]
   -t, --threads INTEGER    Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
@@ -239,7 +245,8 @@ Usage: dnaapler mystery [OPTIONS]
 Options:
   -h, --help             Show this message and exit.
   -V, --version          Show the version and exit.
-  -i, --input PATH       Path to input file in FASTA format  [required]
+  -i, --input PATH       Path to input file in FASTA or GFA format
+                         [required]
   -o, --output PATH      Output directory   [default: output.dnaapler]
   -t, --threads INTEGER  Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT      Prefix for output files  [default: dnaapler]
@@ -265,7 +272,8 @@ Usage: dnaapler nearest [OPTIONS]
 Options:
   -h, --help             Show this message and exit.
   -V, --version          Show the version and exit.
-  -i, --input PATH       Path to input file in FASTA format  [required]
+  -i, --input PATH       Path to input file in FASTA or GFA format
+                         [required]
   -o, --output PATH      Output directory   [default: output.dnaapler]
   -t, --threads INTEGER  Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT      Prefix for output files  [default: dnaapler]
@@ -283,14 +291,15 @@ dnaapler largest -i input.fasta -o output_directory_path -t 8
 ```
 
 ```
-Usage: dnaapler nearest [OPTIONS]
+Usage: dnaapler largest [OPTIONS]
 
   Reorients your genome the begin with the largest CDS as called by pyrodigal
 
 Options:
   -h, --help             Show this message and exit.
   -V, --version          Show the version and exit.
-  -i, --input PATH       Path to input file in FASTA format  [required]
+  -i, --input PATH       Path to input file in FASTA or GFA format
+                         [required]
   -o, --output PATH      Output directory   [default: output.dnaapler]
   -t, --threads INTEGER  Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT      Prefix for output files  [default: dnaapler]
@@ -319,7 +328,8 @@ Usage: dnaapler bulk [OPTIONS]
 Options:
   -h, --help             Show this message and exit.
   -V, --version          Show the version and exit.
-  -i, --input PATH       Path to input file in FASTA format  [required]
+  -i, --input PATH       Path to input file in FASTA or GFA format
+                         [required]
   -o, --output PATH      Output directory   [default: output.dnaapler]
   -t, --threads INTEGER  Number of threads to use with BLAST  [default: 1]
   -p, --prefix TEXT      Prefix for output files  [default: dnaapler]
