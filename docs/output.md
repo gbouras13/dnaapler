@@ -4,7 +4,7 @@
 
 dnaapler creates a number of output files. For all subcommands that are not `dnaapler bulk`, inside the output directory you will find:
 
-* A `{prefix}_reoriented.fasta` containing the reoriented genome.
+* A `{prefix}_reoriented.fasta` containing the reoriented genome. If the input file was in GFA format, this will instead be `{prefix}_reoriented.gfa`.
 
 * A `{prefix}_blast_output.txt` if a BLAST based method is used. This file will contain the raw blastx results in BLAST output format 6.
 

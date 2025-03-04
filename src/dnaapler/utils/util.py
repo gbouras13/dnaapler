@@ -15,6 +15,8 @@ from Bio import SeqIO
 from loguru import logger
 
 from dnaapler.utils.cds_methods import run_largest, run_mystery, run_nearest
+from dnaapler.utils.gfa import gfa_sequence_names, is_gfa
+from dnaapler.utils.validation import is_fasta
 
 
 class OrderedCommands(click.Group):
@@ -72,7 +74,7 @@ def begin_dnaapler(input, output, threads, gene, params):
     logger.info(f"You are using dnaapler version {get_version()}")
     logger.info("Repository homepage is https://github.com/gbouras13/dnaapler")
     logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
-    logger.info(f"Your input FASTA is {input}")
+    logger.info(f"Your input file is {input}")
     logger.info(f"Your output directory  is {output}")
     logger.info(f"You have specified {threads} threads to use with MMseqs2")
     logger.info(f"You have specified {gene} gene(s) to reorient your sequence")
@@ -213,23 +215,30 @@ for all and bulk
 """
 
 
-def check_duplicate_headers(fasta_file: Path) -> None:
+def check_duplicate_headers(input_file: Path) -> None:
     """
-    checks if there are duplicated in the FASTA header
+    Checks if there are duplicate headers in the input file (FASTA or GFA).
     https://github.com/gbouras13/pharokka/issues/293
     """
     header_set = set()
 
-    # Iterate through the FASTA file and check for duplicate headers
-    for record in SeqIO.parse(fasta_file, "fasta"):
-        header = record.description
-        if header in header_set:
-            logger.error(
-                f"Duplicate FASTA header {header} found in the input file {fasta_file}."
-            )  # errors if duplicate header found
-        else:
-            header_set.add(header)
-    # if it finished it will be fine
+    if is_fasta(input_file):
+        for record in SeqIO.parse(input_file, "fasta"):
+            header = record.description
+            if header in header_set:
+                logger.error(
+                    f"Duplicate FASTA header {header} found in the input file {input_file}."
+                )
+            else:
+                header_set.add(header)
+    elif is_gfa(input_file):
+        for name in gfa_sequence_names(input_file):
+            if name in header_set:
+                logger.error(
+                    f"Duplicate GFA name {name} found in the input file {input_file}."
+                )
+            else:
+                header_set.add(name)
 
 
 def remove_directory(dir_path: Path) -> None:

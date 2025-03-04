@@ -247,6 +247,24 @@ def test_all_dnaa_repa(tmp_dir):
     exec_command(cmd)
 
 
+def test_gfa_all(tmp_dir):
+    """test all with a GFA input - seq 3 contains overlap and seq 5 in non-circular"""
+    input_fasta: Path = f"{overall_test_data}/all_test.gfa"
+    cmd = f"dnaapler all  -i {input_fasta} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+    output_gfa_lines = open(f"{tmp_dir}/dnaapler_reoriented.gfa").read().splitlines()
+    seq_1 = output_gfa_lines[1].split("\t")[2]
+    seq_2 = output_gfa_lines[4].split("\t")[2]
+    seq_3 = output_gfa_lines[7].split("\t")[2]
+    seq_4 = output_gfa_lines[10].split("\t")[2]
+    seq_5 = output_gfa_lines[13].split("\t")[2]
+    assert seq_1.startswith("GTGTCACTTT") and len(seq_1) == 398227
+    assert seq_2.startswith("GTGACTGATC") and len(seq_2) == 186230
+    assert seq_3.startswith("ATGATCGTAG") and len(seq_3) == 1240
+    assert seq_4.startswith("ATGTCAGAAG") and len(seq_4) == 2088
+    assert seq_5.startswith("GTTCTAGCAT") and len(seq_5) == 1000
+
+
 """
 this one is for hybracter
 """
@@ -465,8 +483,25 @@ class TestExits(unittest.TestCase):
             cmd = f"dnaapler bulk -i {input_fasta} -o {outdir} -t 1 -f  "
             exec_command(cmd)
 
+    def test_gfa_no_circular(self):
+        """test all with a GFA input that contains no circular sequences"""
+        with self.assertRaises(RuntimeError):
+            input_gfa: Path = f"{overall_test_data}/no_circular.gfa"
+            outdir: Path = f"{overall_test_data}/all_out"
+            cmd = f"dnaapler all -i {input_gfa} -o {outdir} -t 1 -f  "
+            exec_command(cmd)
+
+    def test_gfa_inexact_overlap(self):
+        """test all with a GFA input that contains an inexact overlap"""
+        with self.assertRaises(RuntimeError):
+            input_gfa: Path = f"{overall_test_data}/inexact_overlap.gfa"
+            outdir: Path = f"{overall_test_data}/all_out"
+            cmd = f"dnaapler all -i {input_gfa} -o {outdir} -t 1 -f  "
+            exec_command(cmd)
+
 
 remove_directory(f"{overall_test_data}/phage_out")
 remove_directory(f"{overall_test_data}/chrom_out")
 remove_directory(f"{overall_test_data}/bulk_out")
 remove_directory(f"{overall_test_data}/plas_out")
+remove_directory(f"{overall_test_data}/all_out")
