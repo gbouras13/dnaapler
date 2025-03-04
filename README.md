@@ -12,7 +12,6 @@
 [![PyPI version](https://badge.fury.io/py/dnaapler.svg)](https://badge.fury.io/py/dnaapler)
 [![Downloads](https://static.pepy.tech/badge/dnaapler)](https://pepy.tech/project/dnaapler)
 
-
 # dnaapler
 
 Dnaapler is a simple tool that reorients complete circular microbial genomes.
@@ -32,9 +31,11 @@ conda install -c bioconda dnaapler
 # runs dnaapler all 
 dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
 
+# runs dnaapler all with a gfa file from e.g. Flye, Unicycler or Autocycler
+dnaapler all -i assembly.gfa -o output_directory_path -p my_bacteria_name -t 8
 ```
 
-* If you have a MacOS machine with Apple Silicon (M1/M2/M3/M4), please try
+* If you have a MacOS machine with Apple Silicon (M1/M2/M3/M4) and are having installation issues, please try
 
 ```
 conda create --platform osx-64 -n dnaapler_env dnaapler
@@ -68,6 +69,13 @@ Hyatt, D., Chen, GL., LoCascio, P.F. et al. Prodigal: prokaryotic gene recogniti
 
 ## v1 and other recent changes
 
+# 1.2.0
+
+* Thanks to the one and only @[rrwick](https://github.com/rrwick), Dnaapler now supports the [GFA](https://gfa-spec.github.io/GFA-spec/GFA1.html) format as input. This was done to ensure support for Ryan's new bacterial genome assembly tool [Autocycler](https://github.com/rrwick/Autocycler), the successor to Trycycler, but may also be useful if you have GFA files from e.g. Unicycler, Flye, Spades or other assemblers.
+    * If you run `dnaapler` with GFA input, you will get a GFA output as well.
+    * If you run `dnaapler` with GFA input, only circular contigs will be reoriented
+* Relaxes the `MMSeqs2` dependency to `>=13.45111` 
+
 # 1.1.0
 
 * Adds support for reorienting contigs where the gene of interest spands the contig ends - [fixes this issue](https://github.com/gbouras13/dnaapler/issues/90). Thanks @marade @oschwengers.
@@ -94,6 +102,7 @@ If you don't want to install `dnaapler` locally, you can run `dnaapler all` with
   - [Quick Start](#quick-start)
   - [Paper](#paper)
   - [v1 and other recent changes](#v1-and-other-recent-changes)
+- [1.2.0](#120)
 - [1.1.0](#110)
 - [v1.0](#v10)
 - [Google Colab Notebooks](#google-colab-notebooks)
