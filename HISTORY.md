@@ -1,5 +1,12 @@
 # History
 
+# 1.2.0 (2025-03-04)
+
+* Thanks to the one and only @[rrwick](https://github.com/rrwick), Dnaapler now supports the [GFA](https://gfa-spec.github.io/GFA-spec/GFA1.html) format as input. This was done to ensure support for Ryan's new bacterial genome assembly tool [Autocycler](https://github.com/rrwick/Autocycler), the successor to Trycycler, but may also be useful if you have GFA files from e.g. Unicycler, Flye, Spades or other assemblers.
+    * If you run `dnaapler` with GFA input, you will get a GFA output as well.
+    * If you run `dnaapler` with GFA input, only circular contigs will be reoriented
+* Relaxes the `MMSeqs2` dependency to `>=13.45111` 
+
 # 1.1.0 (2025-01-13)
 
 * Adds support for reorienting contigs where the gene of interest spands the contig ends - [fixes this issue](https://github.com/gbouras13/dnaapler/issues/90). Thanks @marade @oschwengers.
