@@ -116,7 +116,7 @@ def check_mmseqs2_version():
     checks the MMseqs2 version
     """
 
-    # 13.45111 to match pharokka!
+    # >=13.45111 to match pharokka!
 
     message = "Checking MMseqs2 installation."
     logger.info(message)
@@ -133,7 +133,12 @@ def check_mmseqs2_version():
 
         # The pre-built binary on GitHub reports its version using the commit hash instead of
         # a version number.
-        if mmseqs_version.startswith("45111b6"):
+
+        # to be honest, it doesn't really matter what MMseqs2 version dnaapler uses anyway, but for conda >13.45111
+
+        if not mmseqs_version.replace(
+            ".", ""
+        ).isdigit():  # this will be true if a commit hash
             logger.info(f"MMseqs2 version found is {mmseqs_version}")
 
         else:
@@ -144,11 +149,10 @@ def check_mmseqs2_version():
                 f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
             )
 
-            if mmseqs_major_version != 13:
-                logger.error("MMseqs2 is the wrong version. Please install v13.45111")
-            if mmseqs_minor_version != "45111":
-                logger.error("MMseqs2 is the wrong version. Please install v13.45111")
-
+            if mmseqs_major_version < 13:
+                logger.error(
+                    "MMseqs2 is the wrong version. Please install v13.45111 or higher"
+                )
         logger.info("MMseqs2 version is ok.")
 
     except Exception:
