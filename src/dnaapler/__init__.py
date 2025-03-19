@@ -139,7 +139,9 @@ Chromosome command
 """
 
 
-@main_cli.command()
+@main_cli.command(
+    short_help="Reorients your genome to begin with the dnaA chromosomal replication initiation gene"
+)
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
@@ -148,7 +150,7 @@ Chromosome command
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for MMseqs2",
+    help="E-value for MMseqs2",
     show_default=True,
 )
 @autocomplete_options
@@ -164,8 +166,6 @@ def chromosome(
     seed_value,
     **kwargs,
 ):
-    """Reorients your genome to begin with the dnaA chromosomal replication initiation gene"""
-
     params = {
         "--input": input,
         "--output": output,
@@ -194,7 +194,7 @@ def chromosome(
     validate_input(input)
     input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
-    # validate e value
+    # validate E-value
     check_evalue(evalue)
 
     # run MMseqs2
@@ -221,7 +221,9 @@ archaea command
 """
 
 
-@main_cli.command()
+@main_cli.command(
+    short_help="Reorients your genome to begin with the archaeal COG1474 Orc1/cdc6 origin recognition complex gene"
+)
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
@@ -230,7 +232,7 @@ archaea command
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for MMseqs2",
+    help="E-value for MMseqs2",
     show_default=True,
 )
 @autocomplete_options
@@ -246,8 +248,6 @@ def archaea(
     seed_value,
     **kwargs,
 ):
-    """Reorients your genome to begin with the archaeal COG1474 Orc1/cdc6 origin recognition complex gene"""
-
     params = {
         "--input": input,
         "--output": output,
@@ -276,7 +276,7 @@ def archaea(
     validate_input(input)
     input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
-    # validate e value
+    # validate E-value
     check_evalue(evalue)
 
     # run MMseqs2
@@ -303,7 +303,9 @@ Plasmid command
 """
 
 
-@main_cli.command()
+@main_cli.command(
+    short_help="Reorients your genome to begin with the repA replication initiation gene"
+)
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
@@ -312,7 +314,7 @@ Plasmid command
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for MMseqs2",
+    help="E-value for MMseqs2",
     show_default=True,
 )
 @autocomplete_options
@@ -328,8 +330,6 @@ def plasmid(
     seed_value,
     **kwargs,
 ):
-    """Reorients your genome to begin with the repA replication initiation gene"""
-
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
@@ -358,7 +358,7 @@ def plasmid(
     validate_input(input)
     input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
-    # validate e value
+    # validate E-value
     check_evalue(evalue)
 
     # run MMseqs2
@@ -385,7 +385,9 @@ Phage command
 """
 
 
-@main_cli.command()
+@main_cli.command(
+    short_help="Reorients your genome to begin with the terL large terminase subunit"
+)
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
@@ -394,7 +396,7 @@ Phage command
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for MMseqs2",
+    help="E-value for MMseqs2",
     show_default=True,
 )
 @autocomplete_options
@@ -410,8 +412,6 @@ def phage(
     seed_value,
     **kwargs,
 ):
-    """Reorients your genome to begin with the terL large terminase subunit"""
-
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
@@ -440,7 +440,7 @@ def phage(
     validate_input(input)
     input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
-    # validate e value
+    # validate E-value
     check_evalue(evalue)
 
     # runs and processes MMseqs2
@@ -467,7 +467,7 @@ custom command
 """
 
 
-@main_cli.command()
+@main_cli.command(short_help="Reorients your genome with a custom database")
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
@@ -476,7 +476,7 @@ custom command
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for MMseqs2",
+    help="E-value for MMseqs2",
     show_default=True,
 )
 @click.option(
@@ -508,8 +508,6 @@ def custom(
     ignore,
     **kwargs,
 ):
-    """Reorients your genome with a custom database"""
-
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
@@ -539,7 +537,7 @@ def custom(
     validate_input(input)
     input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
-    # validate e value
+    # validate E-value
     check_evalue(evalue)
 
     # validates custom fasta input for database
@@ -589,7 +587,7 @@ mystery command
 """
 
 
-@main_cli.command()
+@main_cli.command(short_help="Reorients your genome with a random CDS")
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
@@ -602,8 +600,6 @@ mystery command
     show_default=True,
 )
 def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
-    """Reorients your genome with a random CDS"""
-
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
@@ -638,14 +634,14 @@ nearest command
 """
 
 
-@main_cli.command()
+@main_cli.command(
+    short_help="Reorients your genome the begin with the first CDS as called by pyrodigal"
+)
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
 def nearest(ctx, input, output, threads, prefix, force, **kwargs):
-    """Reorients your genome the begin with the first CDS as called by pyrodigal"""
-
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
@@ -685,14 +681,14 @@ largest command
 """
 
 
-@main_cli.command()
+@main_cli.command(
+    short_help="Reorients your genome the begin with the largest CDS as called by pyrodigal"
+)
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
 @common_options
 def largest(ctx, input, output, threads, prefix, force, **kwargs):
-    """Reorients your genome the begin with the largest CDS as called by pyrodigal"""
-
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
@@ -732,7 +728,7 @@ bulk subcommand
 """
 
 
-@main_cli.command()
+@main_cli.command(short_help="Reorients multiple genomes to begin with the same gene")
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
@@ -741,7 +737,7 @@ bulk subcommand
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for MMseqs2",
+    help="E-value for MMseqs2",
     show_default=True,
 )
 @click.option(
@@ -770,8 +766,6 @@ def bulk(
     custom_db,
     **kwargs,
 ):
-    """Reorients multiple genomes to begin with the same gene"""
-
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
@@ -808,7 +802,7 @@ def bulk(
     check_duplicate_headers(input)
     input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
-    # validate e value
+    # validate E-value
     check_evalue(evalue)
 
     # check custom db
@@ -867,7 +861,9 @@ all subcommand
 """
 
 
-@main_cli.command()
+@main_cli.command(
+    short_help="Reorients contigs to begin with any of dnaA, repA, terL or archaeal COG1474 Orc1/cdc6"
+)
 @click.help_option("--help", "-h")
 @click.version_option(get_version(), "--version", "-V")
 @click.pass_context
@@ -876,7 +872,7 @@ all subcommand
     "-e",
     "--evalue",
     default="1e-10",
-    help="e value for MMseqs2",
+    help="E-value for MMseqs2",
     show_default=True,
 )
 @click.option(
@@ -918,8 +914,6 @@ def all(
     custom_db,
     **kwargs,
 ):
-    """Reorients contigs to begin with any of dnaA, repA, terL or archaeal COG1474 Orc1/cdc6"""
-
     # validates the directory  (need to before I start dnaapler or else no log file is written)
     instantiate_dirs(output, force)
 
@@ -982,7 +976,7 @@ def all(
     check_duplicate_headers(input)
     input_is_gfa, input, original_gfa = prep_gfa(input, output)
 
-    # validate e value
+    # validate E-value
     check_evalue(evalue)
 
     # create flag for ignore
