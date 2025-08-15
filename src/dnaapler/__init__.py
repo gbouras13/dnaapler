@@ -2,7 +2,6 @@
 """dnaapler"""
 
 import os
-import shutil
 from pathlib import Path
 
 import click
@@ -19,7 +18,6 @@ from dnaapler.utils.cds_methods import (
     run_mystery,
     run_nearest,
 )
-from dnaapler.utils.constants import DNAAPLER_DB
 from dnaapler.utils.external_tools import ExternalTool
 from dnaapler.utils.gfa import finalise_gfa, prep_gfa
 from dnaapler.utils.processing import rotate_input
@@ -35,11 +33,11 @@ from dnaapler.utils.util import (
 from dnaapler.utils.validation import (
     check_evalue,
     instantiate_dirs,
+    process_ignore_input,
     validate_choice_autocomplete,
     validate_choice_db,
     validate_choice_mode,
     validate_custom_db_fasta,
-    validate_ignore_file,
     validate_input,
     validate_input_all,
     validate_input_bulk,
@@ -175,7 +173,6 @@ def chromosome(
         "--evalue": evalue,
         "--autocomplete": autocomplete,
         "--seed_value": seed_value,
-        "--force": force,
     }
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
@@ -257,7 +254,6 @@ def archaea(
         "--evalue": evalue,
         "--autocomplete": autocomplete,
         "--seed_value": seed_value,
-        "--force": force,
     }
 
     # validates the directory  (need to before I start dnaapler or else no log file is written)
@@ -342,7 +338,6 @@ def plasmid(
         "--evalue": evalue,
         "--autocomplete": autocomplete,
         "--seed_value": seed_value,
-        "--force": force,
     }
 
     # defines gene
@@ -424,7 +419,6 @@ def phage(
         "--evalue": evalue,
         "--autocomplete": autocomplete,
         "--seed_value": seed_value,
-        "--force": force,
     }
 
     # defines gene
@@ -486,13 +480,6 @@ custom command
     type=click.Path(),
     required=True,
 )
-@click.option(
-    "--ignore",
-    default="",
-    help="Text file listing contigs (one per row) that are to be ignored",
-    type=click.Path(),
-    show_default=False,
-)
 @autocomplete_options
 def custom(
     ctx,
@@ -505,7 +492,6 @@ def custom(
     custom_db,
     autocomplete,
     seed_value,
-    ignore,
     **kwargs,
 ):
     # validates the directory  (need to before I start dnaapler or else no log file is written)
@@ -520,7 +506,6 @@ def custom(
         "--evalue": evalue,
         "--autocomplete": autocomplete,
         "--seed_value": seed_value,
-        "--force": force,
         "--custom_db": custom_db,
     }
 
@@ -557,7 +542,7 @@ def custom(
         tool="mmseqs",
         input=f"createdb {custom_db}",
         output=f" {custom_database}",
-        params=f"",
+        params="",
         logdir=logdir,
     )
 
@@ -610,7 +595,6 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
         "--force": force,
         "--prefix": prefix,
         "--seed_value": seed_value,
-        "--force": force,
     }
 
     # defines gene
@@ -651,7 +635,6 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
         "--threads": threads,
         "--force": force,
         "--prefix": prefix,
-        "--force": force,
     }
 
     # defines gene
@@ -698,7 +681,6 @@ def largest(ctx, input, output, threads, prefix, force, **kwargs):
         "--threads": threads,
         "--force": force,
         "--prefix": prefix,
-        "--force": force,
     }
 
     # defines gene
@@ -791,7 +773,6 @@ def bulk(
         "--evalue": evalue,
         "--mode": mode,
         "--custom_db": custom_db,
-        "--force": force,
     }
 
     # initial logging etc
@@ -808,7 +789,7 @@ def bulk(
     # check custom db
     logdir = Path(f"{output}/logs")
     if mode == "custom":
-        if custom_db == None:
+        if custom_db is None:
             logger.error(
                 "You have specified dnaapler bulk -m custom without specifying a custom database using -c. Please try again using -c to input a custom database."
             )
@@ -828,14 +809,14 @@ def bulk(
                 tool="mmseqs",
                 input=f"createdb {custom_db}",
                 output=f" {custom_database}",
-                params=f"",
+                params="",
                 logdir=logdir,
             )
 
             ExternalTool.run_tool(makeMMseqs2db, ctx)
 
     else:
-        if custom_db != None:
+        if custom_db is not None:
             logger.info(
                 f"You have specified a custom database using -c but you have specified -m {mode}  not -m custom. Ignoring the custom database and continuing."
             )
@@ -878,8 +859,8 @@ all subcommand
 @click.option(
     "--ignore",
     default="",
-    help="Text file listing contigs (one per row) that are to be ignored",
-    type=click.Path(),
+    help="Text file listing contigs (one per row) that are to be ignored OR comma separated list of contig names to ignore OR '-' to read from stdin",
+    type=str,
     show_default=False,
 )
 @click.option(
@@ -928,7 +909,6 @@ def all(
         "--seed_value": seed_value,
         "--ignore": ignore,
         "--custom_db": custom_db,
-        "--force": force,
         "--db": db,
     }
 
@@ -979,15 +959,12 @@ def all(
     # validate E-value
     check_evalue(evalue)
 
-    # create flag for ignore
-    if ignore == "":
-        ignore_flag = False
+    # process ignore input (file path or comma/space separated list)
+    ignore_list = process_ignore_input(ignore)
+    if ignore_list:
+        logger.info(f"You have specified contigs to ignore: {', '.join(ignore_list)}")
     else:
-        ignore_flag = True
-    # checks if the ignore file exists and contains text
-    if ignore_flag == True:
-        logger.info(f"You have specified contigs to ignore in {ignore}.")
-        exists_contains_txt = validate_ignore_file(ignore)
+        logger.info("No contigs specified to ignore.")
 
     if gene == "custom":
         # validates custom fasta input for database
@@ -1006,7 +983,7 @@ def all(
             tool="mmseqs",
             input=f"createdb {custom_db}",
             output=f" {custom_database}",
-            params=f"",
+            params="",
             logdir=logdir,
         )
 
@@ -1026,19 +1003,6 @@ def all(
 
     # rerorients MMseqs2
     MMseqs2_file = os.path.join(output, f"{prefix}_MMseqs2_output.txt")
-
-    ### ignore
-    # list is empty
-    ignore_list = []
-    if ignore_flag == True:
-        if exists_contains_txt is False:
-            logger.warning(f"{ignore} contains no text. No contigs will be ignored")
-        else:
-            # gets all contigs in the ignore
-            # will split by space so short_contig only (to match MMseqs2)
-            with open(ignore) as f:
-                ignore_dict = {x.rstrip().split()[0] for x in f}
-            ignore_list = list(ignore_dict)
 
     all_process_MMseqs2_output_and_reorient(
         input,

@@ -134,7 +134,10 @@ For bacterial chromosomes, `dnaapler chromosome` should ensure the chromosome br
 
 Additionally, you can also reorient multiple bacterial chromosomes/plasmids/phages at once using the `dnaapler bulk` subcommand.
 
-If your input FASTA or GFA is mixed (e.g. has chromosome and plasmids), you can also use `dnaapler all`, with the option to ignore some contigs with the `--ignore` parameter.
+If your input FASTA or GFA is mixed (e.g. has chromosome and plasmids), you can also use `dnaapler all`, with the option to ignore some contigs with the `--ignore` parameter. The `--ignore` parameter accepts either:
+- A file path containing contig names to ignore (one per line)
+- A comma-separated list of contig names (e.g., `chr1,chr2,chr3`)
+- `-` to read contig names from stdin (one per line)
 
 **As of v1, in practice, `dnaapler all` is the only command you will likely need, as it contains all the functionality of `bulk`, `chromosome`, `plasmid`, `phage` but with much more flexibility and user-friendliness**
 
@@ -223,8 +226,9 @@ Options:
   -p, --prefix TEXT        Prefix for output files  [default: dnaapler]
   -f, --force              Force overwrites the output directory
   -e, --evalue TEXT        e value for MMseqs2  [default: 1e-10]
-  --ignore PATH            Text file listing contigs (one per row) that are to
-                           be ignored
+  --ignore TEXT            Text file listing contigs (one per row) that are to
+                           be ignored OR comma separated list of contig names
+                           to ignore OR '-' to read from stdin
   -a, --autocomplete TEXT  Choose an option to autocomplete reorientation if
                            MMseqs2 based approach fails. Must be one of: none,
                            mystery, largest, or nearest [default: none]
@@ -240,6 +244,14 @@ The reoriented output will be `{prefix}_reoriented.fasta` in the specified outpu
 
 ```
 dnaapler all -i input.fasta -o output_directory_path -p my_genome_name --ignore list_of_contigs_to_ignore.txt
+```
+
+```
+dnaapler all -i input.fasta -o output_directory_path -p my_genome_name --ignore chr1,chr2,chr3
+```
+
+```
+echo -e "chr1\nchr2\nchr3" | dnaapler all -i input.fasta -o output_directory_path -p my_genome_name --ignore -
 ```
 
 ```

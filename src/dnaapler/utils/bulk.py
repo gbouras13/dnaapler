@@ -1,5 +1,4 @@
 import os
-import shutil
 from pathlib import Path
 
 import pandas as pd
@@ -86,7 +85,7 @@ def run_bulk_MMseqs2(
             tool="mmseqs createdb",
             input=f" {custom_db}",
             output=f" {custom_database}",
-            params=f"",
+            params="",
             logdir=logdir,
         )
 

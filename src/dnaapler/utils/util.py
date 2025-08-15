@@ -104,7 +104,7 @@ def check_pyrodigal_version():
             )
 
         logger.info(f"Pyrodigal version is v{pyrodigal_version}")
-        logger.info(f"Pyrodigal version is ok.")
+        logger.info("Pyrodigal version is ok.")
 
     except Exception:
         message = "Pyrodigal not found."
@@ -184,7 +184,7 @@ def run_autocomplete(
     """
 
     # if there was
-    if MMseqs_success == False:
+    if MMseqs_success is False:
         if autocomplete == "none":
             logger.error(
                 "BLAST based reorientation failed.\n"

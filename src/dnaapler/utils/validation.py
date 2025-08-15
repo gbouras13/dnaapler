@@ -1,6 +1,5 @@
 import re
 import shutil
-import subprocess as sp
 import sys
 from pathlib import Path
 
@@ -237,13 +236,42 @@ def validate_choice_db(ctx, param, value):
     return value
 
 
-def validate_ignore_file(ignore_file_path):
-    try:
-        # Open the file in read mode
-        with open(ignore_file_path, "r") as file:
-            # Read the first character
-            first_char = file.read(1)
-            # If the first character is not empty, will be true
-            return bool(first_char)
-    except FileNotFoundError:
-        logger.error(f"{ignore_file_path} not found")
+def process_ignore_input(ignore_input):
+    """
+    Process ignore input which can be either:
+    1. A comma separated list of chromosome names
+    2. A path to a file containing chromosome names (one per line)
+    3. "-" to read from stdin
+
+    Returns a list of chromosome names to ignore
+    """
+
+    if not ignore_input or ignore_input == "":
+        return []
+
+    if ignore_input == "-":
+        try:
+            return [x.rstrip().split()[0] for x in sys.stdin if x.strip()]
+        except Exception as e:
+            logger.error(f"Error reading from stdin: {e}")
+            sys.exit(1)
+
+    # Check if it looks like a file path (contains path separators or has an extension)
+    path_obj = Path(ignore_input)
+    if "/" in ignore_input or "\\" in ignore_input or "." in path_obj.name:
+        # It looks like a file path, so check if it exists
+        if path_obj.is_file():
+            with open(ignore_input) as f:
+                return [x.rstrip().split()[0] for x in f if x.strip()]
+        else:
+            logger.error(f"{ignore_input} not found")
+            sys.exit(1)
+    else:
+        # It's a comma separated list
+        chromosomes = []
+        parts = ignore_input.split(",")
+        for part in parts:
+            part = part.strip()
+            if part:  # Only add non-empty parts
+                chromosomes.append(part)
+        return chromosomes
