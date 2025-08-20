@@ -5,22 +5,18 @@ Usage: pytest
 
 """
 
-import glob
 import os
 import sys
 
 # import
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 import click
 import pandas as pd
 import pytest
 from loguru import logger
 
-from src.dnaapler.utils.constants import repo_root
-from src.dnaapler.utils.external_tools import ExternalTool
 from src.dnaapler.utils.processing import (
     process_MMseqs2_output_and_reorient,
     reorient_sequence,
@@ -206,7 +202,7 @@ class TestBlastOutput(unittest.TestCase):
         MMseqs2_success = process_MMseqs2_output_and_reorient(
             input, MMseqs2_file, output, gene
         )
-        assert MMseqs2_success == True
+        assert MMseqs2_success
 
     def test_process_MMseqs2_output_and_reorient_wrong_start_codon(self):
         # Test scenario where the best BLAST hit has no valid start codon
@@ -219,7 +215,7 @@ class TestBlastOutput(unittest.TestCase):
         MMseqs2_success = process_MMseqs2_output_and_reorient(
             input, MMseqs2_file, output, gene
         )
-        assert MMseqs2_success == True
+        assert MMseqs2_success
 
     def test_process_MMseqs2_output_and_reorient_correct(self):
         # Test scenario where the no BLAST hit begins with 1 (start of gene)
@@ -230,7 +226,7 @@ class TestBlastOutput(unittest.TestCase):
         MMseqs2_success = process_MMseqs2_output_and_reorient(
             input, MMseqs2_file, output, gene
         )
-        assert MMseqs2_success == True
+        assert MMseqs2_success
 
     def test_begin_dnaapler(self):
         # Test begin
@@ -285,22 +281,22 @@ class TestChoiceAutocomplete(unittest.TestCase):
         param = "2"
         value = "sfsd"
         with self.assertRaises(click.BadParameter):
-            val = validate_choice_autocomplete(ctx, param, value)
+            validate_choice_autocomplete(ctx, param, value)
 
     def test_evalue_none(self):
         value = "none"
         ctx = "1"
         param = "2"
-        val = validate_choice_autocomplete(ctx, param, value)
+        validate_choice_autocomplete(ctx, param, value)
 
     def test_evalue_mys(self):
         value = "mystery"
         ctx = "1"
         param = "2"
-        val = validate_choice_autocomplete(ctx, param, value)
+        validate_choice_autocomplete(ctx, param, value)
 
     def test_evalue_nearest(self):
         value = "nearest"
         ctx = "1"
         param = "2"
-        val = validate_choice_autocomplete(ctx, param, value)
+        validate_choice_autocomplete(ctx, param, value)

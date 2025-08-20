@@ -5,7 +5,6 @@ from typing import List
 import pandas as pd
 import pyrodigal
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 from loguru import logger
 
 
@@ -193,7 +192,7 @@ def process_MMseqs2_output_and_reorient(
         with open(out_file, "w") as out_fa:
             SeqIO.write(record, out_fa, "fasta")
 
-        MMseqs2_success == True
+        MMseqs2_success = True
 
     # top hit
     # prokaryotes can use AUG M, GUG V or UUG L as start codons - e.g. for Pseudomonas aeruginosa PA01  dnaA actually starts with V

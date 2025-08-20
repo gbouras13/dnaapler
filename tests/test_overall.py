@@ -225,7 +225,7 @@ def test_all_custom(tmp_dir):
     exec_command(cmd)
 
 
-def test_custom(tmp_dir):
+def test_custom2(tmp_dir):
     """test custom"""
     input_fasta: Path = f"{overall_test_data}/all_test.fasta"
     custom: Path = f"{test_data}/fake_custom.faa"
@@ -369,7 +369,7 @@ def test_all_mixed_contig_end(tmp_dir):
 
 def test_citation():
     """test citation"""
-    cmd = f"dnaapler citation"
+    cmd = "dnaapler citation"
     exec_command(cmd)
 
 
