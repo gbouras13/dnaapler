@@ -1,5 +1,14 @@
 # History
 
+# 1.3.0 (2025-08-21)
+
+* Thanks @mbhall88 for extending the functionality of `--ignore` and generally cleaning up the codebase a bit
+* If your input FASTA or GFA is mixed (e.g. has chromosome and plasmids), you can also use `dnaapler all`, with the option to ignore some contigs with the `--ignore` parameter. The `--ignore` parameter accepts either:
+
+  1. A file path containing contig names to ignore (one per line)
+  2. A comma-separated list of contig names (e.g., chr1,chr2,chr3)
+  3. - to read contig names from stdin (one per line)
+
 # 1.2.0 (2025-03-04)
 
 * Thanks to the one and only @[rrwick](https://github.com/rrwick), Dnaapler now supports the [GFA](https://gfa-spec.github.io/GFA-spec/GFA1.html) format as input. This was done to ensure support for Ryan's new bacterial genome assembly tool [Autocycler](https://github.com/rrwick/Autocycler), the successor to Trycycler, but may also be useful if you have GFA files from e.g. Unicycler, Flye, Spades or other assemblers.
