@@ -1,5 +1,9 @@
 # History
 
+# 1.3.0 (2025-08-21)
+
+* Thanks @
+
 # 1.2.0 (2025-03-04)
 
 * Thanks to the one and only @[rrwick](https://github.com/rrwick), Dnaapler now supports the [GFA](https://gfa-spec.github.io/GFA-spec/GFA1.html) format as input. This was done to ensure support for Ryan's new bacterial genome assembly tool [Autocycler](https://github.com/rrwick/Autocycler), the successor to Trycycler, but may also be useful if you have GFA files from e.g. Unicycler, Flye, Spades or other assemblers.
