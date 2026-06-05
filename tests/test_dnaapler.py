@@ -184,6 +184,7 @@ class TestReorientSequenceRandom(unittest.TestCase):
         # gene.end (not gene.begin) so the output starts with a valid start codon.
         # no_hit_plasmid.fasta has its only/largest CDS on strand=-1 with begin=450, end=1184.
         import tempfile
+
         from Bio import SeqIO
 
         input_fasta = os.path.join(overall_inputs_test_data, "no_hit_plasmid.fasta")
@@ -218,6 +219,7 @@ class TestRunLargestNegativeStrand(unittest.TestCase):
         # Its largest CDS is on strand=-1 (begin=20063, end=23929).
         # After correct reorientation the first gene should begin at position 1.
         import tempfile
+
         import pyrodigal
         from Bio import SeqIO
 

@@ -20,7 +20,6 @@ from dnaapler.utils.validation import process_ignore_input  # noqa: E402
 
 
 class TestProcessIgnoreInput(unittest.TestCase):
-
     def test_empty_input(self):
         """Test empty string and None input"""
         self.assertEqual(process_ignore_input(""), [])

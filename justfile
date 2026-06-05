@@ -2,19 +2,15 @@ PROJECT := "dnaapler"
 OPEN := if os() == "macos" { "open" } else { "xdg-open" }
 VERSION := `poetry version | rg -o '\d+\.\d+\.\d+'`
 
-# format code with black and isort
+# format code with ruff
 fmt:
-    poetry run black .
-    poetry run isort .
+    poetry run ruff format .
+    poetry run ruff check --fix .
 
-# check format of code with black and isort
+# check formatting and lint with ruff
 check-fmt:
-    poetry run black --check .
-    poetry run isort --check .
-
-# lint code with flake8
-lint:
-    poetry run flake8 .
+    poetry run ruff format --check .
+    poetry run ruff check .
 
 # install latest version with poetry
 install:

@@ -37,8 +37,7 @@ jobs:
           conda install python=${{ matrix.python-version }} pip
           python -m pip install --upgrade pip
           pip install -e .
-          pip install black
-          pip install isort
+          pip install ruff
           pip install pytest
           pip install pytest-cov
       - name: Check formatting
