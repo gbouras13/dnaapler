@@ -355,8 +355,6 @@ def reorient_sequence(
             elif strand == -1:
                 start = genes[closest_gene_index].end
 
-            start = genes[closest_gene_index].begin
-
             if strand == 1:
                 strand_eng = "forward"
             else:
