@@ -1,53 +1,36 @@
 name: CI
 
-on: [push,pull_request]
+on: [push, pull_request]
 
 jobs:
   tests:
-    name: "Python ${{ matrix.python-version }}"
+    name: "Tests (${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
-
-    defaults:
-      run:
-        shell: bash -el {0}
 
     strategy:
       matrix:
         os: [macos-13, ubuntu-latest]
-        python-version: ["3.9"]
 
     steps:
-      - uses: "actions/checkout@v3"
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Setup env
-      - uses: conda-incubator/setup-miniconda@v3
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.8.1
         with:
-          activate-environment: dnaapler
-          environment-file: build/environment.yaml
-          python-version: ${{ matrix.python-version }}
-          auto-activate-base: false
-          channels: conda-forge,bioconda,defaults
-          channel-priority: strict
-          auto-update-conda: true
-      - name: Install project
-        shell: bash -l {0}
-        run: |
-          conda install python=${{ matrix.python-version }}
-          python -m pip install --upgrade pip
-          pip install -e .
-          pip install black
-          pip install isort
-          pip install pytest
-          pip install pytest-cov
+          pixi-version: v0.70.2
+          cache: true
+          environments: dev
+
       - name: Check formatting
-        shell: bash -l {0}
-        run: just check-fmt
-      - name: Test and generate coverage report with pytest
-        shell: bash -l {0}
-        run: just test-ci
+        run: pixi run check-fmt
+
+      - name: Lint
+        run: pixi run lint
+
+      - name: Run unit tests
+        run: pixi run coverage
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
-      
-

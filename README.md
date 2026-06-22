@@ -18,31 +18,22 @@ Dnaapler is a simple tool that reorients complete circular microbial genomes.
 
 ## Quick Start
 
+For local development or running directly in the cloned repository:
 ```
-# creates empty conda environment
-conda create -n dnaapler_env
+# install dependencies and setup the environment
+pixi install
 
-# activates conda environment
-conda activate dnaapler_env
+# run dnaapler all 
+pixi run dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
 
-# installs dnaapler
-conda install -c bioconda dnaapler
-
-# runs dnaapler all 
-dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
-
-# runs dnaapler all with a gfa file from e.g. Flye, Unicycler or Autocycler
-dnaapler all -i assembly.gfa -o output_directory_path -p my_bacteria_name -t 8
+# run dnaapler all with a gfa file
+pixi run dnaapler all -i assembly.gfa -o output_directory_path -p my_bacteria_name -t 8
 ```
 
-* If you have a MacOS machine with Apple Silicon (M1/M2/M3/M4) and are having installation issues, please try
-
+For general usage, you can also install it globally:
 ```
-conda create --platform osx-64 -n dnaapler_env dnaapler
-
-conda activate dnaapler_env
-
-dnaapler all -i input_mixed_contigs.fasta -o output_directory_path -p my_bacteria_name -t 8
+# installs dnaapler globally
+pixi global install dnaapler
 ```
 
 ## Paper
@@ -93,7 +84,7 @@ Hyatt, D., Chen, GL., LoCascio, P.F. et al. Prodigal: prokaryotic gene recogniti
 
 # v1.0
 
-* **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2 v13.45111` rather than `BLAST`. You will need to install [MMSeqs2](https://github.com/soedinglab/MMseqs2) if you upgrade (if you use conda, it should be handled for you). The CLI is identical.
+* **BREAKING CHANGE** - `dnaapler` now uses `MMSeqs2 v13.45111` rather than `BLAST`. You will need to install [MMSeqs2](https://github.com/soedinglab/MMseqs2) if you upgrade (if you use pixi or conda, it should be handled for you). The CLI is identical.
 * There are 2 reasons for this:
     1. Users reported problems installing BLAST on MacOS with Apple Silicon (see e.g. [here](https://github.com/gbouras13/pharokka/issues/368)). MMseqs2 works on all platforms and is dilligently maintained.
     2. MMSeqs2 is much much faster than BLAST (what took BLAST a few minutes takes MMSeqs2 seconds). We probably should have written `dnaapler` with `MMseqs2` to begin with. `MMSeqs2 v13.45111` was chosen to ensure interoperability with [pharokka](https://github.com/gbouras13/pharokka)
@@ -121,7 +112,7 @@ If you don't want to install `dnaapler` locally, you can run `dnaapler all` with
   - [Documentation](#documentation)
   - [Commands](#commands)
   - [Installation](#installation)
-    - [Conda](#conda)
+    - [Pixi](#pixi)
     - [Pip](#pip)
   - [Usage](#usage)
   - [Example Usage](#example-usage)
@@ -177,14 +168,14 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 
 `dnaapler` requires only `MMseqs2 v13.45111` as an external dependency. 
 
-Installation from conda is highly recommended as this will install `MMseqs2` automatically.
+Installation using `pixi` is highly recommended as this will install `MMseqs2` automatically.
 
-### Conda
+### Pixi
 
-`dnaapler` is available on bioconda.
+`dnaapler` is available on bioconda and can be installed globally using `pixi`:
 
 ```
-conda install -c bioconda dnaapler
+pixi global install dnaapler
 ```
 
 ### Pip

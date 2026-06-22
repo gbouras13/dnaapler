@@ -44,6 +44,7 @@ pyyaml = ">=6.0"
 pandas = ">=1.4.2"
 biopython = ">=1.76"
 pyrodigal = ">=3.0.0"
+mmseqs2 = ">=13.45111"
 
 [tool.pixi.pypi-dependencies]
 dnaapler = { path = ".", editable = true }
@@ -58,9 +59,13 @@ isort = ">=5.10.1"
 flake8 = ">=3.0.1"
 hatch = "*"
 
+[tool.pixi.feature.dev-tools.dependencies]
+just = "*"
+ripgrep = "*"
+
 [tool.pixi.environments]
 default = { solve-group = "default" }
-dev = { features = ["test", "lint"], solve-group = "default" }
+dev = { features = ["test", "lint", "dev-tools"], solve-group = "default" }
 
 [tool.pixi.tasks]
 fmt = { cmd = "black src tests && isort src tests", default-environment = "dev" }
