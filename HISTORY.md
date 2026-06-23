@@ -1,5 +1,9 @@
 # History
 
+# Unreleased
+
+* If you run `dnaapler` with GFA input, it now also writes a `{prefix}_reoriented.fasta` alongside the `{prefix}_reoriented.gfa`. This FASTA contains all contigs from the GFA (circular contigs reoriented with overlap trimmed, non-circular contigs passed through unchanged), so it can be fed directly to downstream tools such as polishers.
+
 # 1.3.0 (2025-08-21)
 
 * Thanks @mbhall88 for extending the functionality of `--ignore` and generally cleaning up the codebase a bit

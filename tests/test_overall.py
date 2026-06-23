@@ -15,6 +15,7 @@ import unittest
 from pathlib import Path
 
 import pytest
+from Bio import SeqIO
 
 test_data = Path("tests/test_data")
 overall_test_data = Path(f"{test_data}/overall_inputs")
@@ -263,6 +264,26 @@ def test_gfa_all(tmp_dir):
     assert seq_3.startswith("ATGATCGTAG") and len(seq_3) == 1240
     assert seq_4.startswith("ATGTCAGAAG") and len(seq_4) == 2088
     assert seq_5.startswith("GTTCTAGCAT") and len(seq_5) == 1000
+
+    # GFA input should also produce a complete FASTA containing all contigs
+    gfa_s_lines = {
+        parts[1]: parts
+        for parts in (line.split("\t") for line in output_gfa_lines)
+        if parts[0] == "S"
+    }
+    fasta_records = {
+        rec.id: rec
+        for rec in SeqIO.parse(f"{tmp_dir}/dnaapler_reoriented.fasta", "fasta")
+    }
+    # every contig from the GFA is present in the FASTA with an identical sequence
+    assert set(fasta_records) == set(gfa_s_lines)
+    for name, parts in gfa_s_lines.items():
+        assert str(fasta_records[name].seq) == parts[2]
+        # a contig is annotated rotated=True in the FASTA iff it carries an RT:z: tag in the GFA
+        has_rt_tag = any(field.startswith("RT:z:") for field in parts[3:])
+        assert ("rotated=True" in fasta_records[name].description) == has_rt_tag
+    # the non-circular contig (5) is passed through unannotated
+    assert "rotated=True" not in fasta_records["5"].description
 
 
 """

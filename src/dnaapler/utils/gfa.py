@@ -45,12 +45,15 @@ def prep_gfa(input_file, output_dir):
 def finalise_gfa(temp_input_fasta, gfa_input_file, output_fasta):
     """
     If the input file given to Dnaapler is a GFA file, this function is run at the end of Dnaapler's
-    pipeline. It will create the output GFA and remove the output FASTA (because non-circular
-    sequences will be missing from the FASTA).
+    pipeline. It creates the output GFA and rewrites the output FASTA so that it contains all
+    contigs from the GFA (circular contigs reoriented, non-circular contigs passed through
+    unchanged), making it suitable for downstream tools such as polishers.
     """
     remove_file(Path(temp_input_fasta))
-    save_reoriented_gfa(gfa_input_file, output_fasta)
-    remove_file(Path(output_fasta))
+    # save_reoriented_gfa reads the circular-only output_fasta to build the GFA, so it must run
+    # before we overwrite output_fasta with the complete (all-contigs) version below.
+    reoriented_gfa = save_reoriented_gfa(gfa_input_file, output_fasta)
+    gfa_to_fasta(reoriented_gfa, output_fasta)
 
 
 def remove_file(file_path: Path):
@@ -164,6 +167,33 @@ def save_reoriented_gfa(original_gfa, reoriented_fasta):
                 parts[5] = "0M"
                 line = "\t".join(parts) + "\n"
             out_gfa.write(line)
+    return reoriented_gfa
+
+
+def gfa_to_fasta(gfa_file, fasta_file):
+    """
+    Writes all sequences (the S lines) from a GFA file to a FASTA file. Contigs that were reoriented
+    carry an "RT:z:<gene>" tag in the GFA (added by save_reoriented_gfa); these are annotated in the
+    FASTA header with "rotated=True rotated_gene=<gene>" to match the `dnaapler all` convention.
+    Non-circular contigs are written out unchanged with a plain header.
+    """
+    logger.info(f"saving reoriented sequences to FASTA format in {fasta_file}")
+    with open(gfa_file, "rt") as in_gfa, open(fasta_file, "wt") as out_fasta:
+        for line in in_gfa:
+            parts = line.rstrip("\n").split("\t")
+            if parts[0] != "S":
+                continue
+            name, seq = parts[1], parts[2]
+            gene = None
+            for field in parts[3:]:
+                if field.startswith("RT:z:"):
+                    gene = field[len("RT:z:") :]
+                    break
+            if gene is not None:
+                header = f">{name} rotated=True rotated_gene={gene}"
+            else:
+                header = f">{name}"
+            out_fasta.write(f"{header}\n{seq}\n")
 
 
 def load_reoriented_fasta(reoriented_fasta):
