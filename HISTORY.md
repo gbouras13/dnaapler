@@ -3,6 +3,7 @@
 # Unreleased
 
 * If you run `dnaapler` with GFA input, it now also writes a `{prefix}_reoriented.fasta` alongside the `{prefix}_reoriented.gfa`. This FASTA contains all contigs from the GFA (circular contigs reoriented with overlap trimmed, non-circular contigs passed through unchanged), so it can be fed directly to downstream tools such as polishers.
+* If a GFA input contains no circular sequences, `dnaapler` no longer exits with an error. Instead it warns, copies the input GFA to the output, and writes all sequences out as a linear `{prefix}_reoriented.fasta`. For `dnaapler all` and `dnaapler bulk`, a reorientation summary is also written with every contig marked as not reoriented.
 
 # 1.3.0 (2025-08-21)
 

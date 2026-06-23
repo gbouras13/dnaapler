@@ -5,6 +5,7 @@ Uses some code from https://github.com/rrwick/Circular-Contig-Extractor
 
 import os
 import re
+import shutil
 from pathlib import Path
 
 from Bio import SeqIO
@@ -22,24 +23,50 @@ def is_gfa(input_file):
     return gfa_sequence_count(input_file) > 0
 
 
-def prep_gfa(input_file, output_dir):
+def prep_gfa(input_file, output_dir, prefix, summary_type=None):
     """
     If the input file given to Dnaapler is a GFA file, this function is run early in Dnaapler's
-    pipeline. It will save a temporary FASTA file which contains the circular sequences from the
-    GFA.
+    pipeline. It saves a temporary FASTA file which contains the circular sequences from the GFA,
+    which is what Dnaapler reorients.
+
+    If the GFA contains no circular sequences there is nothing to reorient, so the input GFA is
+    instead copied to the output and all sequences are written out as a linear FASTA, and the caller
+    is told to skip reorientation.
+
+    Args:
+    * summary_type (str | None): for a GFA with no circular sequences, controls whether a
+    *      reorientation summary is also written. "all" and "bulk" write the corresponding summary
+    *      (with every contig marked as not reoriented); None (the single-gene commands) writes none.
 
     Returns:
     * bool: whether or not the input was GFA format
     * str: FASTA input file to reorient (if the input was GFA, this is the temp FASTA file, but if
     *      the input was FASTA this is just the same FASTA)
     * str: GFA input file (if the input was FASTA this is None)
+    * bool: whether reorientation should be skipped (True only for a GFA with no circular sequences,
+    *       in which case the output GFA and FASTA have already been written)
     """
-    if is_gfa(input_file):
-        temp_input_fasta = os.path.join(output_dir, "input.fasta")
-        save_circular_sequences_as_fasta(input_file, temp_input_fasta)
-        return True, temp_input_fasta, input_file
-    else:
-        return False, input_file, None
+    if not is_gfa(input_file):
+        return False, input_file, None, False
+
+    contigs, links = load_gfa(input_file)
+    circular_contigs = find_circular_contigs(contigs, links)
+
+    if not circular_contigs:
+        logger.warning(
+            f"{input_file} contains no circular sequences. No contigs will be reoriented; the "
+            "input GFA will be copied to the output and all sequences written out as a linear FASTA."
+        )
+        write_gfa_passthrough(input_file, output_dir, prefix, summary_type)
+        return True, input_file, input_file, True
+
+    temp_input_fasta = os.path.join(output_dir, "input.fasta")
+    circular_contigs = trim_overlaps(circular_contigs)
+    write_fasta(circular_contigs, temp_input_fasta)
+    logger.info(
+        f"number of circular sequences in {input_file}: {len(circular_contigs)}"
+    )
+    return True, temp_input_fasta, input_file, False
 
 
 def finalise_gfa(temp_input_fasta, gfa_input_file, output_fasta):
@@ -61,17 +88,74 @@ def remove_file(file_path: Path):
         file_path.unlink()
 
 
-def save_circular_sequences_as_fasta(gfa_file, fasta_file):
+def write_gfa_passthrough(input_gfa, output_dir, prefix, summary_type=None):
     """
-    Identifies the circular sequences in the GFA file and saves them in FASTA format.
+    Handles a GFA input that contains no circular sequences: copies the input GFA to the output
+    {prefix}_reoriented.gfa and writes all of its sequences out, unchanged, as a linear
+    {prefix}_reoriented.fasta. Nothing is reoriented.
+
+    For the `all` and `bulk` commands (summary_type "all"/"bulk"), a reorientation summary is also
+    written, with every contig marked as not reoriented.
     """
-    contigs, links = load_gfa(gfa_file)
-    contigs = find_circular_contigs(contigs, links)
-    if not contigs:
-        logger.error(f"Error: {gfa_file} file contains no circular sequences.")
-    contigs = trim_overlaps(contigs)
-    write_fasta(contigs, fasta_file)
-    logger.info(f"number of circular sequences in {gfa_file}: {len(contigs)}")
+    reoriented_gfa = os.path.join(output_dir, f"{prefix}_reoriented.gfa")
+    reoriented_fasta = os.path.join(output_dir, f"{prefix}_reoriented.fasta")
+    logger.info(f"copying input GFA to {reoriented_gfa}")
+    shutil.copyfile(input_gfa, reoriented_gfa)
+    gfa_to_fasta(input_gfa, reoriented_fasta)
+    if summary_type is not None:
+        write_no_reorientation_summary(
+            gfa_sequence_names(input_gfa), output_dir, prefix, summary_type
+        )
+
+
+def write_no_reorientation_summary(contig_names, output_dir, prefix, summary_type):
+    """
+    Writes a reorientation summary TSV marking every contig as not reoriented. Used for the `all`
+    and `bulk` commands when a GFA input has no circular sequences. The columns mirror the summaries
+    written by dnaapler.utils.all and dnaapler.utils.bulk respectively.
+    """
+    if summary_type == "all":
+        columns = [
+            "Contig",
+            "Gene_Reoriented",
+            "Start",
+            "Strand",
+            "Top_Hit",
+            "Top_Hit_Length",
+            "Covered_Length",
+            "Coverage",
+            "Identical_AAs",
+            "Identity_Percentage",
+            "Overlapping_Contig_End",
+        ]
+        summary_file = os.path.join(
+            output_dir, f"{prefix}_all_reorientation_summary.tsv"
+        )
+    elif summary_type == "bulk":
+        columns = [
+            "Contig",
+            "Start",
+            "Strand",
+            "Top_Hit",
+            "Top_Hit_Length",
+            "Covered_Length",
+            "Coverage",
+            "Identical_AAs",
+            "Identity_Percentage",
+        ]
+        summary_file = os.path.join(
+            output_dir, f"{prefix}_bulk_reorientation_summary.tsv"
+        )
+    else:
+        return
+
+    logger.info(f"writing reorientation summary to {summary_file}")
+    with open(summary_file, "wt") as f:
+        f.write("\t".join(columns) + "\n")
+        for name in contig_names:
+            f.write(
+                "\t".join([name] + ["No_reorientation"] * (len(columns) - 1)) + "\n"
+            )
 
 
 def load_gfa(filename):

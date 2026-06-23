@@ -286,6 +286,49 @@ def test_gfa_all(tmp_dir):
     assert "rotated=True" not in fasta_records["5"].description
 
 
+def test_gfa_no_circular(tmp_dir):
+    """test all with a GFA input that has no circular sequences - instead of erroring, dnaapler
+    should warn, copy the input GFA to the output, and write all sequences out as a linear FASTA."""
+    input_gfa: Path = f"{overall_test_data}/no_circular.gfa"
+    cmd = f"dnaapler all -i {input_gfa} -o {tmp_dir} -t 1 -f"
+    exec_command(cmd)
+
+    # the input GFA is copied to the output unchanged
+    with open(input_gfa) as f:
+        original_gfa = f.read()
+    with open(f"{tmp_dir}/dnaapler_reoriented.gfa") as f:
+        assert f.read() == original_gfa
+
+    # all sequences are written out as a linear FASTA, unchanged and unannotated
+    input_seqs = {
+        parts[1]: parts[2]
+        for parts in (
+            line.rstrip("\n").split("\t") for line in original_gfa.splitlines()
+        )
+        if parts and parts[0] == "S"
+    }
+    fasta_records = {
+        rec.id: rec
+        for rec in SeqIO.parse(f"{tmp_dir}/dnaapler_reoriented.fasta", "fasta")
+    }
+    assert set(fasta_records) == set(input_seqs)
+    for name, seq in input_seqs.items():
+        assert str(fasta_records[name].seq) == seq
+        assert "rotated=True" not in fasta_records[name].description
+
+    # a summary is written marking every contig as not reoriented
+    summary_lines = (
+        open(f"{tmp_dir}/dnaapler_all_reorientation_summary.tsv").read().splitlines()
+    )
+    header = summary_lines[0].split("\t")
+    assert header[0] == "Contig" and "Gene_Reoriented" in header
+    summary_rows = {line.split("\t")[0]: line.split("\t") for line in summary_lines[1:]}
+    assert set(summary_rows) == set(input_seqs)
+    for name, row in summary_rows.items():
+        # every column other than the contig name marks no reorientation
+        assert row[1:] == ["No_reorientation"] * (len(header) - 1)
+
+
 """
 this one is for hybracter
 """
@@ -502,14 +545,6 @@ class TestExits(unittest.TestCase):
             input_fasta: Path = f"{test_data}/dupe_header.fasta"
             outdir: Path = f"{overall_test_data}/bulk_out"
             cmd = f"dnaapler bulk -i {input_fasta} -o {outdir} -t 1 -f  "
-            exec_command(cmd)
-
-    def test_gfa_no_circular(self):
-        """test all with a GFA input that contains no circular sequences"""
-        with self.assertRaises(RuntimeError):
-            input_gfa: Path = f"{overall_test_data}/no_circular.gfa"
-            outdir: Path = f"{overall_test_data}/all_out"
-            cmd = f"dnaapler all -i {input_gfa} -o {outdir} -t 1 -f  "
             exec_command(cmd)
 
     def test_gfa_inexact_overlap(self):
