@@ -172,7 +172,7 @@ def all_process_MMseqs2_output_and_reorient(
 
                 else:
                     message = f"autocomplete_method_{autocomplete}"
-                    (start, strand) = run_autocomplete_record(
+                    start, strand = run_autocomplete_record(
                         record, autocomplete, reoriented_output_file, seed_value
                     )
 
