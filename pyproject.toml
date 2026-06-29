@@ -1,43 +1,36 @@
-[tool.poetry]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
 name = "dnaapler"
-version = "1.4.0" # change VERSION too
+version = "1.4.0"
 description = "Reorients assembled microbial sequences"
-authors = ["George Bouras <george.bouras@adelaide.edu.au>"]
-license = "MIT"
+authors = [
+    { name = "George Bouras", email = "george.bouras@adelaide.edu.au" }
+]
+license = { text = "MIT" }
 readme = "README.md"
-homepage = "https://github.com/gbouras13/dnaapler"
-repository = "https://github.com/gbouras13/dnaapler"
 keywords = ["microbial", "bioinformatics"]
-include = [
-    "HISTORY.md"
+requires-python = ">=3.8,<4.0"
+dependencies = [
+    "click>=8.0.0",
+    "loguru>=0.5.3",
+    "pyyaml>=6.0",
+    "pandas>=1.4.2",
+    "biopython>=1.76",
+    "pyrodigal>=3.0.0",
 ]
 
-[tool.poetry.scripts]
-dnaapler = 'dnaapler:main'
+[project.urls]
+homepage = "https://github.com/gbouras13/dnaapler"
+repository = "https://github.com/gbouras13/dnaapler"
 
-[tool.poetry.dependencies]
-python = ">=3.8,<4.0"
-click = ">=8.0.0"
-loguru = ">=0.5.3"
-pyyaml = ">=6.0"
-pandas = ">=1.4.2"
-biopython = ">=1.76"
-pyrodigal = ">=3.0.0"
+[project.scripts]
+dnaapler = "dnaapler:main"
 
-
-[tool.poetry.dev-dependencies]
-ruff = ">=0.4.0"
-pytest = ">=6.2.5"
-pytest-cov = ">=3.0.0"
-
-[[tool.poetry.source]]
-name = "pypi-test"
-url = "https://test.pypi.org/simple/"
-priority = "primary"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.hatch.build.targets.wheel]
+packages = ["src/dnaapler"]
 
 [tool.ruff]
 line-length = 88
@@ -46,3 +39,44 @@ exclude = ["*.ipynb"]
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
 ignore = ["E501"]
+
+[tool.pixi.workspace]
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64", "osx-64", "osx-arm64"]
+
+[tool.pixi.dependencies]
+python = ">=3.8,<4.0"
+click = ">=8.0.0"
+loguru = ">=0.5.3"
+pyyaml = ">=6.0"
+pandas = ">=1.4.2"
+biopython = ">=1.76"
+pyrodigal = ">=3.0.0"
+mmseqs2 = ">=13.45111"
+
+[tool.pixi.pypi-dependencies]
+dnaapler = { path = ".", editable = true }
+
+[tool.pixi.feature.test.dependencies]
+pytest = ">=6.2.5"
+pytest-cov = ">=3.0.0"
+
+[tool.pixi.feature.lint.dependencies]
+ruff = ">=0.4.0"
+hatch = "*"
+
+[tool.pixi.feature.dev-tools.dependencies]
+just = "*"
+ripgrep = "*"
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+dev = { features = ["test", "lint", "dev-tools"], solve-group = "default" }
+
+[tool.pixi.tasks]
+fmt = { cmd = "ruff format . && ruff check --fix .", default-environment = "dev" }
+check-fmt = { cmd = "ruff format --check . && ruff check .", default-environment = "dev" }
+test = { cmd = "pytest -vv tests/", default-environment = "dev" }
+test-ci = { cmd = "pytest --cov=dnaapler --cov-report=xml --cov-branch tests/", default-environment = "dev" }
+coverage = { cmd = "pytest --cov-report term --cov-report html --cov=dnaapler --cov-branch tests/", default-environment = "dev" }
+build = { cmd = "hatch build", default-environment = "dev" }
