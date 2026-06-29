@@ -1,0 +1,102 @@
+{
+  "dnaapler_reoriented.fasta": {
+    "records": [
+      {
+        "description": "1 rotated=True rotated_gene=dnaA",
+        "head": "GTGTCACTTTCGCTTTGGCAGCAGTGTCTTGCCCGATTGCAGGATGAGTTACCAGCCACA",
+        "id": "1",
+        "length": 398227,
+        "sha256": "2c19aeb7b29f9ee032444d0aea4951c278044a5df3e77e8177b02ee6abcbd21c"
+      },
+      {
+        "description": "2 rotated=True rotated_gene=repA",
+        "head": "GTGACTGATCTTCAACAAACTTATTACCGCCAGGTAAAGAACCCGAATCCGGTGTTCACA",
+        "id": "2",
+        "length": 186230,
+        "sha256": "e3818b01ab17fa9c0ad20280a6f8dd6c5c5501665d92e37eccc1d036bd483e59"
+      },
+      {
+        "description": "3 rotated=True rotated_gene=repA",
+        "head": "ATGATCGTAGCTTCAGAACATCAAACAAAGCTAAGACAGAAAGAAATACAGGAAATCGAC",
+        "id": "3",
+        "length": 1240,
+        "sha256": "7bb39e24a82b9994e4aeeb2b9aef7b5a6dc736c6536de6a29912130140661057"
+      },
+      {
+        "description": "4 rotated=True rotated_gene=repA",
+        "head": "ATGTCAGAAGATAAATTCCTTTCGGACTACAGCCCCCGTGATGCAGTTTGGGATACCCAG",
+        "id": "4",
+        "length": 2088,
+        "sha256": "b83be93e219c10186b740e9c512608318886a579621c296ebb3ac2fbc428bb6e"
+      },
+      {
+        "description": "5",
+        "head": "GTTCTAGCATCGTTCGTCTGAGTTTGTTCTATATAAAACGGGCGCAATGTCTGCTTTGAT",
+        "id": "5",
+        "length": 1000,
+        "sha256": "3d73d8de6a50a1c879bde1c733f8876ab81471d5bf2c1b394da04967488dec79"
+      }
+    ],
+    "type": "fasta"
+  },
+  "dnaapler_reoriented.gfa": {
+    "non_s_lines": [
+      "H\tVN:Z:1.0",
+      "L\t1\t+\t1\t+\t0M",
+      "L\t1\t-\t1\t-\t0M",
+      "L\t2\t+\t2\t+\t0M",
+      "L\t2\t-\t2\t-\t0M",
+      "L\t3\t+\t3\t+\t0M",
+      "L\t3\t-\t3\t-\t0M",
+      "L\t4\t+\t4\t+\t0M",
+      "L\t4\t-\t4\t-\t0M"
+    ],
+    "s_lines": {
+      "1": {
+        "length": 398227,
+        "sha256": "2c19aeb7b29f9ee032444d0aea4951c278044a5df3e77e8177b02ee6abcbd21c",
+        "tags": [
+          "DP:f:17.00",
+          "CL:z:steelblue",
+          "RT:z:dnaA"
+        ]
+      },
+      "2": {
+        "length": 186230,
+        "sha256": "e3818b01ab17fa9c0ad20280a6f8dd6c5c5501665d92e37eccc1d036bd483e59",
+        "tags": [
+          "DP:f:22.00",
+          "CL:z:steelblue",
+          "RT:z:repA"
+        ]
+      },
+      "3": {
+        "length": 1240,
+        "sha256": "7bb39e24a82b9994e4aeeb2b9aef7b5a6dc736c6536de6a29912130140661057",
+        "tags": [
+          "DP:f:4.00",
+          "CL:z:steelblue",
+          "RT:z:repA"
+        ]
+      },
+      "4": {
+        "length": 2088,
+        "sha256": "b83be93e219c10186b740e9c512608318886a579621c296ebb3ac2fbc428bb6e",
+        "tags": [
+          "DP:f:5.00",
+          "CL:z:steelblue",
+          "RT:z:repA"
+        ]
+      },
+      "5": {
+        "length": 1000,
+        "sha256": "3d73d8de6a50a1c879bde1c733f8876ab81471d5bf2c1b394da04967488dec79",
+        "tags": [
+          "DP:f:4.00",
+          "CL:z:steelblue"
+        ]
+      }
+    },
+    "type": "gfa"
+  }
+}

@@ -59,8 +59,11 @@ def run_mystery(ctx, input: Path, seed_value: int, output: Path, prefix: str) ->
         reorient_gene_number = random.randint(2, gene_count - 1)
 
         logger.info(f"Gene number {reorient_gene_number} was selected.")
-        start = genes[reorient_gene_number].begin
         strand = genes[reorient_gene_number].strand
+        if strand == 1:
+            start = genes[reorient_gene_number].begin
+        else:
+            start = genes[reorient_gene_number].end
 
         if strand == 1:
             strand_eng = "forward"
@@ -112,8 +115,11 @@ def run_nearest(ctx, input: Path, output: Path, prefix: str) -> None:
 
         reorient_gene_number = 1
 
-        start = genes[reorient_gene_number].begin
         strand = genes[reorient_gene_number].strand
+        if strand == 1:
+            start = genes[reorient_gene_number].begin
+        else:
+            start = genes[reorient_gene_number].end
 
         if strand == 1:
             strand_eng = "forward"
@@ -176,8 +182,11 @@ def run_largest(ctx, input: Path, output: Path, prefix: str) -> None:
         # Find the gene with the max overlap
         largest_gene_index = max(size_dict, key=lambda key: size_dict[key])
 
-        start = genes[largest_gene_index].begin
         strand = genes[largest_gene_index].strand
+        if strand == 1:
+            start = genes[largest_gene_index].begin
+        else:
+            start = genes[largest_gene_index].end
         max_size = size_dict[largest_gene_index] / 3
 
         if strand == 1:

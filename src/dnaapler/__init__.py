@@ -189,7 +189,10 @@ def chromosome(
 
     # validates fasta or gfa
     validate_input(input)
-    input_is_gfa, input, original_gfa = prep_gfa(input, output)
+    input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(input, output, prefix)
+    if gfa_no_circular:
+        end_dnaapler(start_time)
+        return
 
     # validate E-value
     check_evalue(evalue)
@@ -270,7 +273,10 @@ def archaea(
 
     # validates fasta or gfa
     validate_input(input)
-    input_is_gfa, input, original_gfa = prep_gfa(input, output)
+    input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(input, output, prefix)
+    if gfa_no_circular:
+        end_dnaapler(start_time)
+        return
 
     # validate E-value
     check_evalue(evalue)
@@ -351,7 +357,10 @@ def plasmid(
 
     # validates fasta or gfa
     validate_input(input)
-    input_is_gfa, input, original_gfa = prep_gfa(input, output)
+    input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(input, output, prefix)
+    if gfa_no_circular:
+        end_dnaapler(start_time)
+        return
 
     # validate E-value
     check_evalue(evalue)
@@ -432,7 +441,10 @@ def phage(
 
     # validates fasta or gfa
     validate_input(input)
-    input_is_gfa, input, original_gfa = prep_gfa(input, output)
+    input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(input, output, prefix)
+    if gfa_no_circular:
+        end_dnaapler(start_time)
+        return
 
     # validate E-value
     check_evalue(evalue)
@@ -520,7 +532,10 @@ def custom(
 
     # validates fasta or gfa
     validate_input(input)
-    input_is_gfa, input, original_gfa = prep_gfa(input, output)
+    input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(input, output, prefix)
+    if gfa_no_circular:
+        end_dnaapler(start_time)
+        return
 
     # validate E-value
     check_evalue(evalue)
@@ -645,7 +660,10 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
 
     # validates fasta or gfa
     validate_input(input)
-    input_is_gfa, input, original_gfa = prep_gfa(input, output)
+    input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(input, output, prefix)
+    if gfa_no_circular:
+        end_dnaapler(start_time)
+        return
 
     # run the nearest workflow
     run_nearest(ctx, input, output, prefix)
@@ -691,7 +709,10 @@ def largest(ctx, input, output, threads, prefix, force, **kwargs):
 
     # validates fasta or gfa
     validate_input(input)
-    input_is_gfa, input, original_gfa = prep_gfa(input, output)
+    input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(input, output, prefix)
+    if gfa_no_circular:
+        end_dnaapler(start_time)
+        return
 
     # run the nearest workflow
     run_largest(ctx, input, output, prefix)
@@ -781,7 +802,12 @@ def bulk(
     # validates fasta or gfa
     validate_input_bulk(input)
     check_duplicate_headers(input)
-    input_is_gfa, input, original_gfa = prep_gfa(input, output)
+    input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(
+        input, output, prefix, summary_type="bulk"
+    )
+    if gfa_no_circular:
+        end_dnaapler(start_time)
+        return
 
     # validate E-value
     check_evalue(evalue)
@@ -954,7 +980,12 @@ def all(
     # validates fasta or gfa
     validate_input_all(input)
     check_duplicate_headers(input)
-    input_is_gfa, input, original_gfa = prep_gfa(input, output)
+    input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(
+        input, output, prefix, summary_type="all"
+    )
+    if gfa_no_circular:
+        end_dnaapler(start_time)
+        return
 
     # validate E-value
     check_evalue(evalue)

@@ -1,0 +1,14 @@
+{
+  "dnaapler_reoriented.fasta": {
+    "records": [
+      {
+        "description": "chromosome",
+        "head": "ATGAAGAAAACATTACTCGCATCATCATTAGCAGTAGGTTTAGGAATCGTAGCAGGAAAT",
+        "id": "chromosome",
+        "length": 2836041,
+        "sha256": "a01c1628c071eda928163ea9e3b7679563efd2294faca5f1c19f1e10ed3b0f75"
+      }
+    ],
+    "type": "fasta"
+  }
+}

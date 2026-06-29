@@ -4,7 +4,9 @@
 
 dnaapler creates a number of output files. For all subcommands that are not `dnaapler bulk`, inside the output directory you will find:
 
-* A `{prefix}_reoriented.fasta` containing the reoriented genome. If the input file was in GFA format, this will instead be `{prefix}_reoriented.gfa`.
+* A `{prefix}_reoriented.fasta` containing the reoriented genome. If the input file was in GFA format, dnaapler will additionally write a `{prefix}_reoriented.gfa`. In this case the `{prefix}_reoriented.fasta` contains all contigs from the GFA — circular contigs reoriented (with overlap trimmed), and non-circular contigs passed through unchanged — so it can be fed directly to downstream tools such as polishers. Reoriented contigs are indicated in the FASTA header with `rotated=True`.
+
+* If the input GFA contains no circular sequences, there is nothing to reorient. Rather than exiting with an error, dnaapler will warn, copy the input GFA to `{prefix}_reoriented.gfa`, and write all sequences out as a linear `{prefix}_reoriented.fasta` unchanged. For `dnaapler all` and `dnaapler bulk`, a reorientation summary is also written (`{prefix}_all_reorientation_summary.tsv` / `{prefix}_bulk_reorientation_summary.tsv`) with every contig marked `No_reorientation`.
 
 * A `{prefix}_blast_output.txt` if a BLAST based method is used. This file will contain the raw blastx results in BLAST output format 6.
 

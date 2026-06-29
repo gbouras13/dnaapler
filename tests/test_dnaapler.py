@@ -17,6 +17,8 @@ import pandas as pd
 import pytest
 from loguru import logger
 
+from src.dnaapler.utils.cds_methods import run_largest
+from src.dnaapler.utils.gfa import gfa_to_fasta
 from src.dnaapler.utils.processing import (
     process_MMseqs2_output_and_reorient,
     reorient_sequence,
@@ -177,6 +179,103 @@ class TestReorientSequenceRandom(unittest.TestCase):
             start = 1000
             strand = 24
             reorient_sequence_random(input, out_file, start, strand)
+
+    def test_reorient_sequence_random_negative_strand_start_codon(self, tmp_path=None):
+        # Regression test for issue #102: negative-strand gene reorientation must use
+        # gene.end (not gene.begin) so the output starts with a valid start codon.
+        # no_hit_plasmid.fasta has its only/largest CDS on strand=-1 with begin=450, end=1184.
+        import tempfile
+
+        from Bio import SeqIO
+
+        input_fasta = os.path.join(overall_inputs_test_data, "no_hit_plasmid.fasta")
+        with tempfile.NamedTemporaryFile(suffix=".fasta", delete=False) as fh:
+            out_file = fh.name
+
+        # strand=-1, correct start = gene.end = 1184
+        reorient_sequence_random(input_fasta, out_file, 1184, -1)
+
+        record = SeqIO.read(out_file, "fasta")
+        first_codon = str(record.seq[:3])
+        assert first_codon in ("ATG", "GTG", "TTG"), (
+            f"Reoriented sequence should start with a valid start codon, got {first_codon}"
+        )
+
+        # Confirm the old buggy behaviour (using begin=450) would NOT produce a start codon
+        reorient_sequence_random(input_fasta, out_file, 450, -1)
+        record_wrong = SeqIO.read(out_file, "fasta")
+        first_codon_wrong = str(record_wrong.seq[:3])
+        assert first_codon_wrong not in ("ATG", "GTG", "TTG"), (
+            "Expected the buggy reorientation to fail to produce a start codon"
+        )
+        os.unlink(out_file)
+
+
+class TestRunLargestNegativeStrand(unittest.TestCase):
+    """Regression tests for issue #102 - run_largest must orient correctly when
+    the largest CDS is on the negative strand."""
+
+    def test_run_largest_negative_strand(self, tmp_path=None):
+        # NC_007458_rc.fasta is the reverse complement of NC_007458.fasta.
+        # Its largest CDS is on strand=-1 (begin=20063, end=23929).
+        # After correct reorientation the first gene should begin at position 1.
+        import tempfile
+
+        import pyrodigal
+        from Bio import SeqIO
+
+        input_fasta = os.path.join(test_data, "NC_007458_rc.fasta")
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            ctx = click.Context(click.Command("test"))
+            run_largest(ctx, input_fasta, tmp_dir, "test")
+
+            out_file = os.path.join(tmp_dir, "test_reoriented.fasta")
+            assert os.path.exists(out_file), "Reoriented output file was not created"
+
+            record = SeqIO.read(out_file, "fasta")
+            orf_finder = pyrodigal.GeneFinder(meta=True)
+            genes = orf_finder.find_genes(str(record.seq))
+            assert len(genes) > 0, "No genes found in reoriented sequence"
+            # The first gene should start at position 1 after correct reorientation
+            first_gene = genes[0]
+            assert first_gene.begin == 1, (
+                f"Expected first gene to start at position 1 after reorientation, got {first_gene.begin}"
+            )
+
+
+class TestGfaToFasta(unittest.TestCase):
+    """Tests for gfa_to_fasta - GFA input should yield a complete FASTA of all contigs."""
+
+    def test_gfa_to_fasta_writes_all_contigs_with_annotations(self):
+        import tempfile
+
+        from Bio import SeqIO
+
+        # A minimal reoriented GFA: one rotated contig (with RT:z: tag) and one
+        # passed-through (non-circular) contig with no tag.
+        gfa_contents = (
+            "H\tVN:Z:1.0\n"
+            "S\t1\tATGCATGCAT\tRT:z:dnaA\n"
+            "S\t2\tGGGGCCCCAA\n"
+            "L\t1\t+\t1\t+\t0M\n"
+        )
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            gfa_file = os.path.join(tmp_dir, "test_reoriented.gfa")
+            fasta_file = os.path.join(tmp_dir, "test_reoriented.fasta")
+            with open(gfa_file, "w") as fh:
+                fh.write(gfa_contents)
+
+            gfa_to_fasta(gfa_file, fasta_file)
+
+            records = {rec.id: rec for rec in SeqIO.parse(fasta_file, "fasta")}
+            # both contigs present (the L line is ignored)
+            assert set(records.keys()) == {"1", "2"}
+            assert str(records["1"].seq) == "ATGCATGCAT"
+            assert str(records["2"].seq) == "GGGGCCCCAA"
+            # rotated contig is annotated from the RT:z: tag, the other is not
+            assert "rotated=True" in records["1"].description
+            assert "rotated_gene=dnaA" in records["1"].description
+            assert "rotated=True" not in records["2"].description
 
 
 class TestBlastOutput(unittest.TestCase):

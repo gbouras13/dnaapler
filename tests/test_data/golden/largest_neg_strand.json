@@ -1,0 +1,14 @@
+{
+  "dnaapler_reoriented.fasta": {
+    "records": [
+      {
+        "description": "NC_007458_rc",
+        "head": "ATGAGAACACCAAGCGGGATTTTGCATGTTGTGGATTTTAAAACGGATCAAATCGTCGCA",
+        "id": "NC_007458_rc",
+        "length": 37253,
+        "sha256": "80e7e51c9826cd595a3b80ccde42deb83a97397f42dafc70db8cb18b4de7609b"
+      }
+    ],
+    "type": "fasta"
+  }
+}

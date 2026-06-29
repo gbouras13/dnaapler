@@ -30,7 +30,6 @@ def choose_highest_mmseqs2_bitscore(MMseqs2_df: pd.DataFrame, gene: str) -> List
     unique_qseqids = MMseqs2_df["qseqid"].unique()
 
     for qseqid in unique_qseqids:
-
         if qseqid.startswith("rotated_"):
             # Check if there is no matching original seqid
             original_id = qseqid[len("rotated_") :]
@@ -38,7 +37,6 @@ def choose_highest_mmseqs2_bitscore(MMseqs2_df: pd.DataFrame, gene: str) -> List
                 chosen_contig_list.append(qseqid)
         else:
             for keyword in keywords:
-
                 rotated_id = f"rotated_{qseqid}"
 
                 # Get rows for the original and rotated qseqid
@@ -69,7 +67,6 @@ def choose_highest_mmseqs2_bitscore(MMseqs2_df: pd.DataFrame, gene: str) -> List
                     rotated_max_bitscore = 0
 
                 if rotated_max_bitscore > 0 or original_max_bitscore > 0:
-
                     # Compare the max bitscore
                     # if the rotated is higher
                     if rotated_max_bitscore > original_max_bitscore:
@@ -354,8 +351,6 @@ def reorient_sequence(
                 start = genes[closest_gene_index].begin
             elif strand == -1:
                 start = genes[closest_gene_index].end
-
-            start = genes[closest_gene_index].begin
 
             if strand == 1:
                 strand_eng = "forward"

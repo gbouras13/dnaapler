@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-13, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest]
         python-version: ["3.9"]
 
     steps:
@@ -34,11 +34,10 @@ jobs:
       - name: Install project
         shell: bash -l {0}
         run: |
-          conda install python=${{ matrix.python-version }}
+          conda install python=${{ matrix.python-version }} pip
           python -m pip install --upgrade pip
           pip install -e .
-          pip install black
-          pip install isort
+          pip install ruff
           pip install pytest
           pip install pytest-cov
       - name: Check formatting

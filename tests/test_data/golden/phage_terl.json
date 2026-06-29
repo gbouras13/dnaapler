@@ -1,0 +1,14 @@
+{
+  "dnaapler_reoriented.fasta": {
+    "records": [
+      {
+        "description": "NC_007458.1 Bacillus phage Gamma, complete genome",
+        "head": "ATGAACTGGATAATGGAACGGGTTTTTGCATATTGCGAGGACATTTTAAACGGCAAGATA",
+        "id": "NC_007458.1",
+        "length": 37253,
+        "sha256": "de214b734448de3e1def4d7e7f7d6e5e207f26fcbbe080bf313d12695f37c07e"
+      }
+    ],
+    "type": "fasta"
+  }
+}
