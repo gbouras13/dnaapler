@@ -1,0 +1,14 @@
+{
+  "dnaapler_reoriented.fasta": {
+    "records": [
+      {
+        "description": "CP001742.1 Acidilobus saccharovorans 345-15, complete genome",
+        "head": "ATGGGAGGAAGGATATTCACGGACAGGAGGGTGTTCGAGGAGACCTACGTGCCCGACATA",
+        "id": "CP001742.1",
+        "length": 1496453,
+        "sha256": "3111a671a268dc38a0b9c9ce4bed54c601228f753f75f63762642e6081b77979"
+      }
+    ],
+    "type": "fasta"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "dnaapler_reoriented.fasta": {
+    "records": [
+      {
+        "description": "MW460250_1_subset",
+        "head": "ATGGGTGTAATGGAAATGGTTCATTTTGCAGATATGCATAGTTATGCTAACGCAAAGTGT",
+        "id": "MW460250_1_subset",
+        "length": 34300,
+        "sha256": "e42d6f826c0216f5fe105f063cbbf19a46601d8fed6fe1d62c3b8b13c6fc6cc0"
+      }
+    ],
+    "type": "fasta"
+  }
+}

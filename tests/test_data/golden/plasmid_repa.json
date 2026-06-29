@@ -1,0 +1,14 @@
+{
+  "dnaapler_reoriented.fasta": {
+    "records": [
+      {
+        "description": "1 length=181436 plasmid_copy_number_short=1.0x plasmid_copy_number_long=1.04x circular=true",
+        "head": "ATGACGAGCGAAAATAACAGCTTACTTCTGAACCTTCAGGAAGTTGATAAGACAACCGGC",
+        "id": "1",
+        "length": 181436,
+        "sha256": "544052fb253d2636ce5f25e2450c9bc5082eaca8065457d64b31fb266aaeee4b"
+      }
+    ],
+    "type": "fasta"
+  }
+}

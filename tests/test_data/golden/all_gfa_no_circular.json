@@ -1,0 +1,82 @@
+{
+  "dnaapler_all_reorientation_summary.tsv": {
+    "content": "Contig\tGene_Reoriented\tStart\tStrand\tTop_Hit\tTop_Hit_Length\tCovered_Length\tCoverage\tIdentical_AAs\tIdentity_Percentage\tOverlapping_Contig_End\n1\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\n2\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\n3\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\n4\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\tNo_reorientation\n",
+    "type": "text"
+  },
+  "dnaapler_reoriented.fasta": {
+    "records": [
+      {
+        "description": "1",
+        "head": "TCATTTCTTCAACAG",
+        "id": "1",
+        "length": 15,
+        "sha256": "cb0f4a4e1ac479386ffa36a01d479cf97281b4c5e3b54ed15bafd5580f08cd3e"
+      },
+      {
+        "description": "2",
+        "head": "GCAGGTAAAT",
+        "id": "2",
+        "length": 10,
+        "sha256": "2e2c3b363689876e85145293430e839dd3de6b0d2449a63351518a2ae206505e"
+      },
+      {
+        "description": "3",
+        "head": "TGTGA",
+        "id": "3",
+        "length": 5,
+        "sha256": "7d2c94ac87c0df08826fd63b12c96b7d6017123f2a279133b9a4a52ec2ac379d"
+      },
+      {
+        "description": "4",
+        "head": "ACAT",
+        "id": "4",
+        "length": 4,
+        "sha256": "d2189a0465aec644e836092ea0ff9a50c28c42c10a2efd22b28e9f20926e4ede"
+      }
+    ],
+    "type": "fasta"
+  },
+  "dnaapler_reoriented.gfa": {
+    "non_s_lines": [
+      "H\tVN:Z:1.0",
+      "L\t1\t+\t3\t+\t0M",
+      "L\t2\t+\t2\t-\t0M",
+      "L\t3\t+\t3\t+\t0M"
+    ],
+    "s_lines": {
+      "1": {
+        "length": 15,
+        "sha256": "cb0f4a4e1ac479386ffa36a01d479cf97281b4c5e3b54ed15bafd5580f08cd3e",
+        "tags": [
+          "LN:i:15",
+          "dp:f:1.0"
+        ]
+      },
+      "2": {
+        "length": 10,
+        "sha256": "2e2c3b363689876e85145293430e839dd3de6b0d2449a63351518a2ae206505e",
+        "tags": [
+          "LN:i:10",
+          "dp:f:2.0"
+        ]
+      },
+      "3": {
+        "length": 5,
+        "sha256": "7d2c94ac87c0df08826fd63b12c96b7d6017123f2a279133b9a4a52ec2ac379d",
+        "tags": [
+          "LN:i:5",
+          "dp:f:3.0"
+        ]
+      },
+      "4": {
+        "length": 4,
+        "sha256": "d2189a0465aec644e836092ea0ff9a50c28c42c10a2efd22b28e9f20926e4ede",
+        "tags": [
+          "LN:i:4",
+          "dp:f:3.0"
+        ]
+      }
+    },
+    "type": "gfa"
+  }
+}
