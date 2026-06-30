@@ -121,6 +121,7 @@ If you don't want to install `dnaapler` locally, you can run `dnaapler all` with
   - [Documentation](#documentation)
   - [Commands](#commands)
   - [Installation](#installation)
+    - [Pixi](#pixi)
     - [Conda](#conda)
     - [Pip](#pip)
   - [Usage](#usage)
@@ -177,7 +178,15 @@ The full documentation for `dnaapler` can be found [here](https://dnaapler.readt
 
 `dnaapler` requires only `MMseqs2 v13.45111` as an external dependency. 
 
-Installation from conda is highly recommended as this will install `MMseqs2` automatically.
+Installation using `pixi` or `conda` is highly recommended as this will install `MMseqs2` automatically.
+
+### Pixi
+
+`dnaapler` is available on bioconda and can be installed globally using `pixi`:
+
+```
+pixi global install dnaapler
+```
 
 ### Conda
 

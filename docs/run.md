@@ -1,7 +1,7 @@
 
 # Running `dnaapler`
 
-For all subcommands, `dnaapler` requires an input FASTA file using the `-i` or `--input` parameters. 
+For all subcommands, `dnaapler` requires an input FASTA file using the `-i` or `--input` parameters. The input may be in FASTA or GFA format, and may be gzip (`.gz`), bzip2 (`.bz2`) or xz (`.xz`) compressed (this is detected automatically, regardless of the file extension).
 
 It is also highly recommended to specify an output directory using the `-o` or `--output` parameters, otherwise `dnaapler` will write the output to a directory named `output.dnaapler` by default.
 

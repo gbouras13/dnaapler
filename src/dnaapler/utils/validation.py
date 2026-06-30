@@ -1,3 +1,8 @@
+import atexit
+import bz2
+import gzip
+import lzma
+import os
 import re
 import shutil
 import sys
@@ -38,6 +43,45 @@ def instantiate_dirs(output_dir: str, force: bool) -> None:
     # instantiate outdir
     if Path(output_dir).exists() is False:
         Path(output_dir).mkdir(parents=True, exist_ok=True)
+
+
+def decompress_if_needed(input_file: Path, output_dir: str) -> str:
+    """
+    If input_file is gzip-, bzip2- or xz-compressed, decompress it to a temporary file in the output
+    directory and return that path; otherwise return input_file unchanged. Compression is detected
+    from the file's magic bytes, so it works regardless of the file extension. The temporary file is
+    removed automatically when dnaapler exits.
+
+    This lets the rest of the pipeline (validation, GFA handling, Pyrodigal and MMseqs2) operate on
+    a plain uncompressed file without any of them needing to be compression-aware.
+    """
+    with open(input_file, "rb") as handle:
+        magic = handle.read(6)
+
+    if magic[:2] == b"\x1f\x8b":
+        opener = gzip.open
+        compression = "gzip"
+    elif magic[:3] == b"BZh":
+        opener = bz2.open
+        compression = "bzip2"
+    elif magic[:6] == b"\xfd7zXZ\x00":
+        opener = lzma.open
+        compression = "xz"
+    else:
+        return str(input_file)
+
+    logger.info(
+        f"{input_file} appears to be {compression}-compressed; decompressing to a temporary file."
+    )
+    decompressed = os.path.join(output_dir, "dnaapler_decompressed_input.fasta")
+    with opener(input_file, "rb") as src, open(decompressed, "wb") as dst:
+        shutil.copyfileobj(src, dst)
+
+    # remove the temporary decompressed file when dnaapler exits
+    atexit.register(
+        lambda: os.remove(decompressed) if os.path.exists(decompressed) else None
+    )
+    return decompressed
 
 
 def is_fasta(input_file):

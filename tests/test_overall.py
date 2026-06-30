@@ -286,6 +286,28 @@ def test_gfa_all(tmp_dir):
     assert "rotated=True" not in fasta_records["5"].description
 
 
+def test_compressed_input(tmp_dir):
+    """gzipped FASTA input (issue #98) should give the same result as uncompressed input."""
+    import gzip
+
+    plain_input: Path = f"{overall_test_data}/plasmid.fasta"
+    gz_input = f"{tmp_dir}/plasmid.fasta.gz"
+    with open(plain_input, "rb") as fh, gzip.open(gz_input, "wb") as out:
+        out.write(fh.read())
+
+    plain_out = f"{tmp_dir}/compressed_plain"
+    gz_out = f"{tmp_dir}/compressed_gz"
+    exec_command(f"dnaapler plasmid -i {plain_input} -o {plain_out} -t 1 -f")
+    exec_command(f"dnaapler plasmid -i {gz_input} -o {gz_out} -t 1 -f")
+
+    plain_seq = str(
+        next(SeqIO.parse(f"{plain_out}/dnaapler_reoriented.fasta", "fasta")).seq
+    )
+    gz_seq = str(next(SeqIO.parse(f"{gz_out}/dnaapler_reoriented.fasta", "fasta")).seq)
+    assert len(gz_seq) > 0
+    assert gz_seq == plain_seq
+
+
 def test_gfa_no_circular(tmp_dir):
     """test all with a GFA input that has no circular sequences - instead of erroring, dnaapler
     should warn, copy the input GFA to the output, and write all sequences out as a linear FASTA."""

@@ -31,6 +31,7 @@ from src.dnaapler.utils.util import (
 )
 from src.dnaapler.utils.validation import (
     check_evalue,
+    decompress_if_needed,
     validate_choice_autocomplete,
     validate_custom_db_fasta,
     validate_input,
@@ -241,6 +242,51 @@ class TestRunLargestNegativeStrand(unittest.TestCase):
             assert first_gene.begin == 1, (
                 f"Expected first gene to start at position 1 after reorientation, got {first_gene.begin}"
             )
+
+
+class TestDecompressIfNeeded(unittest.TestCase):
+    """Tests for decompress_if_needed - issue #98 (compressed FASTA input)."""
+
+    def _check_roundtrip(self, compressor, suffix):
+        import tempfile
+
+        from Bio import SeqIO
+
+        src = os.path.join(overall_inputs_test_data, "plasmid.fasta")
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            compressed = os.path.join(tmp_dir, f"in.fasta{suffix}")
+            with open(src, "rb") as fh, compressor(compressed, "wb") as out:
+                out.write(fh.read())
+
+            result = decompress_if_needed(compressed, tmp_dir)
+            assert result != compressed, "expected a new decompressed path"
+
+            original = [(r.id, str(r.seq)) for r in SeqIO.parse(src, "fasta")]
+            decompressed = [(r.id, str(r.seq)) for r in SeqIO.parse(result, "fasta")]
+            assert decompressed == original
+
+    def test_gzip_input_decompressed(self):
+        import gzip
+
+        self._check_roundtrip(gzip.open, ".gz")
+
+    def test_bzip2_input_decompressed(self):
+        import bz2
+
+        self._check_roundtrip(bz2.open, ".bz2")
+
+    def test_xz_input_decompressed(self):
+        import lzma
+
+        self._check_roundtrip(lzma.open, ".xz")
+
+    def test_plain_input_returned_unchanged(self):
+        import tempfile
+
+        plain = os.path.join(overall_inputs_test_data, "plasmid.fasta")
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result = decompress_if_needed(plain, tmp_dir)
+            assert result == str(plain)
 
 
 class TestGfaToFasta(unittest.TestCase):

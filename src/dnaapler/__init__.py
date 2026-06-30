@@ -32,6 +32,7 @@ from dnaapler.utils.util import (
 )
 from dnaapler.utils.validation import (
     check_evalue,
+    decompress_if_needed,
     instantiate_dirs,
     process_ignore_input,
     validate_choice_autocomplete,
@@ -187,6 +188,9 @@ def chromosome(
         f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
+    # decompress the input first if it is gzip/bzip2 compressed
+    input = decompress_if_needed(input, output)
+
     # validates fasta or gfa
     validate_input(input)
     input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(input, output, prefix)
@@ -270,6 +274,9 @@ def archaea(
     logger.info(
         f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
+
+    # decompress the input first if it is gzip/bzip2 compressed
+    input = decompress_if_needed(input, output)
 
     # validates fasta or gfa
     validate_input(input)
@@ -355,6 +362,9 @@ def plasmid(
         f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
+    # decompress the input first if it is gzip/bzip2 compressed
+    input = decompress_if_needed(input, output)
+
     # validates fasta or gfa
     validate_input(input)
     input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(input, output, prefix)
@@ -438,6 +448,9 @@ def phage(
     logger.info(
         f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
+
+    # decompress the input first if it is gzip/bzip2 compressed
+    input = decompress_if_needed(input, output)
 
     # validates fasta or gfa
     validate_input(input)
@@ -530,6 +543,9 @@ def custom(
         f"You have chosen {autocomplete} method to reorient your sequence if the MMseqs2 based method fails."
     )
 
+    # decompress the input first if it is gzip/bzip2 compressed
+    input = decompress_if_needed(input, output)
+
     # validates fasta or gfa
     validate_input(input)
     input_is_gfa, input, original_gfa, gfa_no_circular = prep_gfa(input, output, prefix)
@@ -618,6 +634,9 @@ def mystery(ctx, input, output, threads, prefix, seed_value, force, **kwargs):
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
 
+    # decompress the input first if it is gzip/bzip2 compressed
+    input = decompress_if_needed(input, output)
+
     # validates fasta or gfa
     validate_input(input)
 
@@ -657,6 +676,9 @@ def nearest(ctx, input, output, threads, prefix, force, **kwargs):
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
+
+    # decompress the input first if it is gzip/bzip2 compressed
+    input = decompress_if_needed(input, output)
 
     # validates fasta or gfa
     validate_input(input)
@@ -706,6 +728,9 @@ def largest(ctx, input, output, threads, prefix, force, **kwargs):
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
+
+    # decompress the input first if it is gzip/bzip2 compressed
+    input = decompress_if_needed(input, output)
 
     # validates fasta or gfa
     validate_input(input)
@@ -798,6 +823,9 @@ def bulk(
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
+
+    # decompress the input first if it is gzip/bzip2 compressed
+    input = decompress_if_needed(input, output)
 
     # validates fasta or gfa
     validate_input_bulk(input)
@@ -976,6 +1004,9 @@ def all(
 
     # initial logging etc
     start_time = begin_dnaapler(input, output, threads, gene, params)
+
+    # decompress the input first if it is gzip/bzip2 compressed
+    input = decompress_if_needed(input, output)
 
     # validates fasta or gfa
     validate_input_all(input)

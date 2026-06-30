@@ -11,25 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: conda-incubator/setup-miniconda@v3
+      - uses: actions/checkout@v4
+
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.8.1
         with:
-          python-version: 3.9
-          activate-environment: dnaapler
-          environment-file: build/environment.yaml
-          auto-activate-base: false
-          channels: conda-forge,bioconda,defaults
-          channel-priority: strict
-          auto-update-conda: true
-      - name: Install project
-        shell: bash -l {0}
-        run: |
-          python -m pip install -U pip
-          pip install -e .
-          pip install ruff
+          pixi-version: v0.71.2
+          cache: true
+          environments: dev
+
       - name: Build a binary wheel and a source tarball
-        shell: bash -l {0}
-        run: just build
+        run: pixi run build
+
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
